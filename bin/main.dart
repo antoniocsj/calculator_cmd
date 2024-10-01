@@ -129,17 +129,21 @@ void test_4b([int n = 1000]) {
   var d = Number().mpSetFromString('3.6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001002003');
   var e = Number().mpSetFromString('1.8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002003004');
   var f = Number().mpSetFromString('0.0');
+  var g = Number().mpSetFromString('0.0');
 
-  if (d == null || e == null || f == null) {
-    print('d, e, or f is null');
+  if (d == null || e == null || f == null || g == null) {
+    print('d, e, f, or g is null');
   } else {
     print('d: ${d.num.getString()}, ${d.num.getString1()}');
     print('e: ${e.num.getString()}, ${e.num.getString1()}');
     print('f: ${f.num.getString()}, ${f.num.getString1()}');
+    print('g: ${g.num.getString()}, ${g.num.getString1()}');
 
     f = d.add(e);
+    g = d.xpowy(e);
 
     print('f: ${f.num.getString()}, ${f.num.getString1()}');
+    print('g: ${g.num.getString()}, ${g.num.getString1()}');
   }
 }
 
