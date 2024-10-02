@@ -1,5 +1,4 @@
 import 'package:calculator/enums.dart';
-import 'package:calculator/mpfr_bindings.dart';
 import 'package:calculator/types.dart';
 import 'package:calculator/number.dart';
 
