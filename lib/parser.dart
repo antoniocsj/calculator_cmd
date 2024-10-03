@@ -1,6 +1,7 @@
 import 'package:calculator/enums.dart';
 import 'package:calculator/lexer.dart';
 import 'package:calculator/number.dart';
+import 'package:calculator/types.dart';
 
 // The following is a Vala code that defines the ParseNode class:
 // public class ParseNode : Object
@@ -2915,9 +2916,313 @@ class ConvertNumberNode extends ParseNode {
 //
 
 class Parser {
+  // Vala code:
+  //     private string input;
+  //     private ParseNode root;
+  //     private ParseNode right_most;
+  //     private Lexer lexer;
+  //     public int number_base;
+  //     public int wordlen;
+  //     public AngleUnit angle_units;
+  //     private uint depth_level;
+  //     private ErrorCode error;
+  //     private string error_token;
+  //     private int error_token_start;
+  //     private int error_token_end;
+  //     private uint representation_base;
+  //
+  //     public static HashTable<string, Number> CONSTANTS;
+  //
+  //     static construct {
+  //         CONSTANTS = new HashTable<string, Number> (str_hash, str_equal);
+  //         CONSTANTS.insert ("e", new Number.eulers ());
+  //         CONSTANTS.insert ("pi", new Number.pi ());
+  //         CONSTANTS.insert ("tau", new Number.tau ());
+  //         CONSTANTS.insert ("π", new Number.pi ());
+  //         CONSTANTS.insert ("τ", new Number.tau ());
+  //         CONSTANTS.insert ("i", new Number.i ());
+  //     }
+  //
+  // Dart code:
   String input;
-  ParseNode root;
-  ParseNode right_most;
-  Lexer lexer;
+  ParseNode? root;
+  ParseNode? rightMost;
+  late Lexer lexer;
   int numberBase;
+  int wordLen;
+  AngleUnit angleUnits;
+  late int depthLevel;
+  late ErrorCode error;
+  String? errorToken;
+  late int errorTokenStart;
+  late int errorTokenEnd;
+  late int representationBase;
+
+  static Map<String, Number> constants = {
+    "e": Number.eulers(),
+    "pi": Number.pi(),
+    "tau": Number.tau(),
+    "π": Number.pi(),
+    "τ": Number.tau(),
+    "i": Number.i()
+  };
+
+  // the following is a Vala code that defines the Parser constructor:
+  // public Parser (string input, int number_base, int wordlen, AngleUnit angle_units)
+  // {
+  //   this.input = input;
+  //   lexer = new Lexer (input, this, number_base);
+  //   root = null;
+  //   depth_level = 0;
+  //   right_most = null;
+  //   this.number_base = number_base;
+  //   this.representation_base = number_base;
+  //   this.wordlen = wordlen;
+  //   this.angle_units = angle_units;
+  //   error = ErrorCode.NONE;
+  //   error_token = null;
+  //   error_token_start = 0;
+  //   error_token_end = 0;
+  // }
+  //
+  // this is the equivalent Dart code to the previous Vala code that defines the Parser constructor:
+  Parser(this.input, this.numberBase, this.wordLen, this.angleUnits) {
+    lexer = Lexer(input, this, numberBase);
+    root = null;
+    depthLevel = 0;
+    rightMost = null;
+    representationBase = numberBase;
+    error = ErrorCode.none;
+    errorToken = null;
+    errorTokenStart = 0;
+    errorTokenEnd = 0;
+  }
+
+  // the following is a Vala code that defines the create_parse_tree method:
+//     public bool create_parse_tree (out uint representation_base, out ErrorCode error_code, out string? error_token, out uint error_start, out uint error_end)
+//     {
+//         representation_base = number_base;
+//         /* Scan string and split into tokens */
+//         lexer.scan ();
+//
+//         /* Parse tokens */
+//         var ret = statement ();
+//
+//         var token = lexer.get_next_token ();
+//         if (token.type == LexerTokenType.ASSIGN)
+//         {
+//             token = lexer.get_next_token ();
+//             if (token.type != LexerTokenType.PL_EOS)
+//             {
+//                 /* Full string is not parsed. */
+//                 if (error == ErrorCode.NONE)
+//                     set_error (ErrorCode.INVALID, token.text, token.start_index, token.end_index);
+//
+//                 error_code = error;
+//                 error_token = this.error_token;
+//                 error_start = error_token_start;
+//                 error_end = error_token_end;
+//                 return false;
+//             }
+//         }
+//         if (token.type != LexerTokenType.PL_EOS)
+//         {
+//             /* Full string is not parsed. */
+//             if (error == ErrorCode.NONE)
+//                 set_error (ErrorCode.INVALID, token.text, token.start_index, token.end_index);
+//
+//             error_code = error;
+//             error_token = this.error_token;
+//             error_start = error_token_start;
+//             error_end = error_token_end;
+//             return false;
+//         }
+//
+//         /* Input can't be parsed with grammar. */
+//         if (!ret)
+//         {
+//             if (error == ErrorCode.NONE)
+//                 set_error (ErrorCode.INVALID);
+//
+//             error_code = error;
+//             error_token = this.error_token;
+//             error_start = error_token_start;
+//             error_end = error_token_end;
+//             return false;
+//         }
+//
+//         error_code = ErrorCode.NONE;
+//         error_token = null;
+//         error_start = 0;
+//         error_end = 0;
+//
+//         return true;
+//     }
+//
+  // this is the equivalent Dart code to the previous Vala code that defines the createParseTree method:
+  ParseResult createParseTree() {
+    // Scan string and split into tokens
+    lexer.scan();
+
+    // Parse tokens
+    var ret = statement();
+
+    var token = lexer.getNextToken();
+    if (token.type == LexerTokenType.assign) {
+      token = lexer.getNextToken();
+      if (token.type != LexerTokenType.plEOS) {
+        // Full string is not parsed.
+        if (error == ErrorCode.none) {
+          setError(ErrorCode.invalid, token.text, token.startIndex, token.endIndex);
+        }
+
+        return ParseResult(
+            representationBase: numberBase,
+            errorCode: error, errorToken: errorToken,
+            errorStart: errorTokenStart, errorEnd: errorTokenEnd,
+            result: false);
+      }
+    }
+
+    if (token.type != LexerTokenType.plEOS) {
+      // Full string is not parsed.
+      if (error == ErrorCode.none) {
+        setError(ErrorCode.invalid, token.text, token.startIndex, token.endIndex);
+      }
+
+      return ParseResult(
+          representationBase: numberBase,
+          errorCode: error, errorToken: errorToken,
+          errorStart: errorTokenStart, errorEnd: errorTokenEnd,
+          result: false);
+    }
+
+    // Input can't be parsed with grammar.
+    if (!ret) {
+      if (error == ErrorCode.none) {
+        setError(ErrorCode.invalid);
+      }
+
+      return ParseResult(
+          representationBase: numberBase,
+          errorCode: error, errorToken: errorToken,
+          errorStart: errorTokenStart, errorEnd: errorTokenEnd,
+          result: false);
+    }
+
+    return ParseResult(
+        representationBase: numberBase,
+        errorCode: ErrorCode.none, errorToken: null,
+        errorStart: 0, errorEnd: 0,
+        result: true);
+  }
+
+// The following is a Vala code that defines the setError method:
+// public void set_error (ErrorCode errorno, string? token = null, uint token_start = 0, uint token_end = 0)
+// {
+// error = errorno;
+// error_token = token;
+// error_token_start = input.char_count (token_start);
+// error_token_end = input.char_count (token_end);
+// }
+//
+// this is the equivalent Dart code to the previous Vala code that defines the setError method:
+//
+  void setError(ErrorCode errorno, [String? token, int tokenStart = 0, int tokenEnd = 0]) {
+    error = errorno;
+    errorToken = token;
+    errorTokenStart = input.charCount(tokenStart);
+    errorTokenEnd = input.charCount(tokenEnd);
+  }
+
+// The following is a Vala code that defines the following methods: setRepresentationBase, variableIsDefined, getVariable, setVariable, functionIsDefined, unitIsDefined, literalBaseIsDefined, and convert:
+// public void set_representation_base (uint new_base)
+// {
+//   representation_base = new_base;
+// }
+//
+// public virtual bool variable_is_defined (string name)
+// {
+//   return false;
+// }
+//
+// public virtual Number? get_variable (string name)
+// {
+//   return null;
+// }
+//
+// public virtual void set_variable (string name, Number x)
+// {
+// }
+//
+// public virtual bool function_is_defined (string name)
+// {
+//   return false;
+// }
+//
+// public virtual bool unit_is_defined (string name)
+// {
+//   return false;
+// }
+//
+// public virtual bool literal_base_is_defined (string name)
+// {
+//   return false;
+// }
+//
+// public virtual Number? convert (Number x, string x_units, string z_units)
+// {
+//   return null;
+// }
+//
+// this is the equivalent Dart code to the previous Vala code that defines the following methods: setRepresentationBase, variableIsDefined, getVariable, setVariable, functionIsDefined, unitIsDefined, literalBaseIsDefined, and convert:
+  void setRepresentationBase(int newBase) {
+    representationBase = newBase;
+  }
+
+  bool variableIsDefined(String name) {
+    return false;
+  }
+
+  Number? getVariable(String name) {
+    return null;
+  }
+
+  void setVariable(String name, Number x) {}
+
+  bool functionIsDefined(String name) {
+    return false;
+  }
+
+  bool unitIsDefined(String name) {
+    return false;
+  }
+
+  bool literalBaseIsDefined(String name) {
+    return false;
+  }
+
+  Number? convert(Number x, String xUnits, String zUnits) {
+    return null;
+  }
+
+
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+

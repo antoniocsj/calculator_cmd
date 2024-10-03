@@ -1,3 +1,5 @@
+import 'package:calculator/enums.dart';
+
 // this file contains all the types used in the project.
 
 // class to store the reference of an integer
@@ -39,6 +41,19 @@ extension StringExtensions on String {
     if (length != 1) return false;
     return contains(RegExp(r'^[a-zA-Z]$'));
   }
+
+  int charCount([int max = -1]) {
+    // Se max for -1, retorna o tamanho da string
+    if (max == -1) {
+      return runes.length;
+    }
+
+    // Converte a string em uma lista de runes
+    List<int> runes_ = runes.toList();
+
+    // Conta o número de runes até a posição especificada
+    return runes_.sublist(0, max).length;
+  }
 }
 
 extension StringBuilder on StringBuffer {
@@ -72,4 +87,22 @@ extension StringBuilder on StringBuffer {
       write(truncated);
     }
   }
+}
+
+class ParseResult {
+  final int representationBase;
+  final ErrorCode errorCode;
+  final String? errorToken;
+  final int errorStart;
+  final int errorEnd;
+  final bool result;
+
+  ParseResult({
+    required this.representationBase,
+    required this.errorCode,
+    required this.errorToken,
+    required this.errorStart,
+    required this.errorEnd,
+    required this.result,
+  });
 }

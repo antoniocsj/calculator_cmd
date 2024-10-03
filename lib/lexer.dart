@@ -1,4 +1,5 @@
 import 'package:calculator/enums.dart';
+import 'package:calculator/parser.dart';
 import 'package:calculator/types.dart';
 import 'package:calculator/number.dart';
 
@@ -189,12 +190,16 @@ class LexerToken {
 
 class Lexer {
   Parser parser; // Reference to parser.
-  final PreLexer prelexer; // Pre-lexer is part of lexer.
-  final List<LexerToken> tokens = []; // List of LexerTokens.
-  int nextToken = 0; // Index of next, to be sent, token.
-  final int numberBase;
+  late PreLexer prelexer; // Pre-lexer is part of lexer.
+  late List<LexerToken> tokens; // List of LexerTokens.
+  late int nextToken; // Index of next, to be sent, token.
+  int numberBase;
 
-  Lexer(String input, {this.numberBase = 10}) : prelexer = PreLexer(input);
+  Lexer(String input, this.parser, [this.numberBase = 10]) {
+    prelexer = PreLexer(input);
+    tokens = [];
+    nextToken = 0;
+  }
 
   void scan() {
     while (true) {
