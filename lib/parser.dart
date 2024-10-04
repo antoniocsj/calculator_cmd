@@ -3,7 +3,7 @@ import 'package:calculator/lexer.dart';
 import 'package:calculator/number.dart';
 import 'package:calculator/types.dart';
 
-// The following is a Vala code that defines the ParseNode class:
+// The following is a commented Vala code that defines the ParseNode class:
 // public class ParseNode : Object
 // {
 // public Parser parser;
@@ -57,7 +57,7 @@ import 'package:calculator/types.dart';
 // }
 // }
 //
-// // the following is the equivalent Dart code to the previous Vala code that defines the ParseNode class:
+// // the following is the equivalent Dart code to the previous commented Vala code that defines the ParseNode class:
 class ParseNode {
   Parser parser;
   ParseNode? parent;
@@ -87,7 +87,7 @@ class ParseNode {
   }
 }
 
-// The following is a Vala code that defines the RNode class:
+// The following is a commented Vala code that defines the RNode class:
 // public abstract class RNode : ParseNode
 // {
 //     protected RNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -118,7 +118,7 @@ class ParseNode {
 //
 //     public abstract Number? solve_r (Number r);
 // }
-// the following is the equivalent Dart code to the previous Vala code that defines the RNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the RNode class:
 abstract class RNode extends ParseNode {
   RNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -149,7 +149,7 @@ abstract class RNode extends ParseNode {
   Number? solveR(Number r);
 }
 
-// The following is a Vala code that defines the LRNode class:
+// The following is a commented Vala code that defines the LRNode class:
 // public abstract class LRNode : ParseNode
 // {
 //     protected LRNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -181,7 +181,7 @@ abstract class RNode extends ParseNode {
 //
 //     public abstract Number solve_lr (Number left, Number r);
 // }
-// the following is the equivalent Dart code to the previous Vala code that defines the LRNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the LRNode class:
 abstract class LRNode extends ParseNode {
   LRNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -213,7 +213,7 @@ abstract class LRNode extends ParseNode {
   Number solveLR(Number left, Number r);
 }
 
-// The following is a Vala code that defines the ConstantNode class:
+// The following is a commented Vala code that defines the ConstantNode class:
 // public class ConstantNode : ParseNode
 // {
 // public ConstantNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -227,7 +227,7 @@ abstract class LRNode extends ParseNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the ConstantNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the ConstantNode class:
 class ConstantNode extends ParseNode {
   ConstantNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -238,7 +238,7 @@ class ConstantNode extends ParseNode {
   }
 }
 
-// The following is a Vala code that defines the AssignNode class:
+// The following is a commented Vala code that defines the AssignNode class:
 // public class AssignNode : RNode
 // {
 // public AssignNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -253,7 +253,7 @@ class ConstantNode extends ParseNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the AssignNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the AssignNode class:
 class AssignNode extends RNode {
   AssignNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -265,7 +265,7 @@ class AssignNode extends RNode {
   }
 }
 
-// The following is a Vala code that defines the AssignFunctionNode class:
+// The following is a commented Vala code that defines the AssignFunctionNode class:
 // public class AssignFunctionNode : ParseNode
 // {
 // public AssignFunctionNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -290,7 +290,7 @@ class AssignNode extends RNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the AssignFunctionNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the AssignFunctionNode class:
 class AssignFunctionNode extends ParseNode {
   AssignFunctionNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -312,7 +312,7 @@ class AssignFunctionNode extends ParseNode {
   }
 }
 
-// The following is a Vala code that defines the NameNode class:
+// The following is a commented Vala code that defines the NameNode class:
 // public class NameNode : ParseNode
 // {
 // public NameNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity, string? text = null)
@@ -321,13 +321,13 @@ class AssignFunctionNode extends ParseNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the NameNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the NameNode class:
 class NameNode extends ParseNode {
   NameNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, [String? text])
       : super(parser, token, precedence, associativity, text);
 }
 
-// The following is a Vala code that defines the VariableNode class:
+// The following is a commented Vala code that defines the VariableNode class:
 // public class VariableNode : ParseNode
 // {
 // public VariableNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -361,7 +361,7 @@ class NameNode extends ParseNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the VariableNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the VariableNode class:
 class VariableNode extends ParseNode {
   VariableNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -389,7 +389,7 @@ class VariableNode extends ParseNode {
   }
 }
 
-// The following is a Vala code that defines the VariableWithPowerNode class:
+// The following is a commented Vala code that defines the VariableWithPowerNode class:
 // public class VariableWithPowerNode : ParseNode
 // {
 // public VariableWithPowerNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity, string text)
@@ -446,7 +446,7 @@ class VariableNode extends ParseNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the VariableWithPowerNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the VariableWithPowerNode class:
 class VariableWithPowerNode extends ParseNode {
   VariableWithPowerNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, String text)
       : super(parser, token, precedence, associativity, text);
@@ -497,7 +497,7 @@ class VariableWithPowerNode extends ParseNode {
   }
 }
 
-// The following is a Vala code that defines the FunctionNameNode class:
+// The following is a commented Vala code that defines the FunctionNameNode class:
 // public class FunctionNameNode : NameNode
 // {
 // public FunctionNameNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity, string name)
@@ -506,13 +506,13 @@ class VariableWithPowerNode extends ParseNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the FunctionNameNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the FunctionNameNode class:
 class FunctionNameNode extends NameNode {
   FunctionNameNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, String name)
       : super(parser, token, precedence, associativity, name);
 }
 
-// The following is a Vala code that defines the FunctionArgumentsNode class:
+// The following is a commented Vala code that defines the FunctionArgumentsNode class:
 // public class FunctionArgumentsNode : NameNode
 // {
 // public FunctionArgumentsNode (Parser parser, List<LexerToken> token_list, uint precedence, Associativity associativity, string arguments)
@@ -521,13 +521,13 @@ class FunctionNameNode extends NameNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the FunctionArgumentsNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the FunctionArgumentsNode class:
 class FunctionArgumentsNode extends NameNode {
   FunctionArgumentsNode(Parser parser, List<LexerToken> tokenList, int precedence, Associativity associativity, String arguments)
       : super.withList(parser, tokenList, precedence, associativity, arguments);
 }
 
-// The following is a Vala code that defines the FunctionDescriptionNode class:
+// The following is a commented Vala code that defines the FunctionDescriptionNode class:
 // public class FunctionDescriptionNode : NameNode
 // {
 // public FunctionDescriptionNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity, string description)
@@ -535,13 +535,13 @@ class FunctionArgumentsNode extends NameNode {
 //   base (parser, token, precedence, associativity, description);
 // }
 // }
-// the following is the equivalent Dart code to the previous Vala code that defines the FunctionDescriptionNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the FunctionDescriptionNode class:
 class FunctionDescriptionNode extends NameNode {
   FunctionDescriptionNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, String description)
       : super(parser, token, precedence, associativity, description);
 }
 
-// The following is a Vala code that defines the FunctionNode class:
+// The following is a commented Vala code that defines the FunctionNode class:
 // public class FunctionNode : ParseNode
 // {
 // public FunctionNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity, string? text)
@@ -645,7 +645,7 @@ class FunctionDescriptionNode extends NameNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the FunctionNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the FunctionNode class:
 class FunctionNode extends ParseNode {
   FunctionNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, [String? text])
       : super(parser, token, precedence, associativity, text);
@@ -736,7 +736,7 @@ class FunctionNode extends ParseNode {
   }
 }
 
-// The following is a Vala code that defines the UnaryMinusNode, AbsoluteValueNode, FloorNode, CeilingNode, FractionalComponentNode, RoundNode and PercentNode classes:
+// The following is a commented Vala code that defines the UnaryMinusNode, AbsoluteValueNode, FloorNode, CeilingNode, FractionalComponentNode, RoundNode and PercentNode classes:
 // public class UnaryMinusNode : RNode
 // {
 // public UnaryMinusNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -828,7 +828,7 @@ class FunctionNode extends ParseNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the UnaryMinusNode, AbsoluteValueNode, FloorNode, CeilingNode, FractionalComponentNode, RoundNode and PercentNode classes:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the UnaryMinusNode, AbsoluteValueNode, FloorNode, CeilingNode, FractionalComponentNode, RoundNode and PercentNode classes:
 class UnaryMinusNode extends RNode {
   UnaryMinusNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -899,7 +899,7 @@ class PercentNode extends RNode {
   }
 }
 
-// The following is a Vala code that defines the FactorialNode, AddNode, SubtractNode, MultiplyNode and ShiftNode classes:
+// The following is a commented Vala code that defines the FactorialNode, AddNode, SubtractNode, MultiplyNode and ShiftNode classes:
 // public class FactorialNode : RNode
 // {
 // public FactorialNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -987,7 +987,7 @@ class PercentNode extends RNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the FactorialNode, AddNode, SubtractNode, MultiplyNode and ShiftNode classes:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the FactorialNode, AddNode, SubtractNode, MultiplyNode and ShiftNode classes:
 class FactorialNode extends RNode {
   FactorialNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -1058,7 +1058,7 @@ class ShiftNode extends LRNode {
   }
 }
 
-// The following is a Vala code that defines the DivideNode class:
+// The following is a commented Vala code that defines the DivideNode class:
 // public class DivideNode : LRNode
 // {
 // public DivideNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -1086,7 +1086,7 @@ class ShiftNode extends LRNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the DivideNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the DivideNode class:
 class DivideNode extends LRNode {
   DivideNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -1110,7 +1110,7 @@ class DivideNode extends LRNode {
   }
 }
 
-// The following is a Vala code that defines the ModulusDivideNode class:
+// The following is a commented Vala code that defines the ModulusDivideNode class:
 // public class ModulusDivideNode : LRNode
 // {
 // public ModulusDivideNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -1173,7 +1173,7 @@ class DivideNode extends LRNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the ModulusDivideNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the ModulusDivideNode class:
 class ModulusDivideNode extends LRNode {
   ModulusDivideNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -1226,7 +1226,7 @@ class ModulusDivideNode extends LRNode {
   }
 }
 
-// The following is a Vala code that defines the RootNode class:
+// The following is a commented Vala code that defines the RootNode class:
 // public class RootNode : RNode
 // {
 // private int n;
@@ -1262,7 +1262,7 @@ class ModulusDivideNode extends LRNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the RootNode class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the RootNode class:
 class RootNode extends RNode {
   int n;
   LexerToken? tokenN;
@@ -1293,7 +1293,7 @@ class RootNode extends RNode {
   }
 }
 
-// The following is a Vala code that defines the XPowYNode, XPowYIntegerNode and NotNode classes:
+// The following is a commented Vala code that defines the XPowYNode, XPowYIntegerNode and NotNode classes:
 // public class XPowYNode : LRNode
 // {
 // public XPowYNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -1374,7 +1374,7 @@ class RootNode extends RNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the XPowYNode, XPowYIntegerNode and NotNode classes:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the XPowYNode, XPowYIntegerNode and NotNode classes:
 class XPowYNode extends LRNode {
   XPowYNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -1440,7 +1440,7 @@ class NotNode extends RNode {
   }
 }
 
-// The following is a Vala code that defines the AndNode, OrNode and XorNode classes:
+// The following is a commented Vala code that defines the AndNode, OrNode and XorNode classes:
 // public class AndNode : LRNode
 // {
 // public AndNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -1480,7 +1480,7 @@ class NotNode extends RNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the AndNode, OrNode and XorNode classes:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the AndNode, OrNode and XorNode classes:
 class AndNode extends LRNode {
   AndNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -1511,7 +1511,7 @@ class XorNode extends LRNode {
   }
 }
 
-// The following is a Vala code that defines the ConvertNode, ConvertBaseNode and ConvertNumberNode classes:
+// The following is a commented Vala code that defines the ConvertNode, ConvertBaseNode and ConvertNumberNode classes:
 // public class ConvertNode : LRNode
 // {
 // public ConvertNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -1619,7 +1619,7 @@ class XorNode extends LRNode {
 // }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the ConvertNode, ConvertBaseNode and ConvertNumberNode classes:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the ConvertNode, ConvertBaseNode and ConvertNumberNode classes:
 class ConvertNode extends LRNode {
   ConvertNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
       : super(parser, token, precedence, associativity);
@@ -1709,7 +1709,7 @@ class ConvertNumberNode extends ParseNode {
   }
 }
 
-// The following is a Vala code that defines the Parser class:
+// The following is a commented Vala code that defines the Parser class:
 // public class Parser
 // {
 //     private string input;
@@ -2912,7 +2912,7 @@ class ConvertNumberNode extends ParseNode {
 //     }
 // }
 //
-// the following is the equivalent Dart code to the previous Vala code that defines the Parser class:
+// the following is the equivalent Dart code to the previous commented Vala code that defines the Parser class:
 //
 
 class Parser {
@@ -2967,7 +2967,7 @@ class Parser {
     "i": Number.i()
   };
 
-  // the following is a Vala code that defines the Parser constructor:
+  // the following is a commented Vala code that defines the Parser constructor:
   // public Parser (string input, int number_base, int wordlen, AngleUnit angle_units)
   // {
   //   this.input = input;
@@ -2985,7 +2985,7 @@ class Parser {
   //   error_token_end = 0;
   // }
   //
-  // this is the equivalent Dart code to the previous Vala code that defines the Parser constructor:
+  // this is the equivalent Dart code to the previous commented Vala code that defines the Parser constructor:
   Parser(this.input, this.numberBase, this.wordLen, this.angleUnits) {
     lexer = Lexer(input, this, numberBase);
     root = null;
@@ -2998,7 +2998,7 @@ class Parser {
     errorTokenEnd = 0;
   }
 
-  // the following is a Vala code that defines the create_parse_tree method:
+  // the following is a commented Vala code that defines the create_parse_tree method:
 //     public bool create_parse_tree (out uint representation_base, out ErrorCode error_code, out string? error_token, out uint error_start, out uint error_end)
 //     {
 //         representation_base = number_base;
@@ -3059,7 +3059,7 @@ class Parser {
 //         return true;
 //     }
 //
-  // this is the equivalent Dart code to the previous Vala code that defines the createParseTree method:
+  // this is the equivalent Dart code to the previous commented Vala code that defines the createParseTree method:
   CreateParseTreeResult createParseTree() {
     // Scan string and split into tokens
     lexer.scan();
@@ -3127,7 +3127,7 @@ class Parser {
         result: true);
   }
 
-// The following is a Vala code that defines the setError method:
+// The following is a commented Vala code that defines the setError method:
 // public void set_error (ErrorCode errorno, string? token = null, uint token_start = 0, uint token_end = 0)
 // {
 // error = errorno;
@@ -3136,7 +3136,7 @@ class Parser {
 // error_token_end = input.char_count (token_end);
 // }
 //
-// this is the equivalent Dart code to the previous Vala code that defines the setError method:
+// this is the equivalent Dart code to the previous commented Vala code that defines the setError method:
 //
   void setError(ErrorCode errorno,
       [String? token, int tokenStart = 0, int tokenEnd = 0]) {
@@ -3146,7 +3146,7 @@ class Parser {
     errorTokenEnd = input.charCount(tokenEnd);
   }
 
-// The following is a Vala code that defines the following methods: setRepresentationBase, variableIsDefined, getVariable, setVariable, functionIsDefined, unitIsDefined, literalBaseIsDefined, and convert:
+// The following is a commented Vala code that defines the following methods: setRepresentationBase, variableIsDefined, getVariable, setVariable, functionIsDefined, unitIsDefined, literalBaseIsDefined, and convert:
 // public void set_representation_base (uint new_base)
 // {
 //   representation_base = new_base;
@@ -3186,7 +3186,7 @@ class Parser {
 //   return null;
 // }
 //
-// this is the equivalent Dart code to the previous Vala code that defines the following methods: setRepresentationBase, variableIsDefined, getVariable, setVariable, functionIsDefined, unitIsDefined, literalBaseIsDefined, and convert:
+// this is the equivalent Dart code to the previous commented Vala code that defines the following methods: setRepresentationBase, variableIsDefined, getVariable, setVariable, functionIsDefined, unitIsDefined, literalBaseIsDefined, and convert:
   void setRepresentationBase(int newBase) {
     representationBase = newBase;
   }
@@ -3217,7 +3217,7 @@ class Parser {
     return null;
   }
 
-// The following is a Vala code that defines the following method parse:
+// The following is a commented Vala code that defines the following method parse:
 //   /* Start parsing input string. And call evaluate on success. */
 //   public Number? parse (out uint representation_base, out ErrorCode error_code, out string? error_token, out uint error_start, out uint error_end)
 //   {
@@ -3243,7 +3243,7 @@ class Parser {
 //   return ans;
 //   }
 //
-// this is the equivalent Dart code to the previous Vala code that defines the parse method:
+// this is the equivalent Dart code to the previous commented Vala code that defines the parse method:
   /* Start parsing input string. And call evaluate on success. */
   ParseResult parse() {
     var result = createParseTree();
@@ -3279,7 +3279,7 @@ class Parser {
         result: ans);
   }
 
-  // The following is a Vala code that defines the following method get_precedence.
+  // The following is a commented Vala code that defines the following method get_precedence.
 // /* Converts LexerTokenType to Precedence value. */
 //   private Precedence get_precedence (LexerTokenType type)
 //   {
@@ -3319,62 +3319,65 @@ class Parser {
 //     return Precedence.TOP;
 //   }
 //
-// this is the equivalent Dart code to the previous Vala code that defines the getPrecedence method:
-//   /* Converts LexerTokenType to Precedence value. */
-//   Precedence getPrecedence(LexerTokenType type) {
-//     /* WARNING: This function doesn't work for Unary Plus and Unary Minus. Use their precedence directly while inserting them in tree. */
-//     if (type == LexerTokenType.add || type == LexerTokenType.subtract) {
-//       return Precedence.addSubtract;
-//     }
-//     if (type == LexerTokenType.multiply) {
-//       return Precedence.multiply;
-//     }
-//     if (type == LexerTokenType.mod) {
-//       return Precedence.mod;
-//     }
-//     if (type == LexerTokenType.divide) {
-//       return Precedence.divide;
-//     }
-//     if (type == LexerTokenType.not) {
-//       return Precedence.not;
-//     }
-//     if (type == LexerTokenType.root || type == LexerTokenType.root_3 || type == LexerTokenType.root_4) {
-//       return Precedence.root;
-//     }
-//     if (type == LexerTokenType.function) {
-//       return Precedence.function;
-//     }
-//     if (type == LexerTokenType.and || type == LexerTokenType.or || type == LexerTokenType.xor) {
-//       return Precedence.boolean;
-//     }
-//     if (type == LexerTokenType.percentage) {
-//       return Precedence.percentage;
-//     }
-//     if (type == LexerTokenType.power) {
-//       return Precedence.power;
-//     }
-//     if (type == LexerTokenType.factorial) {
-//       return Precedence.factorial;
-//     }
-//     if (type == LexerTokenType.number || type == LexerTokenType.variable) {
-//       return Precedence.numberVariable;
-//     }
-//     if (type == LexerTokenType.unit) {
-//       return Precedence.unit;
-//     }
-//     if (type == LexerTokenType.in_) {
-//       return Precedence.convert;
-//     }
-//     if (type == LexerTokenType.shiftLeft || type == LexerTokenType.shiftRight) {
-//       return Precedence.shift;
-//     }
-//     if (type == LexerTokenType.lRBracket || type == LexerTokenType.rRBracket) {
-//       return Precedence.depth;
-//     }
-//     return Precedence.top;
-//   }
-//
-//   // The following is a Vala code that defines the methods get_associativity_p, get_associativity, make_precedence_p, make_precedence_t and cmp_nodes:
+// this is the equivalent Dart code to the previous commented Vala code that defines the getPrecedence method:
+  Precedence getPrecedence(LexerTokenType type) {
+    /* WARNING: This function doesn't work for Unary Plus and Unary Minus. Use their precedence directly while inserting them in tree. */
+    if (type == LexerTokenType.add || type == LexerTokenType.subtract) {
+      return Precedence.addSubtract;
+    }
+    if (type == LexerTokenType.multiply) {
+      return Precedence.multiply;
+    }
+    if (type == LexerTokenType.mod) {
+      return Precedence.mod;
+    }
+    if (type == LexerTokenType.divide) {
+      return Precedence.divide;
+    }
+    if (type == LexerTokenType.not) {
+      return Precedence.not;
+    }
+    if (type == LexerTokenType.root ||
+        type == LexerTokenType.root_3 ||
+        type == LexerTokenType.root_4) {
+      return Precedence.root;
+    }
+    if (type == LexerTokenType.function) {
+      return Precedence.function;
+    }
+    if (type == LexerTokenType.and ||
+        type == LexerTokenType.or ||
+        type == LexerTokenType.xor) {
+      return Precedence.boolean;
+    }
+    if (type == LexerTokenType.percentage) {
+      return Precedence.percentage;
+    }
+    if (type == LexerTokenType.power) {
+      return Precedence.power;
+    }
+    if (type == LexerTokenType.factorial) {
+      return Precedence.factorial;
+    }
+    if (type == LexerTokenType.number || type == LexerTokenType.variable) {
+      return Precedence.numberVariable;
+    }
+    if (type == LexerTokenType.unit) {
+      return Precedence.unit;
+    }
+    if (type == LexerTokenType.in_) {
+      return Precedence.convert;
+    }
+    if (type == LexerTokenType.shiftLeft || type == LexerTokenType.shiftRight) {
+      return Precedence.shift;
+    }
+    if (type == LexerTokenType.lRBracket || type == LexerTokenType.rRBracket) {
+      return Precedence.depth;
+    }
+    return Precedence.top;
+  }
+
+// The following is a commented Vala code that defines the methods get_associativity_p, get_associativity, make_precedence_p, make_precedence_t and cmp_nodes:
 //   /* Return associativity of specific token type from precedence. */
 //   private Associativity get_associativity_p (Precedence type)
 //   {
@@ -3421,7 +3424,7 @@ class Parser {
 //       return right.associativity != Associativity.RIGHT;
 //   }
 //
-// this is the equivalent Dart code to the previous Vala code that defines the following methods: getAssociativityP, getAssociativity, makePrecedenceP, makePrecedenceT, and cmpNodes:
+// this is the equivalent Dart code to the previous commented Vala code that defines the following methods: getAssociativityP, getAssociativity, makePrecedenceP, makePrecedenceT, and cmpNodes:
   /* Return associativity of specific token type from precedence. */
   Associativity getAssociativityP(Precedence type) {
     if (type == Precedence.boolean || type == Precedence.divide ||
@@ -3469,7 +3472,7 @@ class Parser {
     }
   }
 
-  // The following is a Vala code that defines the following methods: insert_into_tree_all, insert_into_tree, and insert_into_tree_unary:
+  // The following is a commented Vala code that defines the following methods: insert_into_tree_all, insert_into_tree, and insert_into_tree_unary:
   // /* Unified interface (unary and binary nodes) to insert node into parse tree. */
   // private void insert_into_tree_all (ParseNode node, bool unary_function)
   // {
@@ -3545,7 +3548,7 @@ class Parser {
   //   insert_into_tree_all (node, true);
   // }
   //
-  // this is the equivalent Dart code to the previous Vala code that defines the following methods: insertIntoTreeAll, insertIntoTree, and insertIntoTreeUnary:
+  // this is the equivalent Dart code to the previous commented Vala code that defines the following methods: insertIntoTreeAll, insertIntoTree, and insertIntoTreeUnary:
   /* Unified interface (unary and binary nodes) to insert node into parse tree. */
   void insertIntoTreeAll(ParseNode node, bool unaryFunction) {
     if (root == null) {
@@ -3612,7 +3615,7 @@ class Parser {
     insertIntoTreeAll(node, true);
   }
 
-// The following is a Vala code that defines the following methods: destroy_all_nodes, check_variable, and statement:
+// Consider the following lines of commented Vala code that defines the following methods: destroy_all_nodes, check_variable, and statement:
 //   /* Recursive call to free every node of parse-tree. */
 //   private void destroy_all_nodes (ParseNode node)
 //   {
@@ -3689,7 +3692,7 @@ class Parser {
 //     }
 //   }
 //
-// this is the equivalent Dart code to the previous Vala code that defines the following methods: destroyAllNodes, checkVariable, and statement:
+// this is the equivalent Dart code to the previous commented Vala code that defines the following methods: destroyAllNodes, checkVariable, and statement:
   /* Recursive call to free every node of parse-tree. */
   void destroyAllNodes(ParseNode? node) {
     if (node == null) {
@@ -3711,14 +3714,28 @@ class Parser {
       return true;
     }
 
+    // Consider the following lines of commented Vala code:
+    // /* If has more than one character then assume a multiplication of variables */
+    // var index = 0;
+    // unichar c;
+    // while (name.get_next_char (ref index, out c))
+    // {
+    //   if (!variable_is_defined (c.to_string ()))
+    //     return false;
+    // }
+    //
+    // this is the equivalent of the above Vala code:
     /* If has more than one character then assume a multiplication of variables */
     var index = 0;
-    var c = name.getNextChar(index);
-    while (c != null) {
-      if (!variableIsDefined(c.toString())) {
+    String c;
+    RefInt rIndex = RefInt(index);
+    RefString rC = RefString('');
+    while (name.getNextChar(rIndex, rC)) {
+      index = rIndex.value;
+      c = rC.value;
+      if (!variableIsDefined(c)) {
         return false;
       }
-      c = name.getNextChar(index);
     }
 
     return true;
@@ -3763,12 +3780,1203 @@ class Parser {
     }
   }
 
+  // The following is a commented Vala code that defines the following methods: function_definition, conversion, expression, expression_1, and expression_2:
+  // private bool function_definition ()
+  // {
+  //   int num_token_parsed = 0;
+  //   var token = lexer.get_next_token ();
+  //   num_token_parsed++;
+  //
+  //   string function_name = token.text;
+  //   lexer.get_next_token ();
+  //   num_token_parsed++;
+  //
+  //   token = lexer.get_next_token ();
+  //   num_token_parsed++;
+  //   string argument_list = "";
+  //   List<LexerToken> token_list = new List<LexerToken> ();
+  //
+  //   while (token.type != LexerTokenType.R_R_BRACKET && token.type != LexerTokenType.PL_EOS)
+  //   {
+  //     token_list.append (token);
+  //     argument_list += token.text;
+  //     token = lexer.get_next_token ();
+  //     num_token_parsed++;
+  //   }
+  //
+  //   if (token.type == LexerTokenType.PL_EOS)
+  //   {
+  //     while (num_token_parsed-- > 0)
+  //       lexer.roll_back ();
+  //     return false;
+  //   }
+  //
+  //   var assign_token = lexer.get_next_token ();
+  //   num_token_parsed++;
+  //   if (assign_token.type != LexerTokenType.ASSIGN)
+  //   {
+  //     while (num_token_parsed-- > 0)
+  //       lexer.roll_back ();
+  //     return false;
+  //   }
+  //
+  //   string expression = "";
+  //   token = lexer.get_next_token ();
+  //   while (token.type != LexerTokenType.PL_EOS)
+  //   {
+  //     expression += token.text;
+  //     token = lexer.get_next_token ();
+  //   }
+  //
+  //   insert_into_tree (new FunctionNameNode (this, null, make_precedence_p (Precedence.NUMBER_VARIABLE), get_associativity_p (Precedence.NUMBER_VARIABLE), function_name));
+  //   insert_into_tree (new FunctionNode (this, null, make_precedence_p (Precedence.FUNCTION), get_associativity_p (Precedence.FUNCTION), null));
+  //   insert_into_tree (new FunctionArgumentsNode (this, token_list, make_precedence_p (Precedence.NUMBER_VARIABLE), get_associativity_p (Precedence.NUMBER_VARIABLE), argument_list));
+  //   insert_into_tree (new AssignFunctionNode (this, assign_token, 0, get_associativity (assign_token)));
+  //   insert_into_tree (new FunctionDescriptionNode (this, null, make_precedence_p (Precedence.NUMBER_VARIABLE), get_associativity_p (Precedence.NUMBER_VARIABLE), expression));
+  //
+  //   return true;
+  // }
+  //
+  // private bool conversion ()
+  // {
+  //   var token = lexer.get_next_token ();
+  //   if (token.type == LexerTokenType.IN)
+  //   {
+  //     var token_in = token;
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.UNIT)
+  //     {
+  //       var token_to = token;
+  //       token = lexer.get_next_token ();
+  //       /* We can only convert representation base, if it is next to End Of Stream */
+  //       if (token.type == LexerTokenType.PL_EOS)
+  //       {
+  //         insert_into_tree (new ConvertBaseNode (this, token_in, make_precedence_p (Precedence.CONVERT), get_associativity (token_in)));
+  //         insert_into_tree (new NameNode (this, token_to, make_precedence_p (Precedence.UNIT), get_associativity (token_to)));
+  //         return true;
+  //       }
+  //       else
+  //       {
+  //         lexer.roll_back ();
+  //         lexer.roll_back ();
+  //         lexer.roll_back ();
+  //         return false;
+  //       }
+  //     }
+  //     else
+  //     {
+  //       lexer.roll_back ();
+  //       lexer.roll_back ();
+  //       return false;
+  //     }
+  //   }
+  //   else if (token.type == LexerTokenType.UNIT)
+  //   {
+  //     var token_from = token;
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.IN)
+  //     {
+  //       var token_in = token;
+  //       token = lexer.get_next_token ();
+  //       if (token.type == LexerTokenType.UNIT)
+  //       {
+  //         insert_into_tree (new NameNode (this, token_from, make_precedence_p (Precedence.UNIT), get_associativity (token_from)));
+  //         insert_into_tree (new ConvertNumberNode (this, token_in, make_precedence_p (Precedence.CONVERT), get_associativity (token_in)));
+  //         insert_into_tree (new NameNode (this, token, make_precedence_p (Precedence.UNIT), get_associativity (token)));
+  //         return true;
+  //       }
+  //       else
+  //       {
+  //         lexer.roll_back ();
+  //         lexer.roll_back ();
+  //         lexer.roll_back ();
+  //         return false;
+  //       }
+  //     }
+  //     else
+  //     {
+  //       lexer.roll_back ();
+  //       lexer.roll_back ();
+  //       return false;
+  //     }
+  //   }
+  //   else
+  //   {
+  //     lexer.roll_back ();
+  //     return false;
+  //   }
+  // }
+  //
+  // private bool expression ()
+  // {
+  //   if (!expression_1 ())
+  //     return false;
+  //   if (!expression_2 ())
+  //     return false;
+  //   /* If there is a possible conversion at this level, insert it in the tree. */
+  //   conversion ();
+  //   return true;
+  // }
+  //
+  // private bool expression_1 ()
+  // {
+  //   var token = lexer.get_next_token ();
+  //
+  //   if (token.type == LexerTokenType.PL_EOS || token.type == LexerTokenType.ASSIGN)
+  //   {
+  //     lexer.roll_back ();
+  //     return false;
+  //   }
+  //
+  //   if (token.type == LexerTokenType.L_R_BRACKET)
+  //   {
+  //     depth_level++;
+  //
+  //     if (!expression ())
+  //       return false;
+  //
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.R_R_BRACKET)
+  //     {
+  //       depth_level--;
+  //       token = lexer.get_next_token ();
+  //       lexer.roll_back ();
+  //
+  //       if (token.type == LexerTokenType.NUMBER)
+  //       {
+  //         insert_into_tree (new MultiplyNode (this, null, make_precedence_p (Precedence.MULTIPLY), get_associativity_p (Precedence.MULTIPLY)));
+  //
+  //         if (!expression ())
+  //           return false;
+  //         else
+  //           return true;
+  //       }
+  //       else
+  //         return true;
+  //     }
+  //     //Expected ")" here...
+  //     else
+  //       return false;
+  //   }
+  //   else if (token.type == LexerTokenType.L_S_BRACKET)
+  //   {
+  //     depth_level++;
+  //
+  //     /* Give round, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+  //
+  //     insert_into_tree_unary (new RoundNode (this, token, make_precedence_p (Precedence.TOP), get_associativity (token)));
+  //
+  //     if (!expression ())
+  //       return false;
+  //
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.R_S_BRACKET)
+  //     {
+  //       depth_level--;
+  //       return true;
+  //     }
+  //     else
+  //       //Expected "]" here...
+  //       return false;
+  //   }
+  //   else if (token.type == LexerTokenType.L_C_BRACKET)
+  //   {
+  //     depth_level++;
+  //
+  //     /* Give fraction, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+  //
+  //     insert_into_tree_unary (new FractionalComponentNode (this, token, make_precedence_p (Precedence.TOP), get_associativity (token)));
+  //
+  //     if (!expression ())
+  //       return false;
+  //
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.R_C_BRACKET)
+  //     {
+  //       depth_level--;
+  //       return true;
+  //     }
+  //     //Expected "}" here...
+  //     else
+  //       return false;
+  //   }
+  //   else if (token.type == LexerTokenType.ABS)
+  //   {
+  //     depth_level++;
+  //
+  //     /* Give abs, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+  //
+  //     insert_into_tree_unary (new AbsoluteValueNode (this, token, make_precedence_p (Precedence.TOP), get_associativity (token)));
+  //
+  //     if (!expression ())
+  //       return false;
+  //
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.ABS)
+  //     {
+  //       depth_level--;
+  //       return true;
+  //     }
+  //     //Expected "|" here...
+  //     else
+  //       return false;
+  //   }
+  //   else if (token.type == LexerTokenType.NOT)
+  //   {
+  //     insert_into_tree_unary (new NotNode (this, token, make_precedence_p (Precedence.NOT), get_associativity (token)));
+  //
+  //     if (!expression ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.NUMBER)
+  //   {
+  //     insert_into_tree (new ConstantNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     token = lexer.get_next_token ();
+  //     lexer.roll_back ();
+  //
+  //     if (token.type == LexerTokenType.FUNCTION || token.type == LexerTokenType.VARIABLE || token.type == LexerTokenType.SUB_NUMBER || token.type == LexerTokenType.ROOT || token.type == LexerTokenType.ROOT_3 || token.type == LexerTokenType.ROOT_4)
+  //     {
+  //       insert_into_tree (new MultiplyNode (this, null, make_precedence_p (Precedence.MULTIPLY), get_associativity_p (Precedence.MULTIPLY)));
+  //
+  //       if (!variable ())
+  //         return false;
+  //       else
+  //         return true;
+  //     }
+  //     else
+  //       return true;
+  //   }
+  //   else if (token.type == LexerTokenType.L_FLOOR)
+  //   {
+  //     depth_level++;
+  //     /* Give floor, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+  //
+  //     insert_into_tree_unary (new FloorNode (this, null, make_precedence_p (Precedence.TOP), get_associativity_p (Precedence.TOP)));
+  //
+  //     if (!expression ())
+  //       return false;
+  //
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.R_FLOOR)
+  //     {
+  //       depth_level--;
+  //       return true;
+  //     }
+  //     //Expected ⌋ here...
+  //     else
+  //       return false;
+  //   }
+  //   else if (token.type == LexerTokenType.L_CEILING)
+  //   {
+  //     depth_level++;
+  //     /* Give ceiling, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+  //
+  //     insert_into_tree_unary (new CeilingNode (this, null, make_precedence_p (Precedence.TOP), get_associativity_p (Precedence.TOP)));
+  //
+  //     if (!expression ())
+  //       return false;
+  //
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.R_CEILING)
+  //     {
+  //       depth_level--;
+  //       return true;
+  //     }
+  //     //Expected ⌉ here...
+  //     else
+  //       return false;
+  //   }
+  //   else if (token.type == LexerTokenType.SUBTRACT)
+  //   {
+  //     insert_into_tree_unary (new UnaryMinusNode (this, token, make_precedence_p (Precedence.UNARY_MINUS), get_associativity_p (Precedence.UNARY_MINUS)));
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.ADD)
+  //   {
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.NUMBER)
+  //     {
+  //       /* Ignore ADD. It is not required. */
+  //       insert_into_tree (new ConstantNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //       return true;
+  //     }
+  //     else
+  //       return false;
+  //   }
+  //   else
+  //   {
+  //     lexer.roll_back ();
+  //     if (!variable ())
+  //       return false;
+  //     else
+  //       return true;
+  //   }
+  // }
+  //
+  // private bool expression_2 ()
+  // {
+  //   var token = lexer.get_next_token ();
+  //   if (token.type == LexerTokenType.L_R_BRACKET)
+  //   {
+  //     insert_into_tree (new MultiplyNode (this, null, make_precedence_p (Precedence.MULTIPLY), get_associativity_p (Precedence.MULTIPLY)));
+  //
+  //     depth_level++;
+  //     if (!expression ())
+  //       return false;
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.R_R_BRACKET)
+  //     {
+  //       depth_level--;
+  //
+  //       if (!expression_2 ())
+  //         return false;
+  //
+  //       return true;
+  //     }
+  //     else
+  //       return false;
+  //   }
+  //   else if (token.type == LexerTokenType.POWER)
+  //   {
+  //     insert_into_tree (new XPowYNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.SUP_NUMBER)
+  //   {
+  //     insert_into_tree (new XPowYIntegerNode (this, null, make_precedence_p (Precedence.POWER), get_associativity_p (Precedence.POWER)));
+  //     insert_into_tree (new NameNode (this, token, make_precedence_p (Precedence.NUMBER_VARIABLE), get_associativity_p (Precedence.NUMBER_VARIABLE)));
+  //
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.NSUP_NUMBER)
+  //   {
+  //     insert_into_tree (new XPowYIntegerNode (this, null, make_precedence_p (Precedence.POWER), get_associativity_p (Precedence.POWER)));
+  //     insert_into_tree (new NameNode (this, token, make_precedence_p (Precedence.NUMBER_VARIABLE), get_associativity_p (Precedence.NUMBER_VARIABLE)));
+  //
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.FACTORIAL)
+  //   {
+  //     insert_into_tree_unary (new FactorialNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.MULTIPLY)
+  //   {
+  //     insert_into_tree (new MultiplyNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.PERCENTAGE)
+  //   {
+  //     insert_into_tree_unary (new PercentNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.AND)
+  //   {
+  //     insert_into_tree (new AndNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.OR)
+  //   {
+  //     insert_into_tree (new OrNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.XOR)
+  //   {
+  //     insert_into_tree (new XorNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.DIVIDE)
+  //   {
+  //     insert_into_tree (new DivideNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.SHIFT_LEFT || token.type == LexerTokenType.SHIFT_RIGHT)
+  //   {
+  //     insert_into_tree (new ShiftNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.MOD)
+  //   {
+  //     insert_into_tree (new ModulusDivideNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.ADD)
+  //   {
+  //     var node = new AddNode (this, token, make_precedence_t (token.type), get_associativity (token));
+  //     insert_into_tree (node);
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.PERCENTAGE)
+  //     {
+  //       //FIXME: This condition needs to be verified for all cases.. :(
+  //       if (node.right.precedence > Precedence.PERCENTAGE)
+  //       {
+  //         var next_token  = lexer.get_next_token ();
+  //         lexer.roll_back ();
+  //
+  //         if (next_token.text != "" && get_precedence (next_token.type) < Precedence.PERCENTAGE)
+  //         {
+  //           lexer.roll_back ();
+  //           if (!expression_2 ())
+  //             return true;
+  //         }
+  //
+  //         node.precedence = make_precedence_p (Precedence.PERCENTAGE);
+  //         node.do_percentage = true;
+  //         return true;
+  //       }
+  //       else
+  //       {
+  //         /* Assume '%' to be part of 'expression PERCENTAGE' statement. */
+  //         lexer.roll_back ();
+  //         if (!expression_2 ())
+  //           return true;
+  //       }
+  //     }
+  //     else
+  //       lexer.roll_back ();
+  //
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else if (token.type == LexerTokenType.SUBTRACT)
+  //   {
+  //     var node = new SubtractNode (this, token, make_precedence_t (token.type), get_associativity (token));
+  //     insert_into_tree (node);
+  //
+  //     if (!expression_1 ())
+  //       return false;
+  //     token = lexer.get_next_token ();
+  //     if (token.type == LexerTokenType.PERCENTAGE)
+  //     {
+  //       //FIXME: This condition needs to be verified for all cases.. :(
+  //       if (node.right.precedence > Precedence.PERCENTAGE)
+  //       {
+  //         var next_token  = lexer.get_next_token ();
+  //         lexer.roll_back ();
+  //
+  //         if (next_token.text != "" && get_precedence (next_token.type) < Precedence.PERCENTAGE)
+  //         {
+  //           lexer.roll_back ();
+  //           if (!expression_2 ())
+  //             return true;
+  //         }
+  //
+  //         node.precedence = make_precedence_p (Precedence.PERCENTAGE);
+  //         node.do_percentage = true;
+  //         return true;
+  //       }
+  //       else
+  //       {
+  //         /* Assume '%' to be part of 'expression PERCENTAGE' statement. */
+  //         lexer.roll_back ();
+  //         if (!expression_2 ())
+  //           return true;
+  //       }
+  //     }
+  //     else
+  //       lexer.roll_back ();
+  //
+  //     if (!expression_2 ())
+  //       return false;
+  //
+  //     return true;
+  //   }
+  //   else
+  //   {
+  //     lexer.roll_back ();
+  //     return true;
+  //   }
+  // }
+  //
+  // this is the equivalent Dart code to the previous commented Vala code that defines the following methods: functionDefinition, conversion, expression, expression1, and expression2:
+  bool functionDefinition() {
+    int numTokenParsed = 0;
+    var token = lexer.getNextToken();
+    numTokenParsed++;
 
+    String functionName = token.text;
+    lexer.getNextToken();
+    numTokenParsed++;
 
+    token = lexer.getNextToken();
+    numTokenParsed++;
+    String argumentList = "";
+    List<LexerToken> tokenList = [];
+    while (token.type != LexerTokenType.rRBracket && token.type != LexerTokenType.plEos) {
+      tokenList.add(token);
+      argumentList += token.text;
+      token = lexer.getNextToken();
+      numTokenParsed++;
+    }
 
+    if (token.type == LexerTokenType.plEos) {
+      while (numTokenParsed-- > 0) {
+        lexer.rollBack();
+      }
+      return false;
+    }
 
+    var assignToken = lexer.getNextToken();
+    numTokenParsed++;
+    if (assignToken.type != LexerTokenType.assign) {
+      while (numTokenParsed-- > 0) {
+        lexer.rollBack();
+      }
+      return false;
+    }
 
+    String expression = "";
+    token = lexer.getNextToken();
+    while (token.type != LexerTokenType.plEos) {
+      expression += token.text;
+      token = lexer.getNextToken();
+    }
 
+    insertIntoTree(FunctionNameNode(this, null, makePrecedenceP(Precedence.numberVariable), getAssociativityP(Precedence.numberVariable), functionName));
+    insertIntoTree(FunctionNode(this, null, makePrecedenceP(Precedence.function), getAssociativityP(Precedence.function), null));
+    insertIntoTree(FunctionArgumentsNode(this, tokenList, makePrecedenceP(Precedence.numberVariable), getAssociativityP(Precedence.numberVariable), argumentList));
+    insertIntoTree(AssignFunctionNode(this, assignToken, 0, getAssociativity(assignToken)));
+    insertIntoTree(FunctionDescriptionNode(this, null, makePrecedenceP(Precedence.numberVariable), getAssociativityP(Precedence.numberVariable), expression));
+
+    return true;
+  }
+
+  bool conversion() {
+    var token = lexer.getNextToken();
+    if (token.type == LexerTokenType.in) {
+      var tokenIn = token;
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.unit) {
+        var tokenTo = token;
+        token = lexer.getNextToken();
+        /* We can only convert representation base, if it is next to End Of Stream */
+        if (token.type == LexerTokenType.plEos) {
+          insertIntoTree(ConvertBaseNode(this, tokenIn, makePrecedenceP(Precedence.convert), getAssociativity(tokenIn)));
+          insertIntoTree(NameNode(this, tokenTo, makePrecedenceP(Precedence.unit), getAssociativity(tokenTo)));
+          return true;
+        } else {
+          lexer.rollBack();
+          lexer.rollBack();
+          lexer.rollBack();
+          return false;
+        }
+      } else {
+        lexer.rollBack();
+        lexer.rollBack();
+        return false;
+      }
+    } else if (token.type == LexerTokenType.unit) {
+      var tokenFrom = token;
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.in) {
+        var tokenIn = token;
+        token = lexer.getNextToken();
+        if (token.type == LexerTokenType.unit) {
+          insertIntoTree(NameNode(this, tokenFrom, makePrecedenceP(Precedence.unit), getAssociativity(tokenFrom)));
+          insertIntoTree(ConvertNumberNode(this, tokenIn, makePrecedenceP(Precedence.convert), getAssociativity(tokenIn)));
+          insertIntoTree(NameNode(this, token, makePrecedenceP(Precedence.unit), getAssociativity(token)));
+          return true;
+        } else {
+          lexer.rollBack();
+          lexer.rollBack();
+          lexer.rollBack();
+          return false;
+        }
+      } else {
+        lexer.rollBack();
+        lexer.rollBack();
+        return false;
+      }
+    } else {
+      lexer.rollBack();
+      return false;
+    }
+  }
+
+  bool expression() {
+    if (!expression1()) {
+      return false;
+    }
+    if (!expression2()) {
+      return false;
+    }
+    /* If there is a possible conversion at this level, insert it in the tree. */
+    conversion();
+    return true;
+  }
+
+  bool expression1() {
+    var token = lexer.getNextToken();
+
+    if (token.type == LexerTokenType.plEOS ||
+        token.type == LexerTokenType.assign) {
+      lexer.rollBack();
+      return false;
+    }
+
+    if (token.type == LexerTokenType.lRBracket) {
+      depthLevel++;
+
+      if (!expression()) {
+        return false;
+      }
+
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.rRBracket) {
+        depthLevel--;
+        token = lexer.getNextToken();
+        lexer.rollBack();
+
+        if (token.type == LexerTokenType.number) {
+          insertIntoTree(MultiplyNode(
+              this, null, makePrecedenceP(Precedence.multiply),
+              getAssociativityP(Precedence.multiply)));
+
+          if (!expression()) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      }
+      //Expected ")" here...
+      else {
+        return false;
+      }
+    }
+    else if (token.type == LexerTokenType.lSBracket) {
+      depthLevel++;
+
+      /* Give round, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+
+      insertIntoTreeUnary(RoundNode(
+          this, token, makePrecedenceP(Precedence.top),
+          getAssociativity(token)));
+
+      if (!expression()) {
+        return false;
+      }
+
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.rSBracket) {
+        depthLevel--;
+        return true;
+      } else {
+        //Expected "]" here...
+        return false;
+      }
+    }
+    else if (token.type == LexerTokenType.lCBracket) {
+      depthLevel++;
+
+      /* Give fraction, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+
+      insertIntoTreeUnary(FractionalComponentNode(
+          this, token, makePrecedenceP(Precedence.top),
+          getAssociativity(token)));
+
+      if (!expression()) {
+        return false;
+      }
+
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.rCBracket) {
+        depthLevel--;
+        return true;
+      }
+      //Expected "}" here...
+      else {
+        return false;
+      }
+    }
+    else if (token.type == LexerTokenType.abs) {
+      depthLevel++;
+
+      /* Give abs, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+
+      insertIntoTreeUnary(AbsoluteValueNode(
+          this, token, makePrecedenceP(Precedence.top),
+          getAssociativity(token)));
+
+      if (!expression()) {
+        return false;
+      }
+
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.abs) {
+        depthLevel--;
+        return true;
+      }
+      //Expected "|" here...
+      else {
+        return false;
+      }
+    }
+    else if (token.type == LexerTokenType.not) {
+      insertIntoTreeUnary(NotNode(this, token, makePrecedenceP(Precedence.not),
+          getAssociativity(token)));
+
+      if (!expression()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.number) {
+      insertIntoTree(ConstantNode(
+          this, token, makePrecedenceT(token.type), getAssociativity(token)));
+
+      token = lexer.getNextToken();
+      lexer.rollBack();
+
+      if (token.type == LexerTokenType.function ||
+          token.type == LexerTokenType.variable ||
+          token.type == LexerTokenType.subNumber ||
+          token.type == LexerTokenType.root ||
+          token.type == LexerTokenType.root3 ||
+          token.type == LexerTokenType.root4) {
+        insertIntoTree(MultiplyNode(
+            this, null, makePrecedenceP(Precedence.multiply),
+            getAssociativityP(Precedence.multiply)));
+
+        if (!variable()) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
+    else if (token.type == LexerTokenType.lFloor) {
+      depthLevel++;
+      /* Give floor, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+
+      insertIntoTreeUnary(FloorNode(this, null, makePrecedenceP(Precedence.top),
+          getAssociativityP(Precedence.top)));
+
+      if (!expression()) {
+        return false;
+      }
+
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.rFloor) {
+        depthLevel--;
+        return true;
+      }
+      //Expected ⌋ here...
+      else {
+        return false;
+      }
+    }
+    else if (token.type == LexerTokenType.lCeiling) {
+      depthLevel++;
+      /* Give ceiling, preference of Precedence.TOP aka 2, to keep it on the top of expression. */
+
+      insertIntoTreeUnary(CeilingNode(
+          this, null, makePrecedenceP(Precedence.top),
+          getAssociativityP(Precedence.top)));
+
+      if (!expression()) {
+        return false;
+      }
+
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.rCeiling) {
+        depthLevel--;
+        return true;
+      }
+      //Expected ⌉ here...
+      else {
+        return false;
+      }
+    }
+    else if (token.type == LexerTokenType.subtract) {
+      insertIntoTreeUnary(UnaryMinusNode(
+          this, token, makePrecedenceP(Precedence.unaryMinus),
+          getAssociativityP(Precedence.unaryMinus)));
+
+      if (!expression1()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.add) {
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.number) {
+        /* Ignore ADD. It is not required. */
+        insertIntoTree(ConstantNode(
+            this, token, makePrecedenceT(token.type), getAssociativity(token)));
+        return true;
+      } else {
+        return false;
+      }
+    }
+    else {
+      lexer.rollBack();
+      if (!variable()) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  }
+
+  bool expression2() {
+    var token = lexer.getNextToken();
+    if (token.type == LexerTokenType.lRBracket) {
+      insertIntoTree(MultiplyNode(
+          this, null, makePrecedenceP(Precedence.multiply),
+          getAssociativityP(Precedence.multiply)));
+
+      depthLevel++;
+      if (!expression()) {
+        return false;
+      }
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.rRBracket) {
+        depthLevel--;
+
+        if (!expression2()) {
+          return false;
+        }
+
+        return true;
+      } else {
+        return false;
+      }
+    }
+    else if (token.type == LexerTokenType.power) {
+      insertIntoTree(XPowYNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token)));
+
+      if (!expression1()) {
+        return false;
+      }
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.supNumber) {
+      insertIntoTree(XPowYIntegerNode(
+          this, null, makePrecedenceP(Precedence.power),
+          getAssociativityP(Precedence.power)));
+      insertIntoTree(
+          NameNode(this, token, makePrecedenceP(Precedence.numberVariable),
+              getAssociativityP(Precedence.numberVariable)));
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.nSupNumber) {
+      insertIntoTree(XPowYIntegerNode(
+          this, null, makePrecedenceP(Precedence.power),
+          getAssociativityP(Precedence.power)));
+      insertIntoTree(
+          NameNode(this, token, makePrecedenceP(Precedence.numberVariable),
+              getAssociativityP(Precedence.numberVariable)));
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.factorial) {
+      insertIntoTreeUnary(
+          FactorialNode(this, token, makePrecedenceT(token.type),
+              getAssociativity(token)));
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.multiply) {
+      insertIntoTree(MultiplyNode(
+          this, token, makePrecedenceT(token.type), getAssociativity(token)));
+
+      if (!expression1()) {
+        return false;
+      }
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.percentage) {
+      insertIntoTreeUnary(PercentNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token)));
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.and) {
+      insertIntoTree(AndNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token)));
+
+      if (!expression1()) {
+        return false;
+      }
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.or) {
+      insertIntoTree(OrNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token)));
+
+      if (!expression1()) {
+        return false;
+      }
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.xor) {
+      insertIntoTree(XorNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token)));
+
+      if (!expression1()) {
+        return false;
+      }
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.divide) {
+      insertIntoTree(DivideNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token)));
+
+      if (!expression1()) {
+        return false;
+      }
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.shiftLeft ||
+        token.type == LexerTokenType.shiftRight) {
+      insertIntoTree(ShiftNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token)));
+
+      if (!expression1()) {
+        return false;
+      }
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.mod) {
+      insertIntoTree(ModulusDivideNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token)));
+
+      if (!expression1()) {
+        return false;
+      }
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.add) {
+      var node = AddNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token));
+      insertIntoTree(node);
+
+      if (!expression1()) {
+        return false;
+      }
+
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.percentage) {
+        //FIXME: This condition needs to be verified for all cases.. :(
+        if (node.right.precedence > Precedence.percentage) {
+          var nextToken = lexer.getNextToken();
+          lexer.rollBack();
+
+          if (nextToken.text != "" &&
+              getPrecedence(nextToken.type) < Precedence.percentage) {
+            lexer.rollBack();
+            if (!expression2()) {
+              return true;
+            }
+          }
+
+          node.precedence = makePrecedenceP(Precedence.percentage);
+          node.doPercentage = true;
+          return true;
+        } else {
+          /* Assume '%' to be part of 'expression PERCENTAGE' statement. */
+          lexer.rollBack();
+          if (!expression2()) {
+            return true;
+          }
+        }
+      } else {
+        lexer.rollBack();
+      }
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else if (token.type == LexerTokenType.subtract) {
+      var node = SubtractNode(this, token, makePrecedenceT(token.type),
+          getAssociativity(token));
+      insertIntoTree(node);
+
+      if (!expression1()) {
+        return false;
+      }
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.percentage) {
+        //FIXME: This condition needs to be verified for all cases.. :(
+        if (node.right.precedence > Precedence.percentage) {
+          var nextToken = lexer.getNextToken();
+          lexer.rollBack();
+
+          if (nextToken.text != "" &&
+              getPrecedence(nextToken.type) < Precedence.percentage) {
+            lexer.rollBack();
+            if (!expression2()) {
+              return true;
+            }
+          }
+
+          node.precedence = makePrecedenceP(Precedence.percentage);
+          node.doPercentage = true;
+          return true;
+        } else {
+          /* Assume '%' to be part of 'expression PERCENTAGE' statement. */
+          lexer.rollBack();
+          if (!expression2()) {
+            return true;
+          }
+        }
+      }
+      else {
+        lexer.rollBack();
+      }
+
+      if (!expression2()) {
+        return false;
+      }
+
+      return true;
+    } else {
+      lexer.rollBack();
+      return true;
+    }
+  }
 
 
 
