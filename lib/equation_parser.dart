@@ -3,6 +3,8 @@ import 'package:calculator/equation.dart';
 import 'package:calculator/equation_lexer.dart';
 import 'package:calculator/number.dart';
 import 'package:calculator/types.dart';
+import 'package:calculator/function_manager.dart';
+import 'package:calculator/math_function.dart';
 
 // The following is a commented Vala code that defines the ParseNode class:
 // public class ParseNode : Object
@@ -300,7 +302,7 @@ class AssignFunctionNode extends ParseNode {
     var description = right!.value;
 
     var functionManager = FunctionManager.getDefaultFunctionManager();
-    if (functionManager.addFunctionWithProperties(functionName, arguments, description, parser)) {
+    if (functionManager.addFunctionWithProperties(functionName!, arguments!, description!, parser)) {
       return Number.fromInt(0);
     }
 
@@ -1216,8 +1218,12 @@ class ModulusDivideNode extends LRNode {
       if (Number.error != null) {
         var tmpleft = left;
         var tmpright = right;
-        while (tmpleft!.left != null) tmpleft = tmpleft.left;
-        while (tmpright!.right != null) tmpright = tmpright.right;
+        while (tmpleft!.left != null) {
+          tmpleft = tmpleft.left;
+        }
+        while (tmpright!.right != null) {
+          tmpright = tmpright.right;
+        }
         parser.setError(ErrorCode.mp, Number.error, tmpleft.firstToken.startIndex, tmpright.lastToken.endIndex);
         Number.error = null;
       }
@@ -1234,8 +1240,12 @@ class ModulusDivideNode extends LRNode {
       if (Number.error != null) {
         var tmpleft = left;
         var tmpright = right;
-        while (tmpleft!.left != null) tmpleft = tmpleft.left;
-        while (tmpright!.right != null) tmpright = tmpright.right;
+        while (tmpleft!.left != null) {
+          tmpleft = tmpleft.left;
+        }
+        while (tmpright!.right != null) {
+          tmpright = tmpright.right;
+        }
         parser.setError(ErrorCode.mp, Number.error, tmpleft.firstToken.startIndex, tmpright.lastToken.endIndex);
         Number.error = null;
       }
