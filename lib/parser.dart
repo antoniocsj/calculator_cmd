@@ -2914,7 +2914,6 @@ class ConvertNumberNode extends ParseNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the Parser class:
 //
-
 class Parser {
   // Vala code:
   //     private string input;
@@ -3127,7 +3126,7 @@ class Parser {
         result: true);
   }
 
-// The following is a commented Vala code that defines the setError method:
+  // The following is a commented Vala code that defines the setError method:
 // public void set_error (ErrorCode errorno, string? token = null, uint token_start = 0, uint token_end = 0)
 // {
 // error = errorno;
@@ -3146,7 +3145,7 @@ class Parser {
     errorTokenEnd = input.charCount(tokenEnd);
   }
 
-// The following is a commented Vala code that defines the following methods: setRepresentationBase, variableIsDefined, getVariable, setVariable, functionIsDefined, unitIsDefined, literalBaseIsDefined, and convert:
+  // The following is a commented Vala code that defines the following methods: setRepresentationBase, variableIsDefined, getVariable, setVariable, functionIsDefined, unitIsDefined, literalBaseIsDefined, and convert:
 // public void set_representation_base (uint new_base)
 // {
 //   representation_base = new_base;
@@ -3217,7 +3216,7 @@ class Parser {
     return null;
   }
 
-// The following is a commented Vala code that defines the following method parse:
+  // The following is a commented Vala code that defines the following method parse:
 //   /* Start parsing input string. And call evaluate on success. */
 //   public Number? parse (out uint representation_base, out ErrorCode error_code, out string? error_token, out uint error_start, out uint error_end)
 //   {
@@ -3377,7 +3376,7 @@ class Parser {
     return Precedence.top;
   }
 
-// The following is a commented Vala code that defines the methods get_associativity_p, get_associativity, make_precedence_p, make_precedence_t and cmp_nodes:
+  // The following is a commented Vala code that defines the methods get_associativity_p, get_associativity, make_precedence_p, make_precedence_t and cmp_nodes:
 //   /* Return associativity of specific token type from precedence. */
 //   private Associativity get_associativity_p (Precedence type)
 //   {
@@ -3615,7 +3614,7 @@ class Parser {
     insertIntoTreeAll(node, true);
   }
 
-// Consider the following lines of commented Vala code that defines the following methods: destroy_all_nodes, check_variable, and statement:
+  // Consider the following lines of commented Vala code that defines the following methods: destroy_all_nodes, check_variable, and statement:
 //   /* Recursive call to free every node of parse-tree. */
 //   private void destroy_all_nodes (ParseNode node)
 //   {
@@ -3705,9 +3704,6 @@ class Parser {
     /* WARNING: If node.value is freed elsewhere, please assign it null before calling destroyAllNodes (). */
   }
 
-  /* LL (*) parser. Lookahead count depends on tokens. Handle with care. :P */
-
-  /* Check if string "name" is a valid variable for given Parser. It is the same code, used to get the value of variable in parserfunc.c. */
   bool checkVariable(String name) {
     /* If defined, then get the variable */
     if (variableIsDefined(name)) {
@@ -4377,14 +4373,14 @@ class Parser {
     numTokenParsed++;
     String argumentList = "";
     List<LexerToken> tokenList = [];
-    while (token.type != LexerTokenType.rRBracket && token.type != LexerTokenType.plEos) {
+    while (token.type != LexerTokenType.rRBracket && token.type != LexerTokenType.plEOS) {
       tokenList.add(token);
       argumentList += token.text;
       token = lexer.getNextToken();
       numTokenParsed++;
     }
 
-    if (token.type == LexerTokenType.plEos) {
+    if (token.type == LexerTokenType.plEOS) {
       while (numTokenParsed-- > 0) {
         lexer.rollBack();
       }
@@ -4402,7 +4398,7 @@ class Parser {
 
     String expression = "";
     token = lexer.getNextToken();
-    while (token.type != LexerTokenType.plEos) {
+    while (token.type != LexerTokenType.plEOS) {
       expression += token.text;
       token = lexer.getNextToken();
     }
@@ -4418,32 +4414,35 @@ class Parser {
 
   bool conversion() {
     var token = lexer.getNextToken();
-    if (token.type == LexerTokenType.in) {
+    if (token.type == LexerTokenType.in_) {
       var tokenIn = token;
       token = lexer.getNextToken();
       if (token.type == LexerTokenType.unit) {
         var tokenTo = token;
         token = lexer.getNextToken();
         /* We can only convert representation base, if it is next to End Of Stream */
-        if (token.type == LexerTokenType.plEos) {
+        if (token.type == LexerTokenType.plEOS) {
           insertIntoTree(ConvertBaseNode(this, tokenIn, makePrecedenceP(Precedence.convert), getAssociativity(tokenIn)));
           insertIntoTree(NameNode(this, tokenTo, makePrecedenceP(Precedence.unit), getAssociativity(tokenTo)));
           return true;
-        } else {
+        }
+        else {
           lexer.rollBack();
           lexer.rollBack();
           lexer.rollBack();
           return false;
         }
-      } else {
+      }
+      else {
         lexer.rollBack();
         lexer.rollBack();
         return false;
       }
-    } else if (token.type == LexerTokenType.unit) {
+    }
+    else if (token.type == LexerTokenType.unit) {
       var tokenFrom = token;
       token = lexer.getNextToken();
-      if (token.type == LexerTokenType.in) {
+      if (token.type == LexerTokenType.in_) {
         var tokenIn = token;
         token = lexer.getNextToken();
         if (token.type == LexerTokenType.unit) {
@@ -4451,18 +4450,21 @@ class Parser {
           insertIntoTree(ConvertNumberNode(this, tokenIn, makePrecedenceP(Precedence.convert), getAssociativity(tokenIn)));
           insertIntoTree(NameNode(this, token, makePrecedenceP(Precedence.unit), getAssociativity(token)));
           return true;
-        } else {
+        }
+        else {
           lexer.rollBack();
           lexer.rollBack();
           lexer.rollBack();
           return false;
         }
-      } else {
+      }
+      else {
         lexer.rollBack();
         lexer.rollBack();
         return false;
       }
-    } else {
+    }
+    else {
       lexer.rollBack();
       return false;
     }
@@ -4475,8 +4477,10 @@ class Parser {
     if (!expression2()) {
       return false;
     }
+
     /* If there is a possible conversion at this level, insert it in the tree. */
     conversion();
+
     return true;
   }
 
@@ -4509,10 +4513,12 @@ class Parser {
 
           if (!expression()) {
             return false;
-          } else {
+          }
+          else {
             return true;
           }
-        } else {
+        }
+        else {
           return true;
         }
       }
@@ -4538,7 +4544,8 @@ class Parser {
       if (token.type == LexerTokenType.rSBracket) {
         depthLevel--;
         return true;
-      } else {
+      }
+      else {
         //Expected "]" here...
         return false;
       }
@@ -4610,18 +4617,20 @@ class Parser {
           token.type == LexerTokenType.variable ||
           token.type == LexerTokenType.subNumber ||
           token.type == LexerTokenType.root ||
-          token.type == LexerTokenType.root3 ||
-          token.type == LexerTokenType.root4) {
+          token.type == LexerTokenType.root_3 ||
+          token.type == LexerTokenType.root_4) {
         insertIntoTree(MultiplyNode(
             this, null, makePrecedenceP(Precedence.multiply),
             getAssociativityP(Precedence.multiply)));
 
         if (!variable()) {
           return false;
-        } else {
+        }
+        else {
           return true;
         }
-      } else {
+      }
+      else {
         return true;
       }
     }
@@ -4686,7 +4695,8 @@ class Parser {
         insertIntoTree(ConstantNode(
             this, token, makePrecedenceT(token.type), getAssociativity(token)));
         return true;
-      } else {
+      }
+      else {
         return false;
       }
     }
@@ -4694,7 +4704,8 @@ class Parser {
       lexer.rollBack();
       if (!variable()) {
         return false;
-      } else {
+      }
+      else {
         return true;
       }
     }
@@ -4720,7 +4731,8 @@ class Parser {
         }
 
         return true;
-      } else {
+      }
+      else {
         return false;
       }
     }
@@ -4897,12 +4909,12 @@ class Parser {
       token = lexer.getNextToken();
       if (token.type == LexerTokenType.percentage) {
         //FIXME: This condition needs to be verified for all cases.. :(
-        if (node.right.precedence > Precedence.percentage) {
+        if (node.right!.precedence > Precedence.percentage.value) {
           var nextToken = lexer.getNextToken();
           lexer.rollBack();
 
           if (nextToken.text != "" &&
-              getPrecedence(nextToken.type) < Precedence.percentage) {
+              getPrecedence(nextToken.type).value < Precedence.percentage.value) {
             lexer.rollBack();
             if (!expression2()) {
               return true;
@@ -4912,14 +4924,16 @@ class Parser {
           node.precedence = makePrecedenceP(Precedence.percentage);
           node.doPercentage = true;
           return true;
-        } else {
+        }
+        else {
           /* Assume '%' to be part of 'expression PERCENTAGE' statement. */
           lexer.rollBack();
           if (!expression2()) {
             return true;
           }
         }
-      } else {
+      }
+      else {
         lexer.rollBack();
       }
 
@@ -4940,12 +4954,12 @@ class Parser {
       token = lexer.getNextToken();
       if (token.type == LexerTokenType.percentage) {
         //FIXME: This condition needs to be verified for all cases.. :(
-        if (node.right.precedence > Precedence.percentage) {
+        if (node.right!.precedence > Precedence.percentage.value) {
           var nextToken = lexer.getNextToken();
           lexer.rollBack();
 
           if (nextToken.text != "" &&
-              getPrecedence(nextToken.type) < Precedence.percentage) {
+              getPrecedence(nextToken.type).value < Precedence.percentage.value) {
             lexer.rollBack();
             if (!expression2()) {
               return true;
@@ -4955,7 +4969,8 @@ class Parser {
           node.precedence = makePrecedenceP(Precedence.percentage);
           node.doPercentage = true;
           return true;
-        } else {
+        }
+        else {
           /* Assume '%' to be part of 'expression PERCENTAGE' statement. */
           lexer.rollBack();
           if (!expression2()) {
@@ -4972,7 +4987,8 @@ class Parser {
       }
 
       return true;
-    } else {
+    }
+    else {
       lexer.rollBack();
       return true;
     }
