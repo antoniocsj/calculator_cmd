@@ -3060,7 +3060,7 @@ class Parser {
 //     }
 //
   // this is the equivalent Dart code to the previous Vala code that defines the createParseTree method:
-  ParseResult createParseTree() {
+  CreateParseTreeResult createParseTree() {
     // Scan string and split into tokens
     lexer.scan();
 
@@ -3073,13 +3073,16 @@ class Parser {
       if (token.type != LexerTokenType.plEOS) {
         // Full string is not parsed.
         if (error == ErrorCode.none) {
-          setError(ErrorCode.invalid, token.text, token.startIndex, token.endIndex);
+          setError(
+              ErrorCode.invalid, token.text, token.startIndex, token.endIndex);
         }
 
-        return ParseResult(
+        return CreateParseTreeResult(
             representationBase: numberBase,
-            errorCode: error, errorToken: errorToken,
-            errorStart: errorTokenStart, errorEnd: errorTokenEnd,
+            errorCode: error,
+            errorToken: errorToken,
+            errorStart: errorTokenStart,
+            errorEnd: errorTokenEnd,
             result: false);
       }
     }
@@ -3087,13 +3090,16 @@ class Parser {
     if (token.type != LexerTokenType.plEOS) {
       // Full string is not parsed.
       if (error == ErrorCode.none) {
-        setError(ErrorCode.invalid, token.text, token.startIndex, token.endIndex);
+        setError(
+            ErrorCode.invalid, token.text, token.startIndex, token.endIndex);
       }
 
-      return ParseResult(
+      return CreateParseTreeResult(
           representationBase: numberBase,
-          errorCode: error, errorToken: errorToken,
-          errorStart: errorTokenStart, errorEnd: errorTokenEnd,
+          errorCode: error,
+          errorToken: errorToken,
+          errorStart: errorTokenStart,
+          errorEnd: errorTokenEnd,
           result: false);
     }
 
@@ -3103,17 +3109,21 @@ class Parser {
         setError(ErrorCode.invalid);
       }
 
-      return ParseResult(
+      return CreateParseTreeResult(
           representationBase: numberBase,
-          errorCode: error, errorToken: errorToken,
-          errorStart: errorTokenStart, errorEnd: errorTokenEnd,
+          errorCode: error,
+          errorToken: errorToken,
+          errorStart: errorTokenStart,
+          errorEnd: errorTokenEnd,
           result: false);
     }
 
-    return ParseResult(
+    return CreateParseTreeResult(
         representationBase: numberBase,
-        errorCode: ErrorCode.none, errorToken: null,
-        errorStart: 0, errorEnd: 0,
+        errorCode: ErrorCode.none,
+        errorToken: null,
+        errorStart: 0,
+        errorEnd: 0,
         result: true);
   }
 
@@ -3128,7 +3138,8 @@ class Parser {
 //
 // this is the equivalent Dart code to the previous Vala code that defines the setError method:
 //
-  void setError(ErrorCode errorno, [String? token, int tokenStart = 0, int tokenEnd = 0]) {
+  void setError(ErrorCode errorno,
+      [String? token, int tokenStart = 0, int tokenEnd = 0]) {
     error = errorno;
     errorToken = token;
     errorTokenStart = input.charCount(tokenStart);
@@ -3206,6 +3217,571 @@ class Parser {
     return null;
   }
 
+// The following is a Vala code that defines the following method parse:
+//   /* Start parsing input string. And call evaluate on success. */
+//   public Number? parse (out uint representation_base, out ErrorCode error_code, out string? error_token, out uint error_start, out uint error_end)
+//   {
+//   var is_successfully_parsed = create_parse_tree (out representation_base, out error_code, out error_token, out error_start, out error_end);
+//
+//   if (!is_successfully_parsed)
+//   return null;
+//   var ans = root.solve ();
+//   if (ans == null && this.error == ErrorCode.NONE)
+//   {
+//   error_code = ErrorCode.INVALID;
+//   error_token = null;
+//   error_start = error_token_start;
+//   error_end = error_token_end;
+//   return null;
+//   }
+//
+//   representation_base = this.representation_base;
+//   error_code = this.error;
+//   error_token = this.error_token;
+//   error_start = this.error_token_start;
+//   error_end = this.error_token_end;
+//   return ans;
+//   }
+//
+// this is the equivalent Dart code to the previous Vala code that defines the parse method:
+  /* Start parsing input string. And call evaluate on success. */
+  ParseResult parse() {
+    var result = createParseTree();
+
+    if (!result.result) {
+      return ParseResult(
+          representationBase: numberBase,
+          errorCode: result.errorCode,
+          errorToken: result.errorToken,
+          errorStart: result.errorStart,
+          errorEnd: result.errorEnd,
+          result: null);
+    }
+
+    var ans = root?.solve();
+    if (ans == null && error == ErrorCode.none) {
+      setError(ErrorCode.invalid);
+      return ParseResult(
+          representationBase: representationBase,
+          errorCode: ErrorCode.invalid,
+          errorToken: errorToken,
+          errorStart: errorTokenStart,
+          errorEnd: errorTokenEnd,
+          result: null);
+    }
+
+    return ParseResult(
+        representationBase: representationBase,
+        errorCode: error,
+        errorToken: errorToken,
+        errorStart: errorTokenStart,
+        errorEnd: errorTokenEnd,
+        result: ans);
+  }
+
+  // The following is a Vala code that defines the following method get_precedence.
+// /* Converts LexerTokenType to Precedence value. */
+//   private Precedence get_precedence (LexerTokenType type)
+//   {
+//     /* WARNING: This function doesn't work for Unary Plus and Unary Minus. Use their precedence directly while inserting them in tree. */
+//     if (type == LexerTokenType.ADD || type == LexerTokenType.SUBTRACT)
+//       return Precedence.ADD_SUBTRACT;
+//     if (type == LexerTokenType.MULTIPLY)
+//       return Precedence.MULTIPLY;
+//     if (type == LexerTokenType.MOD)
+//       return Precedence.MOD;
+//     if (type == LexerTokenType.DIVIDE)
+//       return Precedence.DIVIDE;
+//     if (type == LexerTokenType.NOT)
+//       return Precedence.NOT;
+//     if (type == LexerTokenType.ROOT || type == LexerTokenType.ROOT_3 || type == LexerTokenType.ROOT_4)
+//       return Precedence.ROOT;
+//     if (type == LexerTokenType.FUNCTION)
+//       return Precedence.FUNCTION;
+//     if (type == LexerTokenType.AND || type == LexerTokenType.OR || type == LexerTokenType.XOR)
+//       return Precedence.BOOLEAN;
+//     if (type == LexerTokenType.PERCENTAGE)
+//       return Precedence.PERCENTAGE;
+//     if (type == LexerTokenType.POWER)
+//       return Precedence.POWER;
+//     if (type == LexerTokenType.FACTORIAL)
+//       return Precedence.FACTORIAL;
+//     if (type == LexerTokenType.NUMBER || type == LexerTokenType.VARIABLE)
+//       return Precedence.NUMBER_VARIABLE;
+//     if (type == LexerTokenType.UNIT)
+//       return Precedence.UNIT;
+//     if (type == LexerTokenType.IN)
+//       return Precedence.CONVERT;
+//     if (type == LexerTokenType.SHIFT_LEFT || type == LexerTokenType.SHIFT_RIGHT)
+//       return Precedence.SHIFT;
+//     if (type == LexerTokenType.L_R_BRACKET || type == LexerTokenType.R_R_BRACKET)
+//       return Precedence.DEPTH;
+//     return Precedence.TOP;
+//   }
+//
+// this is the equivalent Dart code to the previous Vala code that defines the getPrecedence method:
+//   /* Converts LexerTokenType to Precedence value. */
+//   Precedence getPrecedence(LexerTokenType type) {
+//     /* WARNING: This function doesn't work for Unary Plus and Unary Minus. Use their precedence directly while inserting them in tree. */
+//     if (type == LexerTokenType.add || type == LexerTokenType.subtract) {
+//       return Precedence.addSubtract;
+//     }
+//     if (type == LexerTokenType.multiply) {
+//       return Precedence.multiply;
+//     }
+//     if (type == LexerTokenType.mod) {
+//       return Precedence.mod;
+//     }
+//     if (type == LexerTokenType.divide) {
+//       return Precedence.divide;
+//     }
+//     if (type == LexerTokenType.not) {
+//       return Precedence.not;
+//     }
+//     if (type == LexerTokenType.root || type == LexerTokenType.root_3 || type == LexerTokenType.root_4) {
+//       return Precedence.root;
+//     }
+//     if (type == LexerTokenType.function) {
+//       return Precedence.function;
+//     }
+//     if (type == LexerTokenType.and || type == LexerTokenType.or || type == LexerTokenType.xor) {
+//       return Precedence.boolean;
+//     }
+//     if (type == LexerTokenType.percentage) {
+//       return Precedence.percentage;
+//     }
+//     if (type == LexerTokenType.power) {
+//       return Precedence.power;
+//     }
+//     if (type == LexerTokenType.factorial) {
+//       return Precedence.factorial;
+//     }
+//     if (type == LexerTokenType.number || type == LexerTokenType.variable) {
+//       return Precedence.numberVariable;
+//     }
+//     if (type == LexerTokenType.unit) {
+//       return Precedence.unit;
+//     }
+//     if (type == LexerTokenType.in_) {
+//       return Precedence.convert;
+//     }
+//     if (type == LexerTokenType.shiftLeft || type == LexerTokenType.shiftRight) {
+//       return Precedence.shift;
+//     }
+//     if (type == LexerTokenType.lRBracket || type == LexerTokenType.rRBracket) {
+//       return Precedence.depth;
+//     }
+//     return Precedence.top;
+//   }
+//
+//   // The following is a Vala code that defines the methods get_associativity_p, get_associativity, make_precedence_p, make_precedence_t and cmp_nodes:
+//   /* Return associativity of specific token type from precedence. */
+//   private Associativity get_associativity_p (Precedence type)
+//   {
+//     if (type == Precedence.BOOLEAN || type == Precedence.DIVIDE || type == Precedence.MOD || type == Precedence.MULTIPLY || type == Precedence.ADD_SUBTRACT)
+//       return Associativity.LEFT;
+//     if (type == Precedence.POWER)
+//       return Associativity.RIGHT;
+//     /* For all remaining / non-associative operators, return Left Associativity. */
+//     return Associativity.LEFT;
+//   }
+//
+//   /* Return associativity of specific token by converting it to precedence first. */
+//   private Associativity get_associativity (LexerToken token)
+//   {
+//     return get_associativity_p (get_precedence (token.type));
+//   }
+//
+//   /* Generate precedence for a node from precedence value. Includes depth_level. */
+//   private uint make_precedence_p (Precedence p)
+//   {
+//     return p + (depth_level * Precedence.DEPTH);
+//   }
+//
+//   /* Generate precedence for a node from lexer token type. Includes depth_level. */
+//   private uint make_precedence_t (LexerTokenType type)
+//   {
+//     return get_precedence (type) + (depth_level * Precedence.DEPTH);
+//   }
+//
+//   /* Compares two nodes to decide, which will be parent and which will be child. */
+//   private bool cmp_nodes (ParseNode? left, ParseNode? right)
+//   {
+//     /* Return values:
+//          * true = right goes up (near root) in parse tree.
+//          * false = left  goes up (near root) in parse tree.
+//          */
+//     if (left == null)
+//       return false;
+//     if (left.precedence > right.precedence)
+//       return true;
+//     else if (left.precedence < right.precedence)
+//       return false;
+//     else
+//       return right.associativity != Associativity.RIGHT;
+//   }
+//
+// this is the equivalent Dart code to the previous Vala code that defines the following methods: getAssociativityP, getAssociativity, makePrecedenceP, makePrecedenceT, and cmpNodes:
+  /* Return associativity of specific token type from precedence. */
+  Associativity getAssociativityP(Precedence type) {
+    if (type == Precedence.boolean || type == Precedence.divide ||
+        type == Precedence.mod || type == Precedence.multiply ||
+        type == Precedence.addSubtract) {
+      return Associativity.left;
+    }
+    if (type == Precedence.power) {
+      return Associativity.right;
+    }
+    /* For all remaining / non-associative operators, return Left Associativity. */
+    return Associativity.left;
+  }
+
+  /* Return associativity of specific token by converting it to precedence first. */
+  Associativity getAssociativity(LexerToken token) {
+    return getAssociativityP(getPrecedence(token.type));
+  }
+
+  /* Generate precedence for a node from precedence value. Includes depthLevel. */
+  int makePrecedenceP(Precedence p) {
+    return p.index + (depthLevel * Precedence.depth.index);
+  }
+
+  /* Generate precedence for a node from lexer token type. Includes depthLevel. */
+  int makePrecedenceT(LexerTokenType type) {
+    return getPrecedence(type).index + (depthLevel * Precedence.depth.index);
+  }
+
+  /* Compares two nodes to decide, which will be parent and which will be child. */
+  bool cmpNodes(ParseNode? left, ParseNode? right) {
+    /* Return values:
+     * true = right goes up (near root) in parse tree.
+     * false = left  goes up (near root) in parse tree.
+     */
+    if (left == null) {
+      return false;
+    }
+    if (left.precedence > right!.precedence) {
+      return true;
+    } else if (left.precedence < right.precedence) {
+      return false;
+    } else {
+      return right.associativity != Associativity.right;
+    }
+  }
+
+  // The following is a Vala code that defines the following methods: insert_into_tree_all, insert_into_tree, and insert_into_tree_unary:
+  // /* Unified interface (unary and binary nodes) to insert node into parse tree. */
+  // private void insert_into_tree_all (ParseNode node, bool unary_function)
+  // {
+  //   if (root == null)
+  //   {
+  //     root = node;
+  //     right_most = root;
+  //     return;
+  //   }
+  //   ParseNode tmp = right_most;
+  //   while (cmp_nodes (tmp, node))
+  //     tmp = tmp.parent;
+  //
+  //   if (unary_function)
+  //   {
+  //     /* If tmp is null, that means, we have to insert new node at root. */
+  //     if (tmp == null)
+  //     {
+  //       node.right = root;
+  //       node.right.parent = node;
+  //
+  //       root = node;
+  //     }
+  //     else
+  //     {
+  //       node.right = tmp.right;
+  //       if (node.right != null)
+  //         node.right.parent = node;
+  //
+  //       tmp.right = node;
+  //       if (tmp.right != null)
+  //         tmp.right.parent = tmp;
+  //
+  //     }
+  //     right_most = node;
+  //     while (right_most.right != null)
+  //       right_most = right_most.right;
+  //   }
+  //   else
+  //   {
+  //     /* If tmp is null, that means, we have to insert new node at root. */
+  //     if (tmp == null)
+  //     {
+  //       node.left = root;
+  //       node.left.parent = node;
+  //
+  //       root = node;
+  //     }
+  //     else
+  //     {
+  //       node.left = tmp.right;
+  //       if (node.left != null)
+  //         node.left.parent = node;
+  //
+  //       tmp.right = node;
+  //       if (tmp.right != null)
+  //         tmp.right.parent = tmp;
+  //
+  //     }
+  //     right_most = node;
+  //   }
+  // }
+  //
+  // /* Insert binary node into the parse tree. */
+  // private void insert_into_tree (ParseNode node)
+  // {
+  //   insert_into_tree_all (node, false);
+  // }
+  //
+  // /* Insert unary node into the parse tree. */
+  // private void insert_into_tree_unary (ParseNode node)
+  // {
+  //   insert_into_tree_all (node, true);
+  // }
+  //
+  // this is the equivalent Dart code to the previous Vala code that defines the following methods: insertIntoTreeAll, insertIntoTree, and insertIntoTreeUnary:
+  /* Unified interface (unary and binary nodes) to insert node into parse tree. */
+  void insertIntoTreeAll(ParseNode node, bool unaryFunction) {
+    if (root == null) {
+      root = node;
+      rightMost = root;
+      return;
+    }
+    ParseNode? tmp = rightMost;
+    while (cmpNodes(tmp, node)) {
+      tmp = tmp?.parent;
+    }
+
+    if (unaryFunction) {
+      /* If tmp is null, that means, we have to insert new node at root. */
+      if (tmp == null) {
+        node.right = root;
+        node.right!.parent = node;
+
+        root = node;
+      } else {
+        node.right = tmp.right;
+        if (node.right != null) {
+          node.right!.parent = node;
+        }
+
+        tmp.right = node;
+        if (tmp.right != null) {
+          tmp.right!.parent = tmp;
+        }
+      }
+      rightMost = node;
+      while (rightMost!.right != null) {
+        rightMost = rightMost!.right;
+      }
+    } else {
+      /* If tmp is null, that means, we have to insert new node at root. */
+      if (tmp == null) {
+        node.left = root;
+        node.left!.parent = node;
+
+        root = node;
+      } else {
+        node.left = tmp.right;
+        if (node.left != null) {
+          node.left!.parent = node;
+        }
+
+        tmp.right = node;
+        if (tmp.right != null) {
+          tmp.right!.parent = tmp;
+        }
+      }
+      rightMost = node;
+    }
+  }
+
+  /* Insert binary node into the parse tree. */
+  void insertIntoTree(ParseNode node) {
+    insertIntoTreeAll(node, false);
+  }
+
+  /* Insert unary node into the parse tree. */
+  void insertIntoTreeUnary(ParseNode node) {
+    insertIntoTreeAll(node, true);
+  }
+
+// The following is a Vala code that defines the following methods: destroy_all_nodes, check_variable, and statement:
+//   /* Recursive call to free every node of parse-tree. */
+//   private void destroy_all_nodes (ParseNode node)
+//   {
+//     if (node == null)
+//       return;
+//
+//     destroy_all_nodes (node.left);
+//     destroy_all_nodes (node.right);
+//     /* Don't call free for tokens, as they are allocated and freed in lexer. */
+//     /* WARNING: If node.value is freed elsewhere, please assign it null before calling destroy_all_nodes (). */
+//   }
+//
+//   /* LL (*) parser. Lookahead count depends on tokens. Handle with care. :P */
+//
+//   /* Check if string "name" is a valid variable for given Parser. It is the same code, used to get the value of variable in parserfunc.c. */
+//   private bool check_variable (string name)
+//   {
+//     /* If defined, then get the variable */
+//     if (variable_is_defined (name))
+//       return true;
+//
+//     /* If has more than one character then assume a multiplication of variables */
+//     var index = 0;
+//     unichar c;
+//     while (name.get_next_char (ref index, out c))
+//     {
+//       if (!variable_is_defined (c.to_string ()))
+//         return false;
+//     }
+//
+//     return true;
+//   }
+//
+//   private bool statement ()
+//   {
+//     var token = lexer.get_next_token ();
+//     if (token.type == LexerTokenType.VARIABLE || token.type == LexerTokenType.FUNCTION)
+//     {
+//       var token_old = token;
+//       token = lexer.get_next_token ();
+//       if (token.type == LexerTokenType.ASSIGN)
+//       {
+//         insert_into_tree (new NameNode (this, token_old, make_precedence_p (Precedence.NUMBER_VARIABLE), get_associativity (token_old)));
+//         insert_into_tree (new AssignNode (this, token, 0, get_associativity (token)));
+//
+//         if (!expression ())
+//           return false;
+//
+//         return true;
+//       }
+//       else
+//       {
+//         lexer.roll_back ();
+//         lexer.roll_back ();
+//
+//         if (token.type == LexerTokenType.L_R_BRACKET)
+//         {
+//           if (function_definition ())
+//             return true;
+//         }
+//
+//         if (!expression ())
+//           return false;
+//
+//         return true;
+//       }
+//     }
+//     else
+//     {
+//       lexer.roll_back ();
+//       if (!expression ())
+//         return false;
+//       return true;
+//     }
+//   }
+//
+// this is the equivalent Dart code to the previous Vala code that defines the following methods: destroyAllNodes, checkVariable, and statement:
+  /* Recursive call to free every node of parse-tree. */
+  void destroyAllNodes(ParseNode? node) {
+    if (node == null) {
+      return;
+    }
+
+    destroyAllNodes(node.left);
+    destroyAllNodes(node.right);
+    /* Don't call free for tokens, as they are allocated and freed in lexer. */
+    /* WARNING: If node.value is freed elsewhere, please assign it null before calling destroyAllNodes (). */
+  }
+
+  /* LL (*) parser. Lookahead count depends on tokens. Handle with care. :P */
+
+  /* Check if string "name" is a valid variable for given Parser. It is the same code, used to get the value of variable in parserfunc.c. */
+  bool checkVariable(String name) {
+    /* If defined, then get the variable */
+    if (variableIsDefined(name)) {
+      return true;
+    }
+
+    /* If has more than one character then assume a multiplication of variables */
+    var index = 0;
+    var c = name.getNextChar(index);
+    while (c != null) {
+      if (!variableIsDefined(c.toString())) {
+        return false;
+      }
+      c = name.getNextChar(index);
+    }
+
+    return true;
+  }
+
+  bool statement() {
+    var token = lexer.getNextToken();
+    if (token.type == LexerTokenType.variable || token.type == LexerTokenType.function) {
+      var tokenOld = token;
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.assign) {
+        insertIntoTree(NameNode(this, tokenOld, makePrecedenceP(Precedence.numberVariable), getAssociativity(tokenOld)));
+        insertIntoTree(AssignNode(this, token, 0, getAssociativity(token)));
+
+        if (!expression()) {
+          return false;
+        }
+
+        return true;
+      } else {
+        lexer.rollBack();
+        lexer.rollBack();
+
+        if (token.type == LexerTokenType.lRBracket) {
+          if (functionDefinition()) {
+            return true;
+          }
+        }
+
+        if (!expression()) {
+          return false;
+        }
+
+        return true;
+      }
+    } else {
+      lexer.rollBack();
+      if (!expression()) {
+        return false;
+      }
+      return true;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3214,15 +3790,3 @@ class Parser {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-

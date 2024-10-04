@@ -1,4 +1,5 @@
 import 'package:calculator/enums.dart';
+import 'package:calculator/number.dart';
 
 // this file contains all the types used in the project.
 
@@ -54,6 +55,28 @@ extension StringExtensions on String {
     // Conta o número de runes até a posição especificada
     return runes_.sublist(0, max).length;
   }
+
+  bool getNextChar(RefInt index, RefString outChar) {
+    if (index.value < 0 || index.value >= length) {
+      outChar.value = '';
+      return false;
+    }
+
+    int charCode = codeUnitAt(index.value);
+    if (charCode >= 0xD800 && charCode <= 0xDBFF && index.value + 1 < length) {
+      // Handle surrogate pairs for Unicode characters outside the BMP
+      int nextCharCode = codeUnitAt(index.value + 1);
+      if (nextCharCode >= 0xDC00 && nextCharCode <= 0xDFFF) {
+        outChar.value = String.fromCharCodes([charCode, nextCharCode]);
+        index.value += 2;
+        return true;
+      }
+    }
+
+    outChar.value = String.fromCharCode(charCode);
+    index.value += 1;
+    return true;
+  }
 }
 
 extension StringBuilder on StringBuffer {
@@ -89,13 +112,31 @@ extension StringBuilder on StringBuffer {
   }
 }
 
-class ParseResult {
+class CreateParseTreeResult {
   final int representationBase;
   final ErrorCode errorCode;
   final String? errorToken;
   final int errorStart;
   final int errorEnd;
   final bool result;
+
+  CreateParseTreeResult({
+    required this.representationBase,
+    required this.errorCode,
+    required this.errorToken,
+    required this.errorStart,
+    required this.errorEnd,
+    required this.result,
+  });
+}
+
+class ParseResult {
+  final int representationBase;
+  final ErrorCode errorCode;
+  final String? errorToken;
+  final int errorStart;
+  final int errorEnd;
+  final Number? result;
 
   ParseResult({
     required this.representationBase,
