@@ -77,6 +77,29 @@ extension StringExtensions on String {
     index.value += 1;
     return true;
   }
+
+  bool getPrevChar(RefInt index, RefString outChar) {
+    if (index.value <= 0 || index.value > length) {
+      outChar.value = '';
+      return false;
+    }
+
+    int charCode = codeUnitAt(index.value - 1);
+    if (charCode >= 0xDC00 && charCode <= 0xDFFF && index.value - 2 >= 0) {
+      // Handle surrogate pairs for Unicode characters outside the BMP
+      int prevCharCode = codeUnitAt(index.value - 2);
+      if (prevCharCode >= 0xD800 && prevCharCode <= 0xDBFF) {
+        outChar.value = String.fromCharCodes([prevCharCode, charCode]);
+        index.value -= 2;
+        return true;
+      }
+    }
+
+    outChar.value = String.fromCharCode(charCode);
+    index.value -= 1;
+    return true;
+  }
+
 }
 
 extension StringBuilder on StringBuffer {
