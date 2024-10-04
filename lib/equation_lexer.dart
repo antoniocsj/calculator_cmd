@@ -1,5 +1,5 @@
 import 'package:calculator/enums.dart';
-import 'package:calculator/parser.dart';
+import 'package:calculator/equation_parser.dart';
 import 'package:calculator/types.dart';
 import 'package:calculator/number.dart';
 
@@ -261,14 +261,14 @@ class Lexer {
     int count = 0;
     var text = prelexer.getMarkedSubstring();
 
-    var tmp = Number().mpSetFromString(text, numberBase);
+    var tmp = mpSetFromString(text, numberBase);
     if (tmp != null) {
       return true;
     }
     else {
       // Try to rollback several characters to see, if that yields any number.
       while (text != '') {
-        tmp = Number().mpSetFromString(text, numberBase);
+        tmp = mpSetFromString(text, numberBase);
         if (tmp != null) {
           return true;
         }

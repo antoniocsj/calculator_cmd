@@ -100,7 +100,7 @@ class Serializer {
 
   Number? fromString(String str) {
     // FIXME: Move mpSetFromString into here
-    return Number().mpSetFromString(str, numberBase);
+    return mpSetFromString(str, numberBase);
   }
 
   void setBase(int numberBase) {

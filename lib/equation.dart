@@ -1,0 +1,196 @@
+import 'package:calculator/enums.dart';
+import 'package:calculator/number.dart';
+import 'package:calculator/types.dart';
+
+int subAtoi(String data) {
+  const List<String> digits = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+
+  int index = 0;
+  String c;
+  int value = 0;
+  RefInt refIndex = RefInt(index);
+  RefString refChar = RefString('');
+
+  while (data.getNextChar(refIndex, refChar)) {
+    c = refChar.value;
+    bool isSubdigit = false;
+    for (int i = 0; i < digits.length; i++) {
+      if (c == digits[i]) {
+        value = value * 10 + i;
+        isSubdigit = true;
+        break;
+      }
+    }
+    if (!isSubdigit) return -1;
+  }
+
+  return value;
+}
+
+int superAtoi(String data) {
+  const List<String> digits = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+
+  int index = 0;
+  String c;
+  RefInt refIndex = RefInt(index);
+  RefString refChar = RefString('');
+  data.getNextChar(refIndex, refChar);
+  c = refChar.value;
+  int sign = 1;
+  if (c == '⁻') {
+    sign = -1;
+  } else {
+    refIndex.value = 0;
+  }
+
+  int value = 0;
+  while (data.getNextChar(refIndex, refChar)) {
+    c = refChar.value;
+    bool isSuperdigit = false;
+    for (int i = 0; i < digits.length; i++) {
+      if (c == digits[i]) {
+        value = value * 10 + i;
+        isSuperdigit = true;
+        break;
+      }
+    }
+    if (!isSuperdigit) return 0;
+  }
+
+  return sign * value;
+}
+
+String mpErrorCodeToString(ErrorCode errorCode) {
+  return errorCode.toString().replaceAll('ErrorCode.', '');
+}
+
+class Equation {
+  int base;
+  int wordlen;
+  AngleUnit angleUnits;
+  String expression;
+
+  Equation(this.expression);
+
+  Number? parse({
+    required RefInt representationBase,
+    required Ref<ErrorCode> errorCode,
+    required RefString errorToken,
+    required RefInt errorStart,
+    required RefInt errorEnd,
+  }) {
+    var parser = EquationParser(this, expression);
+    Number.error = null;
+
+    var z = parser.parse(
+      representationBase: representationBase,
+      errorCode: errorCode,
+      errorToken: errorToken,
+      errorStart: errorStart,
+      errorEnd: errorEnd,
+    );
+
+    if (errorCode.value != ErrorCode.none) {
+      return null;
+    }
+
+    if (Number.error != null) {
+      errorCode.value = ErrorCode.mp;
+      return null;
+    }
+
+    return z;
+  }
+
+  bool variableIsDefined(String name) {
+    return false;
+  }
+
+  Number? getVariable(String name) {
+    return null;
+  }
+
+  bool unitIsDefined(String name) {
+    return false;
+  }
+
+  bool literalBaseIsDefined(String name) {
+    return false;
+  }
+
+  void setVariable(String name, Number x) {}
+
+  bool functionIsDefined(String name) {
+    return false;
+  }
+
+  Number? convert(Number x, String xUnits, String zUnits) {
+    return null;
+  }
+}
+
+class ConvertEquation extends Equation {
+  ConvertEquation(String text) : super(text);
+
+  @override
+  Number? convert(Number x, String xUnits, String zUnits) {
+    return UnitManager.getDefault().convertBySymbol(x, xUnits, zUnits);
+  }
+}
+
+class EquationParser extends Parser {
+  final Equation equation;
+
+  EquationParser(this.equation, String expression)
+      : super(expression, equation.base, equation.wordlen, equation.angleUnits);
+
+  @override
+  bool variableIsDefined(String name) {
+    if (CONSTANTS.contains(name)) return true;
+    return equation.variableIsDefined(name);
+  }
+
+  @override
+  Number? getVariable(String name) {
+    if (CONSTANTS.contains(name)) {
+      return CONSTANTS.get(name);
+    } else {
+      return equation.getVariable(name);
+    }
+  }
+
+  @override
+  void setVariable(String name, Number x) {
+    if (CONSTANTS.contains(name)) return;
+    equation.setVariable(name, x);
+  }
+
+  @override
+  bool functionIsDefined(String name) {
+    var functionManager = FunctionManager.getDefaultFunctionManager();
+    if (functionManager.isFunctionDefined(name)) return true;
+    return equation.functionIsDefined(name);
+  }
+
+  @override
+  bool unitIsDefined(String name) {
+    if (name == 'hex' || name == 'hexadecimal' || name == 'dec' || name == 'decimal' || name == 'oct' || name == 'octal' || name == 'bin' || name == 'binary') {
+      return true;
+    }
+
+    var unitManager = UnitManager.getDefault();
+    if (unitManager.unitIsDefined(name)) return true;
+    return equation.unitIsDefined(name);
+  }
+
+  @override
+  Number? convert(Number x, String xUnits, String zUnits) {
+    return equation.convert(x, xUnits, zUnits);
+  }
+
+  @override
+  bool literalBaseIsDefined(String name) {
+    if (name == '0x' || name == '0b' || name == '0o') return true;
+    return equation.literalBaseIsDefined(name);
+  }
+}

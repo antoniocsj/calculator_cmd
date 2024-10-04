@@ -380,13 +380,11 @@ class Number {
     if (n == 0) {
       error = '0√x is undefined';
       return Number.fromInt(0);
-    }
-    else if (n < 0) {
+    } else if (n < 0) {
       // n√x = 1 / n√(1/x)
       z.num.uIntDivide(1, num);
       p = -n;
-    }
-    else {
+    } else {
       z.num.setComplex(num);
       p = n;
     }
@@ -398,8 +396,7 @@ class Number {
 
       mpfr.mpfr_root(rePtrZ, rePtrZ, p, mpfr_rnd_t.MPFR_RNDN);
       mpfr.mpfr_set_zero(imPtrZ, 1);
-    }
-    else {
+    } else {
       // If x is complex or negative and n is even, we can't take the real version of the nth root
       // but we can take the complex version of the nth root using the function mpc_root
       var tmp = Real(precision);
@@ -462,7 +459,6 @@ class Number {
     }
 
     if (!isNatural()) {
-
       // Factorial Not defined for Complex or for negative numbers
       if (isNegative() || isComplex()) {
         error = 'Factorial not defined for negative numbers or complex numbers';
@@ -546,7 +542,8 @@ class Number {
     var z = subtract(t2);
 
     t1 = Number.fromInt(0);
-    if ((y.compare(t1) < 0 && z.compare(t1) > 0) || (y.compare(t1) > 0 && z.compare(t1) < 0)) {
+    if ((y.compare(t1) < 0 && z.compare(t1) > 0) ||
+        (y.compare(t1) > 0 && z.compare(t1) < 0)) {
       z = z.add(y);
     }
 
@@ -610,7 +607,8 @@ class Number {
   Number tan([AngleUnit unit = AngleUnit.radians]) {
     // Check for undefined values
     var xRadians = toRadians(unit);
-    var check = xRadians.subtract(Number.pi().divideInteger(2)).divide(Number.pi());
+    var check =
+        xRadians.subtract(Number.pi().divideInteger(2)).divide(Number.pi());
 
     if (check.isInteger()) {
       error = 'tan(π/2 + nπ) is undefined';
@@ -786,7 +784,7 @@ class Number {
     var len = text.length;
     var offset = wordlen ~/ 4;
 
-    offset = len > offset ? len - offset: 0;
+    offset = len > offset ? len - offset : 0;
 
     var z = mpSetFromString(text.substring(offset), 16, false);
 
@@ -828,7 +826,8 @@ class Number {
       return Number.fromInt(0);
     }
 
-    return bitwise(Number.fromInt(0), (int v1, int v2) => v1 ^ v2, wordlen).not(wordlen);
+    return bitwise(Number.fromInt(0), (int v1, int v2) => v1 ^ v2, wordlen)
+        .not(wordlen);
   }
 
   // Returns the twos complement of x for word of length 'wordlen'
@@ -898,8 +897,7 @@ class Number {
         }
       }
       return true;
-    }
-    else {
+    } else {
       sup = 2 * sup * sup;
 
       for (var i = 0; i < sup; i++) {
@@ -1153,181 +1151,338 @@ class Number {
     return serializer.serialize(this);
   }
 
-  static int parseLiteralPrefix(String str, RefInt prefixLen) {
-    var newBase = 0;
+  // Return a string representation of the number
+  @override
+  String toString() {
+    var serializer = Serializer(DisplayFormat.fixed, 10, 32);
+    return serializer.serialize(this);
+  }
+}
 
-    if (str.length < 3 || str[0] != '0') {
-      return newBase;
-    }
+int parseLiteralPrefix(String str, RefInt prefixLen) {
+  var newBase = 0;
 
-    var prefix = str[1].toLowerCase();
-
-    if (prefix == 'b') {
-      newBase = 2;
-    } else if (prefix == 'o') {
-      newBase = 8;
-    } else if (prefix == 'x') {
-      newBase = 16;
-    } else {
-      return newBase;
-    }
-
-    if (newBase != 0) {
-      prefixLen.value = 2;
-    }
-
+  if (str.length < 3 || str[0] != '0') {
     return newBase;
   }
 
-  //* Returns a string representation in 'text'
-  Number? mpSetFromString(String str, [int defaultBase = 10, bool mayHavePrefix = true]) {
-    if (str.isEmpty) {
-      return null;
-    }
+  var prefix = str[1].toLowerCase();
 
-    if (str.contains('°')) {
-      return setFromSexagesimal(str);
-    }
+  if (prefix == 'b') {
+    newBase = 2;
+  } else if (prefix == 'o') {
+    newBase = 8;
+  } else if (prefix == 'x') {
+    newBase = 16;
+  } else {
+    return newBase;
+  }
 
-    const List<String> baseDigits = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
-    int index = 0;
-    String c;
-    int basePrefix = 0;
+  if (newBase != 0) {
+    prefixLen.value = 2;
+  }
 
-    // Vala code:
-    // var index = 0;
-    // unichar c;
-    // while (str.get_next_char (ref index, out c));
-    // var end = index;
-    //
-    // this is the equivalent of the above Vala code:
-    var rIndex = RefInt(0);
-    var rChar = RefString('');
-    while (str.getNextChar(rIndex, rChar)) {}
+  return newBase;
+}
+
+//* Returns a string representation in 'text'
+Number? mpSetFromString(String str,
+    [int defaultBase = 10, bool mayHavePrefix = true]) {
+  if (str.isEmpty) {
+    return null;
+  }
+
+  if (str.contains('°')) {
+    return setFromSexagesimal(str);
+  }
+
+  const List<String> baseDigits = [
+    '₀',
+    '₁',
+    '₂',
+    '₃',
+    '₄',
+    '₅',
+    '₆',
+    '₇',
+    '₈',
+    '₉'
+  ];
+  int index = 0;
+  String c;
+  int basePrefix = 0;
+
+// Vala code:
+// var index = 0;
+// unichar c;
+// while (str.get_next_char (ref index, out c));
+// var end = index;
+//
+// this is the equivalent of the above Vala code:
+  var rIndex = RefInt(0);
+  var rChar = RefString('');
+  while (str.getNextChar(rIndex, rChar)) {}
+  index = rIndex.value;
+  c = rChar.value;
+
+  int end = index;
+  int numberBase = 0;
+  int literalBase = 0;
+  int baseMultiplier = 1;
+
+// Vala code:
+// while (str.get_prev_char (ref index, out c))
+// {
+//   var value = -1;
+//   for (var i = 0; i < base_digits.length; i++)
+//   {
+//     if (c == base_digits[i])
+//     {
+//       value = i;
+//       break;
+//     }
+//   }
+//   if (value < 0)
+//     break;
+//
+//   end = index;
+//   number_base += value * base_multiplier;
+//   base_multiplier *= 10;
+// }
+//
+// this is the equivalent of the above Vala code:
+  while (str.getPrevChar(rIndex, rChar)) {
     index = rIndex.value;
     c = rChar.value;
 
-    int end = index;
-    int numberBase = 0;
-    int literalBase = 0;
-    int baseMultiplier = 1;
-
-    // Vala code:
-    // while (str.get_prev_char (ref index, out c))
-    // {
-    //   var value = -1;
-    //   for (var i = 0; i < base_digits.length; i++)
-    //   {
-    //     if (c == base_digits[i])
-    //     {
-    //       value = i;
-    //       break;
-    //     }
-    //   }
-    //   if (value < 0)
-    //     break;
-    //
-    //   end = index;
-    //   number_base += value * base_multiplier;
-    //   base_multiplier *= 10;
-    // }
-    //
-    // this is the equivalent of the above Vala code:
-    while (str.getPrevChar(rIndex, rChar)) {
-      index = rIndex.value;
-      c = rChar.value;
-
-      var value = -1;
-      for (var i = 0; i < baseDigits.length; i++) {
-        if (c == baseDigits[i]) {
-          value = i;
-          break;
-        }
-      }
-      if (value < 0) {
+    var value = -1;
+    for (var i = 0; i < baseDigits.length; i++) {
+      if (c == baseDigits[i]) {
+        value = i;
         break;
       }
-
-      end = rIndex.value;
-      numberBase += value * baseMultiplier;
-      baseMultiplier *= 10;
+    }
+    if (value < 0) {
+      break;
     }
 
-    if (mayHavePrefix) {
-      RefInt refBasePrefix = RefInt(0);
-      literalBase = parseLiteralPrefix(str, refBasePrefix);
-      basePrefix = refBasePrefix.value;
-    }
+    end = rIndex.value;
+    numberBase += value * baseMultiplier;
+    baseMultiplier *= 10;
+  }
 
-    if (numberBase != 0 && literalBase != 0 && literalBase != numberBase) {
-      return null;
-    }
+  if (mayHavePrefix) {
+    RefInt refBasePrefix = RefInt(0);
+    literalBase = parseLiteralPrefix(str, refBasePrefix);
+    basePrefix = refBasePrefix.value;
+  }
 
-    if (numberBase == 0) {
-      numberBase = literalBase != 0 ? literalBase : defaultBase;
-    }
+  if (numberBase != 0 && literalBase != 0 && literalBase != numberBase) {
+    return null;
+  }
 
-    // Dart code:
-    // /* Check if this has a sign */
-    // var negate = false;
-    // index = base_prefix;
-    // str.get_next_char (ref index, out c);
-    // if (c == '+')
-    //   negate = false;
-    // else if (c == '-' || c == '−')
-    //   negate = true;
-    // else
-    //   str.get_prev_char (ref index, out c);
-    //
-    // this is the equivalent of the above Dart code:
-    /* Check if this has a sign */
-    var negate = false;
-    index = basePrefix;
+  if (numberBase == 0) {
+    numberBase = literalBase != 0 ? literalBase : defaultBase;
+  }
 
-    str.getNextChar(rIndex, rChar);
+// Dart code:
+// /* Check if this has a sign */
+// var negate = false;
+// index = base_prefix;
+// str.get_next_char (ref index, out c);
+// if (c == '+')
+//   negate = false;
+// else if (c == '-' || c == '−')
+//   negate = true;
+// else
+//   str.get_prev_char (ref index, out c);
+//
+// this is the equivalent of the above Dart code:
+/* Check if this has a sign */
+  var negate = false;
+  index = basePrefix;
+
+  str.getNextChar(rIndex, rChar);
+  index = rIndex.value;
+  c = rChar.value;
+
+  if (c == '+') {
+    negate = false;
+  } else if (c == '-' || c == '−') {
+    negate = true;
+  } else {
+    str.getPrevChar(rIndex, rChar);
+    index = rIndex.value;
+    c = rChar.value;
+  }
+
+// Vala code:
+// /* Convert integer part */
+// var z = new Number.integer (0);
+//
+// while (str.get_next_char (ref index, out c))
+// {
+//   var i = char_val (c, number_base);
+//   if (i > number_base)
+//     return null;
+//   if (i < 0)
+//   {
+//     str.get_prev_char (ref index, out c);
+//     break;
+//   }
+//
+//   z = z.multiply_integer (number_base).add (new Number.integer (i));
+// }
+//
+// this is the equivalent of the above Vala code:
+/* Convert integer part */
+  var z = Number.fromInt(0);
+
+  while (str.getNextChar(rIndex, rChar)) {
     index = rIndex.value;
     c = rChar.value;
 
-    if (c == '+') {
-      negate = false;
-    } else if (c == '-' || c == '−') {
-      negate = true;
+    var i = charVal(c, numberBase);
+    if (i > numberBase) {
+      return null;
+    }
+    if (i < 0) {
+      str.getPrevChar(rIndex, rChar);
+      index = rIndex.value;
+      c = rChar.value;
+      break;
+    }
+
+    z = z.multiplyInteger(numberBase).add(Number.fromInt(i));
+  }
+
+// Vala code:
+// /* Look for fraction characters, e.g. ⅚ */
+// const unichar fractions[] = {'½', '⅓', '⅔', '¼', '¾', '⅕', '⅖', '⅗', '⅘', '⅙', '⅚', '⅛', '⅜', '⅝', '⅞'};
+// const int numerators[]    = { 1,   1,   2,   1,   3,   1,   2,   3,   4,   1,   5,   1,   3,   5,   7};
+// const int denominators[]  = { 2,   3,   3,   4,   4,   5,   5,   5,   5,   6,   6,   8,   8,   8,   8};
+// var has_fraction = false;
+// if (str.get_next_char (ref index, out c))
+// {
+//   for (var i = 0; i < fractions.length; i++)
+//   {
+//     if (c == fractions[i])
+//     {
+//       var fraction = new Number.fraction (numerators[i], denominators[i]);
+//       z = z.add (fraction);
+//
+//       /* Must end with fraction */
+//       if (!str.get_next_char (ref index, out c))
+//         return z;
+//       else
+//         return null;
+//     }
+//   }
+//
+//   /* Check for decimal point */
+//   if (c == '.')
+//     has_fraction = true;
+//   else
+//     str.get_prev_char (ref index, out c);
+// }
+//
+// this is the equivalent of the above Vala code:
+/* Look for fraction characters, e.g. ⅚ */
+  const List<String> fractions = [
+    '½',
+    '⅓',
+    '⅔',
+    '¼',
+    '¾',
+    '⅕',
+    '⅖',
+    '⅗',
+    '⅘',
+    '⅙',
+    '⅚',
+    '⅛',
+    '⅜',
+    '⅝',
+    '⅞'
+  ];
+  const List<int> numerators = [1, 1, 2, 1, 3, 1, 2, 3, 4, 1, 5, 1, 3, 5, 7];
+  const List<int> denominators = [2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 8, 8, 8, 8];
+  var hasFraction = false;
+
+  if (str.getNextChar(rIndex, rChar)) {
+    index = rIndex.value;
+    c = rChar.value;
+
+    for (var i = 0; i < fractions.length; i++) {
+      if (c == fractions[i]) {
+        var fraction = Number.fromFraction(numerators[i], denominators[i]);
+        z = z.add(fraction);
+
+/* Must end with fraction */
+        if (!str.getNextChar(rIndex, rChar)) {
+          index = rIndex.value;
+          c = rChar.value;
+          return z;
+        } else {
+          return null;
+        }
+      }
+    }
+
+/* Check for decimal point */
+    if (c == '.') {
+      hasFraction = true;
     } else {
       str.getPrevChar(rIndex, rChar);
       index = rIndex.value;
       c = rChar.value;
     }
+  }
 
-    // Vala code:
-    // /* Convert integer part */
-    // var z = new Number.integer (0);
-    //
-    // while (str.get_next_char (ref index, out c))
-    // {
-    //   var i = char_val (c, number_base);
-    //   if (i > number_base)
-    //     return null;
-    //   if (i < 0)
-    //   {
-    //     str.get_prev_char (ref index, out c);
-    //     break;
-    //   }
-    //
-    //   z = z.multiply_integer (number_base).add (new Number.integer (i));
-    // }
-    //
-    // this is the equivalent of the above Vala code:
-    /* Convert integer part */
-    var z = Number.fromInt(0);
+// Vala code:
+// /* Convert fractional part */
+// if (has_fraction)
+// {
+//   var numerator = new Number.integer (0);
+//   var denominator = new Number.integer (1);
+//
+//   while (str.get_next_char (ref index, out c))
+//   {
+//     var i = char_val (c, number_base);
+//     if (i < 0)
+//     {
+//       str.get_prev_char (ref index, out c);
+//       break;
+//     }
+//
+//     denominator = denominator.multiply_integer (number_base);
+//     numerator = numerator.multiply_integer (number_base);
+//     numerator = numerator.add (new Number.integer (i));
+//   }
+//
+//   numerator = numerator.divide (denominator);
+//   z = z.add (numerator);
+// }
+//
+// if (index != end)
+//   return null;
+//
+// if (negate)
+//   z = z.invert_sign ();
+//
+// return z;
+//
+// this is the equivalent of the above Vala code:
+/* Convert fractional part */
+  if (hasFraction) {
+    var numerator = Number.fromInt(0);
+    var denominator = Number.fromInt(1);
 
     while (str.getNextChar(rIndex, rChar)) {
       index = rIndex.value;
       c = rChar.value;
 
       var i = charVal(c, numberBase);
-      if (i > numberBase) {
-        return null;
-      }
       if (i < 0) {
         str.getPrevChar(rIndex, rChar);
         index = rIndex.value;
@@ -1335,309 +1490,185 @@ class Number {
         break;
       }
 
-      z = z.multiplyInteger(numberBase).add(Number.fromInt(i));
+      denominator = denominator.multiplyInteger(numberBase);
+      numerator = numerator.multiplyInteger(numberBase);
+      numerator = numerator.add(Number.fromInt(i));
     }
 
-    // Vala code:
-    // /* Look for fraction characters, e.g. ⅚ */
-    // const unichar fractions[] = {'½', '⅓', '⅔', '¼', '¾', '⅕', '⅖', '⅗', '⅘', '⅙', '⅚', '⅛', '⅜', '⅝', '⅞'};
-    // const int numerators[]    = { 1,   1,   2,   1,   3,   1,   2,   3,   4,   1,   5,   1,   3,   5,   7};
-    // const int denominators[]  = { 2,   3,   3,   4,   4,   5,   5,   5,   5,   6,   6,   8,   8,   8,   8};
-    // var has_fraction = false;
-    // if (str.get_next_char (ref index, out c))
-    // {
-    //   for (var i = 0; i < fractions.length; i++)
-    //   {
-    //     if (c == fractions[i])
-    //     {
-    //       var fraction = new Number.fraction (numerators[i], denominators[i]);
-    //       z = z.add (fraction);
-    //
-    //       /* Must end with fraction */
-    //       if (!str.get_next_char (ref index, out c))
-    //         return z;
-    //       else
-    //         return null;
-    //     }
-    //   }
-    //
-    //   /* Check for decimal point */
-    //   if (c == '.')
-    //     has_fraction = true;
-    //   else
-    //     str.get_prev_char (ref index, out c);
-    // }
-    //
-    // this is the equivalent of the above Vala code:
-    /* Look for fraction characters, e.g. ⅚ */
-    const List<String> fractions = ['½', '⅓', '⅔', '¼', '¾', '⅕', '⅖', '⅗', '⅘', '⅙', '⅚', '⅛', '⅜', '⅝', '⅞'];
-    const List<int> numerators = [1, 1, 2, 1, 3, 1, 2, 3, 4, 1, 5, 1, 3, 5, 7];
-    const List<int> denominators = [2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 8, 8, 8, 8];
-    var hasFraction = false;
-
-    if (str.getNextChar(rIndex, rChar)) {
-      index = rIndex.value;
-      c = rChar.value;
-
-      for (var i = 0; i < fractions.length; i++) {
-        if (c == fractions[i]) {
-          var fraction = Number.fromFraction(numerators[i], denominators[i]);
-          z = z.add(fraction);
-
-          /* Must end with fraction */
-          if (!str.getNextChar(rIndex, rChar)) {
-            index = rIndex.value;
-            c = rChar.value;
-            return z;
-          } else {
-            return null;
-          }
-        }
-      }
-
-      /* Check for decimal point */
-      if (c == '.') {
-        hasFraction = true;
-      } else {
-        str.getPrevChar(rIndex, rChar);
-        index = rIndex.value;
-        c = rChar.value;
-      }
-    }
-
-    // Vala code:
-    // /* Convert fractional part */
-    // if (has_fraction)
-    // {
-    //   var numerator = new Number.integer (0);
-    //   var denominator = new Number.integer (1);
-    //
-    //   while (str.get_next_char (ref index, out c))
-    //   {
-    //     var i = char_val (c, number_base);
-    //     if (i < 0)
-    //     {
-    //       str.get_prev_char (ref index, out c);
-    //       break;
-    //     }
-    //
-    //     denominator = denominator.multiply_integer (number_base);
-    //     numerator = numerator.multiply_integer (number_base);
-    //     numerator = numerator.add (new Number.integer (i));
-    //   }
-    //
-    //   numerator = numerator.divide (denominator);
-    //   z = z.add (numerator);
-    // }
-    //
-    // if (index != end)
-    //   return null;
-    //
-    // if (negate)
-    //   z = z.invert_sign ();
-    //
-    // return z;
-    //
-    // this is the equivalent of the above Vala code:
-    /* Convert fractional part */
-    if (hasFraction) {
-      var numerator = Number.fromInt(0);
-      var denominator = Number.fromInt(1);
-
-      while (str.getNextChar(rIndex, rChar)) {
-        index = rIndex.value;
-        c = rChar.value;
-
-        var i = charVal(c, numberBase);
-        if (i < 0) {
-          str.getPrevChar(rIndex, rChar);
-          index = rIndex.value;
-          c = rChar.value;
-          break;
-        }
-
-        denominator = denominator.multiplyInteger(numberBase);
-        numerator = numerator.multiplyInteger(numberBase);
-        numerator = numerator.add(Number.fromInt(i));
-      }
-
-      numerator = numerator.divide(denominator);
-      z = z.add(numerator);
-    }
-
-    if (index != end) {
-      return null;
-    }
-
-    if (negate) {
-      z = z.invertSign();
-    }
-
-    return z;
+    numerator = numerator.divide(denominator);
+    z = z.add(numerator);
   }
 
-  int charVal(String c, int numberBase) {
-    if (!isHexDigit(c)) {
-      return -1;
-    }
-
-    int value = hexDigitValue(c);
-
-    if (value >= numberBase) {
-      return -1;
-    }
-
-    return value;
+  if (index != end) {
+    return null;
   }
 
-  bool isHexDigit(String c) {
-    return RegExp(r'^[0-9a-fA-F]$').hasMatch(c);
+  if (negate) {
+    z = z.invertSign();
   }
 
-  int hexDigitValue(String c) {
-    if (c.codeUnitAt(0) >= '0'.codeUnitAt(0) && c.codeUnitAt(0) <= '9'.codeUnitAt(0)) {
-      return c.codeUnitAt(0) - '0'.codeUnitAt(0);
-    } else if (c.codeUnitAt(0) >= 'a'.codeUnitAt(0) && c.codeUnitAt(0) <= 'f'.codeUnitAt(0)) {
-      return 10 + c.codeUnitAt(0) - 'a'.codeUnitAt(0);
-    } else if (c.codeUnitAt(0) >= 'A'.codeUnitAt(0) && c.codeUnitAt(0) <= 'F'.codeUnitAt(0)) {
-      return 10 + c.codeUnitAt(0) - 'A'.codeUnitAt(0);
-    } else {
-      return -1;
-    }
+  return z;
+}
+
+int charVal(String c, int numberBase) {
+  if (!isHexDigit(c)) {
+    return -1;
   }
 
-  // Returns a Number from a sexagesimal string
-  // Vala code:
-  // private Number? set_from_sexagesimal (string str)
-  // {
-  //   var degree_index = str.index_of_char ('°');
-  //   if (degree_index < 0)
-  //     return null;
-  //
-  //   var degrees = mp_set_from_string (str.substring (0, degree_index));
-  //   if (degrees == null)
-  //     return null;
-  //
-  //   var minute_start = degree_index;
-  //   unichar c;
-  //   str.get_next_char (ref minute_start, out c);
-  //   if (str[minute_start] == '\0')
-  //     return degrees;
-  //
-  //   var minute_index = str.index_of_char ('\'', minute_start);
-  //   if (minute_index < 0)
-  //     return null;
-  //
-  //   var minutes = mp_set_from_string (str.substring (minute_start, minute_index - minute_start));
-  //   if (minutes == null)
-  //     return null;
-  //
-  //   degrees = degrees.add (minutes.divide_integer (60));
-  //
-  //   var second_start = minute_index;
-  //   str.get_next_char (ref second_start, out c);
-  //   if (str[second_start] == '\0')
-  //     return degrees;
-  //
-  //   var second_index = str.index_of_char ('"', second_start);
-  //   if (second_index < 0)
-  //     return null;
-  //
-  //   var seconds = mp_set_from_string (str.substring (second_start, second_index - second_start));
-  //   if (seconds == null)
-  //     return null;
-  //
-  //   degrees = degrees.add (seconds.divide_integer (3600));
-  //
-  //   str.get_next_char (ref second_index, out c);
-  //
-  //   /* Skip over second marker and expect no more characters */
-  //   if (str[second_index] == '\0')
-  //     return degrees;
-  //   else
-  //     return null;
-  // }
-  //
-  // this is the equivalent of the above Vala code:
-  Number? setFromSexagesimal(String str) {
-    var degreeIndex = str.indexOf('°');
-    if (degreeIndex < 0) {
-      return null;
-    }
+  int value = hexDigitValue(c);
 
-    var degrees = mpSetFromString(str.substring(0, degreeIndex));
-    if (degrees == null) {
-      return null;
-    }
-
-    var minuteStart = degreeIndex;
-    var rIndex = RefInt(minuteStart);
-    var rChar = RefString('');
-    str.getNextChar(rIndex, rChar);
-    minuteStart = rIndex.value;
-    var c = rChar.value;
-
-    if (str[minuteStart] == '0') {
-      return degrees;
-    }
-
-    var minuteIndex = str.indexOf('\'', minuteStart);
-    if (minuteIndex < 0) {
-      return null;
-    }
-
-    var minutes = mpSetFromString(str.substring(minuteStart, minuteIndex - minuteStart));
-    if (minutes == null) {
-      return null;
-    }
-
-    degrees = degrees.add(minutes.divideInteger(60));
-
-    var secondStart = minuteIndex;
-    rIndex = RefInt(secondStart);
-    str.getNextChar(rIndex, rChar);
-    secondStart = rIndex.value;
-    c = rChar.value;
-
-    if (str[secondStart] == '0') {
-      return degrees;
-    }
-
-    var secondIndex = str.indexOf('"', secondStart);
-    if (secondIndex < 0) {
-      return null;
-    }
-
-    var seconds = mpSetFromString(str.substring(secondStart, secondIndex - secondStart));
-    if (seconds == null) {
-      return null;
-    }
-
-    degrees = degrees.add(seconds.divideInteger(3600));
-
-    rIndex = RefInt(secondIndex);
-    str.getNextChar(rIndex, rChar);
-    secondIndex = rIndex.value;
-    c = rChar.value;
-
-    /* Skip over second marker and expect no more characters */
-    if (str[secondIndex] == '0') {
-      return degrees;
-    } else {
-      return null;
-    }
+  if (value >= numberBase) {
+    return -1;
   }
 
-  // Returns true if x is cannot be represented in a binary word of length 'wordlen'
-  bool mpIsOverflow(Number x, int wordlen) {
-    var z = Number.fromInt(2).xpowyInteger(wordlen);
-    return z.compare(x) > 0;
+  return value;
+}
+
+bool isHexDigit(String c) {
+  return RegExp(r'^[0-9a-fA-F]$').hasMatch(c);
+}
+
+int hexDigitValue(String c) {
+  if (c.codeUnitAt(0) >= '0'.codeUnitAt(0) &&
+      c.codeUnitAt(0) <= '9'.codeUnitAt(0)) {
+    return c.codeUnitAt(0) - '0'.codeUnitAt(0);
+  } else if (c.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
+      c.codeUnitAt(0) <= 'f'.codeUnitAt(0)) {
+    return 10 + c.codeUnitAt(0) - 'a'.codeUnitAt(0);
+  } else if (c.codeUnitAt(0) >= 'A'.codeUnitAt(0) &&
+      c.codeUnitAt(0) <= 'F'.codeUnitAt(0)) {
+    return 10 + c.codeUnitAt(0) - 'A'.codeUnitAt(0);
+  } else {
+    return -1;
+  }
+}
+
+// Returns a Number from a sexagesimal string
+// Vala code:
+// private Number? set_from_sexagesimal (string str)
+// {
+//   var degree_index = str.index_of_char ('°');
+//   if (degree_index < 0)
+//     return null;
+//
+//   var degrees = mp_set_from_string (str.substring (0, degree_index));
+//   if (degrees == null)
+//     return null;
+//
+//   var minute_start = degree_index;
+//   unichar c;
+//   str.get_next_char (ref minute_start, out c);
+//   if (str[minute_start] == '\0')
+//     return degrees;
+//
+//   var minute_index = str.index_of_char ('\'', minute_start);
+//   if (minute_index < 0)
+//     return null;
+//
+//   var minutes = mp_set_from_string (str.substring (minute_start, minute_index - minute_start));
+//   if (minutes == null)
+//     return null;
+//
+//   degrees = degrees.add (minutes.divide_integer (60));
+//
+//   var second_start = minute_index;
+//   str.get_next_char (ref second_start, out c);
+//   if (str[second_start] == '\0')
+//     return degrees;
+//
+//   var second_index = str.index_of_char ('"', second_start);
+//   if (second_index < 0)
+//     return null;
+//
+//   var seconds = mp_set_from_string (str.substring (second_start, second_index - second_start));
+//   if (seconds == null)
+//     return null;
+//
+//   degrees = degrees.add (seconds.divide_integer (3600));
+//
+//   str.get_next_char (ref second_index, out c);
+//
+//   /* Skip over second marker and expect no more characters */
+//   if (str[second_index] == '\0')
+//     return degrees;
+//   else
+//     return null;
+// }
+//
+// this is the equivalent of the above Vala code:
+Number? setFromSexagesimal(String str) {
+  var degreeIndex = str.indexOf('°');
+  if (degreeIndex < 0) {
+    return null;
   }
 
-  // Return a string representation of the number
-  @override
-  String toString() {
-    var serializer = Serializer(DisplayFormat.fixed, 10, 32);
-    return serializer.serialize(this);
+  var degrees = mpSetFromString(str.substring(0, degreeIndex));
+  if (degrees == null) {
+    return null;
   }
+
+  var minuteStart = degreeIndex;
+  var rIndex = RefInt(minuteStart);
+  var rChar = RefString('');
+  str.getNextChar(rIndex, rChar);
+  minuteStart = rIndex.value;
+  var c = rChar.value;
+
+  if (str[minuteStart] == '0') {
+    return degrees;
+  }
+
+  var minuteIndex = str.indexOf('\'', minuteStart);
+  if (minuteIndex < 0) {
+    return null;
+  }
+
+  var minutes =
+      mpSetFromString(str.substring(minuteStart, minuteIndex - minuteStart));
+  if (minutes == null) {
+    return null;
+  }
+
+  degrees = degrees.add(minutes.divideInteger(60));
+
+  var secondStart = minuteIndex;
+  rIndex = RefInt(secondStart);
+  str.getNextChar(rIndex, rChar);
+  secondStart = rIndex.value;
+  c = rChar.value;
+
+  if (str[secondStart] == '0') {
+    return degrees;
+  }
+
+  var secondIndex = str.indexOf('"', secondStart);
+  if (secondIndex < 0) {
+    return null;
+  }
+
+  var seconds =
+      mpSetFromString(str.substring(secondStart, secondIndex - secondStart));
+  if (seconds == null) {
+    return null;
+  }
+
+  degrees = degrees.add(seconds.divideInteger(3600));
+
+  rIndex = RefInt(secondIndex);
+  str.getNextChar(rIndex, rChar);
+  secondIndex = rIndex.value;
+  c = rChar.value;
+
+/* Skip over second marker and expect no more characters */
+  if (str[secondIndex] == '0') {
+    return degrees;
+  } else {
+    return null;
+  }
+}
+
+// Returns true if x is cannot be represented in a binary word of length 'wordlen'
+bool mpIsOverflow(Number x, int wordlen) {
+  var z = Number.fromInt(2).xpowyInteger(wordlen);
+  return z.compare(x) > 0;
 }

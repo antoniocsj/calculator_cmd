@@ -27,6 +27,12 @@ class RefBool {
   RefBool(this.value);
 }
 
+// class to store the reference of an ErrorCode
+class RefErrorCode {
+  ErrorCode value;
+  RefErrorCode(this.value);
+}
+
 extension StringExtensions on String {
   bool isDigit() {
     if (length != 1) return false;

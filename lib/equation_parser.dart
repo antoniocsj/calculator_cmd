@@ -1,5 +1,6 @@
 import 'package:calculator/enums.dart';
-import 'package:calculator/lexer.dart';
+import 'package:calculator/equation.dart';
+import 'package:calculator/equation_lexer.dart';
 import 'package:calculator/number.dart';
 import 'package:calculator/types.dart';
 
@@ -120,8 +121,7 @@ class ParseNode {
 // }
 // the following is the equivalent Dart code to the previous commented Vala code that defines the RNode class:
 abstract class RNode extends ParseNode {
-  RNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  RNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solve() {
@@ -140,7 +140,7 @@ abstract class RNode extends ParseNode {
       while (tmpright?.right != null) {
         tmpright = tmpright?.right;
       }
-      parser.setError(ErrorCode.mp, Number.error, tmpleft?.firstToken.startIndex, tmpright?.lastToken.endIndex);
+      parser.setError(ErrorCode.mp, Number.error, tmpleft!.firstToken.startIndex, tmpright!.lastToken.endIndex);
       Number.error = null;
     }
     return z;
@@ -183,8 +183,7 @@ abstract class RNode extends ParseNode {
 // }
 // the following is the equivalent Dart code to the previous commented Vala code that defines the LRNode class:
 abstract class LRNode extends ParseNode {
-  LRNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  LRNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solve() {
@@ -204,7 +203,7 @@ abstract class LRNode extends ParseNode {
       while (tmpright?.right != null) {
         tmpright = tmpright?.right;
       }
-      parser.setError(ErrorCode.mp, Number.error, tmpleft?.firstToken.startIndex, tmpright?.lastToken.endIndex);
+      parser.setError(ErrorCode.mp, Number.error, tmpleft!.firstToken.startIndex, tmpright!.lastToken.endIndex);
       Number.error = null;
     }
     return z;
@@ -229,12 +228,11 @@ abstract class LRNode extends ParseNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the ConstantNode class:
 class ConstantNode extends ParseNode {
-  ConstantNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  ConstantNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solve() {
-    return Number().mpSetFromString(token.text, parser.numberBase);
+    return mpSetFromString(token.text, parser.numberBase);
   }
 }
 
@@ -255,8 +253,7 @@ class ConstantNode extends ParseNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the AssignNode class:
 class AssignNode extends RNode {
-  AssignNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  AssignNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
@@ -292,12 +289,11 @@ class AssignNode extends RNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the AssignFunctionNode class:
 class AssignFunctionNode extends ParseNode {
-  AssignFunctionNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  AssignFunctionNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solve() {
-    if (left == null || right == null || left!.left == null || left!.right == null) return null;
+    if (left == null || right == null || left?.left == null || left?.right == null) return null;
 
     var functionName = left!.left!.value;
     var arguments = left!.right!.value;
@@ -305,7 +301,7 @@ class AssignFunctionNode extends ParseNode {
 
     var functionManager = FunctionManager.getDefaultFunctionManager();
     if (functionManager.addFunctionWithProperties(functionName, arguments, description, parser)) {
-      return Number.integer(0);
+      return Number.fromInt(0);
     }
 
     return null;
@@ -323,8 +319,9 @@ class AssignFunctionNode extends ParseNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the NameNode class:
 class NameNode extends ParseNode {
-  NameNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, [String? text])
-      : super(parser, token, precedence, associativity, text);
+  NameNode(super.parser, super.token, super.precedence, super.associativity, [super.text]);
+  NameNode.withList(super.parser, super.tokenList, super.precedence, super.associativity, String super.text)
+      : super.withList();
 }
 
 // The following is a commented Vala code that defines the VariableNode class:
@@ -363,8 +360,8 @@ class NameNode extends ParseNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the VariableNode class:
 class VariableNode extends ParseNode {
-  VariableNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  VariableNode(super.parser, super.token, super.precedence,
+      super.associativity);
 
   @override
   Number? solve() {
@@ -374,17 +371,27 @@ class VariableNode extends ParseNode {
 
     /* If has more than one character then assume a multiplication of variables */
     // FIXME: Do this in the lexer
-    var value = Number.integer(1);
+    var value = Number.fromInt(1);
+
     var index = 0;
-    while (token.text.getNextChar(index) != null) {
-      var c = token.text.getNextChar(index);
+    String c;
+    RefInt rIndex = RefInt(index);
+    RefString rC = RefString('');
+
+    while (token.text.getNextChar(rIndex, rC)) {
+      index = rIndex.value;
+      c = rC.value;
+
       var t = parser.getVariable(c);
       if (t == null) {
-        parser.setError(ErrorCode.unknownVariable, token.text, firstToken.startIndex, lastToken.endIndex);
+        parser.setError(
+            ErrorCode.unknownVariable, token.text, firstToken.startIndex,
+            lastToken.endIndex);
         return null;
       }
       value = value.multiply(t);
     }
+
     return value;
   }
 }
@@ -448,14 +455,13 @@ class VariableNode extends ParseNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the VariableWithPowerNode class:
 class VariableWithPowerNode extends ParseNode {
-  VariableWithPowerNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, String text)
-      : super(parser, token, precedence, associativity, text);
+  VariableWithPowerNode(super.parser, super.token, super.precedence, super.associativity, String super.text);
 
   @override
   Number? solve() {
-    var pow = superAtoi(value);
+    var pow = superAtoi(this.value!);
 
-    value = null;
+    this.value = null;
 
     /* If defined, then get the variable */
     var ans = parser.getVariable(token.text);
@@ -463,10 +469,17 @@ class VariableWithPowerNode extends ParseNode {
 
     /* If has more than one character then assume a multiplication of variables */
     // FIXME: Do in lexer
-    var value = Number.integer(1);
+    var value = Number.fromInt(1);
+
     var index = 0;
-    while (token.text.getNextChar(index) != null) {
-      var c = token.text.getNextChar(index);
+    String c;
+    RefInt rIndex = RefInt(index);
+    RefString rC = RefString('');
+
+    while (token.text.getNextChar(rIndex, rC)) {
+      index = rIndex.value;
+      c = rC.value;
+
       var t = parser.getVariable(c);
       if (t == null) {
         parser.setError(ErrorCode.unknownVariable, token.text, firstToken.startIndex, lastToken.endIndex);
@@ -475,10 +488,17 @@ class VariableWithPowerNode extends ParseNode {
 
       /* If last term do power */
       var i = index;
-      var next = token.text.getNextChar(i);
-      if (next == null) {
+      String next;
+
+      var rI = RefInt(i);
+      var rNext = RefString('');
+
+      if (!token.text.getNextChar(rI, rNext)) {
+        i = rI.value;
+        next = rNext.value;
         t = t.xpowyInteger(pow);
       }
+
       value = value.multiply(t);
     }
 
@@ -487,9 +507,13 @@ class VariableWithPowerNode extends ParseNode {
     if (Number.error != null) {
       var tmpleft = left;
       var tmpright = right;
-      while (tmpleft!.left != null) tmpleft = tmpleft.left;
-      while (tmpright!.right != null) tmpright = tmpright.right;
-      parser.setError(ErrorCode.mp, Number.error, tmpleft.firstToken.startIndex, tmpright.lastToken.endIndex);
+      while (tmpleft?.left != null) {
+        tmpleft = tmpleft?.left;
+      }
+      while (tmpright?.right != null) {
+        tmpright = tmpright?.right;
+      }
+      parser.setError(ErrorCode.mp, Number.error, tmpleft!.firstToken.startIndex, tmpright!.lastToken.endIndex);
       Number.error = null;
     }
 
@@ -508,8 +532,7 @@ class VariableWithPowerNode extends ParseNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the FunctionNameNode class:
 class FunctionNameNode extends NameNode {
-  FunctionNameNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, String name)
-      : super(parser, token, precedence, associativity, name);
+  FunctionNameNode(super.parser, super.token, super.precedence, super.associativity, String super.name);
 }
 
 // The following is a commented Vala code that defines the FunctionArgumentsNode class:
@@ -523,8 +546,8 @@ class FunctionNameNode extends NameNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the FunctionArgumentsNode class:
 class FunctionArgumentsNode extends NameNode {
-  FunctionArgumentsNode(Parser parser, List<LexerToken> tokenList, int precedence, Associativity associativity, String arguments)
-      : super.withList(parser, tokenList, precedence, associativity, arguments);
+  FunctionArgumentsNode(super.parser, super.tokenList, super.precedence, super.associativity, super.arguments)
+      : super.withList();
 }
 
 // The following is a commented Vala code that defines the FunctionDescriptionNode class:
@@ -537,8 +560,7 @@ class FunctionArgumentsNode extends NameNode {
 // }
 // the following is the equivalent Dart code to the previous commented Vala code that defines the FunctionDescriptionNode class:
 class FunctionDescriptionNode extends NameNode {
-  FunctionDescriptionNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, String description)
-      : super(parser, token, precedence, associativity, description);
+  FunctionDescriptionNode(super.parser, super.token, super.precedence, super.associativity, String super.description);
 }
 
 // The following is a commented Vala code that defines the FunctionNode class:
@@ -647,8 +669,7 @@ class FunctionDescriptionNode extends NameNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the FunctionNode class:
 class FunctionNode extends ParseNode {
-  FunctionNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, [String? text])
-      : super(parser, token, precedence, associativity, text);
+  FunctionNode(super.parser, super.token, super.precedence, super.associativity, [super.text]);
 
   @override
   Number? solve() {
@@ -664,10 +685,10 @@ class FunctionNode extends ParseNode {
     }
 
     var pow = 1;
-    if (value != null) pow = superAtoi(value);
+    if (value != null) pow = superAtoi(value!);
 
     if (pow < 0) {
-      name = name + '⁻¹';
+      name = '$name⁻¹';
       pow = -pow;
     }
 
@@ -676,13 +697,15 @@ class FunctionNode extends ParseNode {
       var argumentList = right!.value;
       var temp = '';
       var depth = 0;
-      for (var i = 0; i < argumentList.length; i++) {
+      for (var i = 0; i < argumentList!.length; i++) {
         var ss = argumentList.substring(i, 1);
         if (ss == '(') {
           depth++;
-        } else if (ss == ')') {
+        }
+        else if (ss == ')') {
           depth--;
-        } else if (ss == ';' && depth != 0) {
+        }
+        else if (ss == ';' && depth != 0) {
           ss = '\$';
         }
         temp += ss;
@@ -693,26 +716,34 @@ class FunctionNode extends ParseNode {
         argument = argument.replaceAll('\$', ';').trim();
         var argumentParser = ExpressionParser(argument, parser);
 
-        var representationBase;
-        var errorCode;
-        var errorToken;
-        var errorStart;
-        var errorEnd;
+        var representationBase = 0;
+        var errorCode = ErrorCode.none;
+        String? errorToken = '';
+        var errorStart = 0;
+        var errorEnd = 0;
 
-        var ans = argumentParser.parse(out representationBase, out errorCode, out errorToken, out errorStart, out errorEnd);
+        ParseResult result = argumentParser.parse();
+        var ans = result.result;
+        representationBase = result.representationBase;
+        errorCode = result.errorCode;
+        errorToken = result.errorToken;
+        errorStart = result.errorStart;
 
         if (errorCode == ErrorCode.none && ans != null) {
           args.add(ans);
-        } else {
-          parser.setError(ErrorCode.unknownVariable, errorToken, errorStart, errorEnd);
+        }
+        else {
+          parser.setError(ErrorCode.unknownVariable, errorToken!, errorStart, errorEnd);
           return null;
         }
       }
-    } else {
+    }
+    else {
       var ans = right!.solve();
       if (ans != null) {
         args.add(ans);
-      } else {
+      }
+      else {
         parser.setError(ErrorCode.unknownFunction);
         return null;
       }
@@ -830,8 +861,7 @@ class FunctionNode extends ParseNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the UnaryMinusNode, AbsoluteValueNode, FloorNode, CeilingNode, FractionalComponentNode, RoundNode and PercentNode classes:
 class UnaryMinusNode extends RNode {
-  UnaryMinusNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  UnaryMinusNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
@@ -840,8 +870,7 @@ class UnaryMinusNode extends RNode {
 }
 
 class AbsoluteValueNode extends RNode {
-  AbsoluteValueNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  AbsoluteValueNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
@@ -850,8 +879,7 @@ class AbsoluteValueNode extends RNode {
 }
 
 class FloorNode extends RNode {
-  FloorNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  FloorNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
@@ -860,8 +888,7 @@ class FloorNode extends RNode {
 }
 
 class CeilingNode extends RNode {
-  CeilingNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  CeilingNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
@@ -870,8 +897,7 @@ class CeilingNode extends RNode {
 }
 
 class FractionalComponentNode extends RNode {
-  FractionalComponentNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  FractionalComponentNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
@@ -880,8 +906,7 @@ class FractionalComponentNode extends RNode {
 }
 
 class RoundNode extends RNode {
-  RoundNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  RoundNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
@@ -890,8 +915,7 @@ class RoundNode extends RNode {
 }
 
 class PercentNode extends RNode {
-  PercentNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  PercentNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
@@ -989,8 +1013,7 @@ class PercentNode extends RNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the FactorialNode, AddNode, SubtractNode, MultiplyNode and ShiftNode classes:
 class FactorialNode extends RNode {
-  FactorialNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  FactorialNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
@@ -1001,17 +1024,17 @@ class FactorialNode extends RNode {
 class AddNode extends LRNode {
   bool doPercentage = false;
 
-  AddNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  AddNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
-  Number solveLR(Number l, Number r) {
+  Number solveLR(Number left, Number r) {
     if (doPercentage) {
-      var per = r.add(Number.integer(100));
+      var per = r.add(Number.fromInt(100));
       per = per.divideInteger(100);
-      return l.multiply(per);
-    } else {
-      return l.add(r);
+      return left.multiply(per);
+    }
+    else {
+      return left.add(r);
     }
   }
 }
@@ -1019,41 +1042,40 @@ class AddNode extends LRNode {
 class SubtractNode extends LRNode {
   bool doPercentage = false;
 
-  SubtractNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  SubtractNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
-  Number solveLR(Number l, Number r) {
+  Number solveLR(Number left, Number r) {
     if (doPercentage) {
-      var per = r.add(Number.integer(-100));
+      var per = r.add(Number.fromInt(-100));
       per = per.divideInteger(-100);
-      return l.multiply(per);
-    } else {
-      return l.subtract(r);
+      return left.multiply(per);
+    }
+    else {
+      return left.subtract(r);
     }
   }
 }
 
 class MultiplyNode extends LRNode {
-  MultiplyNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  MultiplyNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
-  Number solveLR(Number l, Number r) {
-    return l.multiply(r);
+  Number solveLR(Number left, Number r) {
+    return left.multiply(r);
   }
 }
 
 class ShiftNode extends LRNode {
-  ShiftNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  ShiftNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
-  Number solveLR(Number l, Number r) {
+  Number solveLR(Number left, Number r) {
     if (firstToken.type == LexerTokenType.shiftLeft) {
-      return l.shift(r.toInteger());
-    } else {
-      return l.shift(r.multiplyInteger(-1).toInteger());
+      return left.shift(r.toInteger());
+    }
+    else {
+      return left.shift(r.multiplyInteger(-1).toInteger());
     }
   }
 }
@@ -1088,8 +1110,7 @@ class ShiftNode extends LRNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the DivideNode class:
 class DivideNode extends LRNode {
-  DivideNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  DivideNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number solveLR(Number l, Number r) {
@@ -1099,8 +1120,12 @@ class DivideNode extends LRNode {
       var tokenEnd = 0;
       var tmpleft = right;
       var tmpright = right;
-      while (tmpleft!.left != null) tmpleft = tmpleft.left;
-      while (tmpright!.right != null) tmpright = tmpright.right;
+      while (tmpleft!.left != null) {
+        tmpleft = tmpleft.left;
+      }
+      while (tmpright!.right != null) {
+        tmpright = tmpright.right;
+      }
       if (tmpleft.firstToken != null) tokenStart = tmpleft.firstToken.startIndex;
       if (tmpright.lastToken != null) tokenEnd = tmpright.lastToken.endIndex;
       parser.setError(ErrorCode.mp, Number.error, tokenStart, tokenEnd);
@@ -1175,8 +1200,7 @@ class DivideNode extends LRNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the ModulusDivideNode class:
 class ModulusDivideNode extends LRNode {
-  ModulusDivideNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  ModulusDivideNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solve() {
@@ -1221,8 +1245,8 @@ class ModulusDivideNode extends LRNode {
   }
 
   @override
-  Number solveLR(Number l, Number r) {
-    return l.modulusDivide(r);
+  Number solveLR(Number left, Number r) {
+    return left.modulusDivide(r);
   }
 }
 
@@ -1264,19 +1288,15 @@ class ModulusDivideNode extends LRNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the RootNode class:
 class RootNode extends RNode {
-  int n;
+  late int n;
   LexerToken? tokenN;
 
-  RootNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, int n)
-      : super(parser, token, precedence, associativity) {
-    this.n = n;
-    this.tokenN = null;
+  RootNode(super.parser, super.token, super.precedence, super.associativity, this.n) {
+    tokenN = null;
   }
 
-  RootNode.withToken(Parser parser, LexerToken? token, int precedence, Associativity associativity, LexerToken tokenN)
-      : super(parser, token, precedence, associativity) {
+  RootNode.withToken(super.parser, super.token, super.precedence, super.associativity, LexerToken this.tokenN) {
     n = 0;
-    this.tokenN = tokenN;
   }
 
   @override
@@ -1376,27 +1396,23 @@ class RootNode extends RNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the XPowYNode, XPowYIntegerNode and NotNode classes:
 class XPowYNode extends LRNode {
-  XPowYNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  XPowYNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
-  Number solveLR(Number l, Number r) {
-    return l.xpowy(r);
+  Number solveLR(Number left, Number r) {
+    return left.xpowy(r);
   }
 }
 
 class XPowYIntegerNode extends ParseNode {
-  XPowYIntegerNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  XPowYIntegerNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solve() {
     var val = left!.solve();
 
     // Are we inside a nested pow?
-    if (val == null) {
-      val = Number.integer(superAtoi(left!.token.text));
-    }
+    val ??= Number.fromInt(superAtoi(left!.token.text));
 
     int pow;
 
@@ -1415,8 +1431,12 @@ class XPowYIntegerNode extends ParseNode {
     if (Number.error != null) {
       var tmpleft = left;
       var tmpright = right;
-      while (tmpleft!.left != null) tmpleft = tmpleft.left;
-      while (tmpright!.right != null) tmpright = tmpright.right;
+      while (tmpleft!.left != null) {
+        tmpleft = tmpleft.left;
+      }
+      while (tmpright!.right != null) {
+        tmpright = tmpright.right;
+      }
       parser.setError(ErrorCode.mp, Number.error, tmpleft.firstToken.startIndex, tmpright.lastToken.endIndex);
       Number.error = null;
     }
@@ -1426,14 +1446,13 @@ class XPowYIntegerNode extends ParseNode {
 }
 
 class NotNode extends RNode {
-  NotNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  NotNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solveR(Number r) {
     if (!mpIsOverflow(r, parser.wordlen)) {
       parser.setError(ErrorCode.overflow);
-      return Number.integer(0);
+      return Number.fromInt(0);
     }
 
     return r.not(parser.wordlen);
@@ -1482,32 +1501,29 @@ class NotNode extends RNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the AndNode, OrNode and XorNode classes:
 class AndNode extends LRNode {
-  AndNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  AndNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
-  Number solveLR(Number l, Number r) {
-    return l.and(r);
+  Number solveLR(Number left, Number r) {
+    return left.and(r);
   }
 }
 
 class OrNode extends LRNode {
-  OrNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  OrNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
-  Number solveLR(Number l, Number r) {
-    return l.or(r);
+  Number solveLR(Number left, Number r) {
+    return left.or(r);
   }
 }
 
 class XorNode extends LRNode {
-  XorNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  XorNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
-  Number solveLR(Number l, Number r) {
-    return l.xor(r);
+  Number solveLR(Number left, Number r) {
+    return left.xor(r);
   }
 }
 
@@ -1621,8 +1637,7 @@ class XorNode extends LRNode {
 //
 // the following is the equivalent Dart code to the previous commented Vala code that defines the ConvertNode, ConvertBaseNode and ConvertNumberNode classes:
 class ConvertNode extends LRNode {
-  ConvertNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  ConvertNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number solveLR(Number l, Number r) {
@@ -1630,7 +1645,8 @@ class ConvertNode extends LRNode {
     if (left!.value != null) {
       from = left!.value;
       left!.value = null;
-    } else {
+    }
+    else {
       from = left!.token.text;
     }
 
@@ -1638,22 +1654,25 @@ class ConvertNode extends LRNode {
     if (right!.value != null) {
       to = right!.value;
       right!.value = null;
-    } else {
+    }
+    else {
       to = right!.token.text;
     }
 
-    var tmp = Number.integer(1);
+    var tmp = Number.fromInt(1);
 
-    var ans = parser.convert(tmp, from, to);
-    if (ans == null) parser.setError(ErrorCode.unknownConversion);
+    var ans = parser.convert(tmp, from!, to!);
+    if (ans == null) {
+      parser.setError(ErrorCode.unknownConversion);
+      return Number.fromInt(0);
+    }
 
     return ans;
   }
 }
 
 class ConvertBaseNode extends ParseNode {
-  ConvertBaseNode(Parser parser, LexerToken? token, int precedence, Associativity associativity, [String? value])
-      : super(parser, token, precedence, associativity, value);
+  ConvertBaseNode(super.parser, super.token, super.precedence, super.associativity, [super.value]);
 
   @override
   Number? solve() {
@@ -1678,8 +1697,7 @@ class ConvertBaseNode extends ParseNode {
 }
 
 class ConvertNumberNode extends ParseNode {
-  ConvertNumberNode(Parser parser, LexerToken? token, int precedence, Associativity associativity)
-      : super(parser, token, precedence, associativity);
+  ConvertNumberNode(super.parser, super.token, super.precedence, super.associativity);
 
   @override
   Number? solve() {
@@ -1687,7 +1705,8 @@ class ConvertNumberNode extends ParseNode {
     if (left!.value != null) {
       from = left!.value;
       left!.value = null;
-    } else {
+    }
+    else {
       from = left!.token.text;
     }
 
@@ -1695,14 +1714,15 @@ class ConvertNumberNode extends ParseNode {
     if (right!.value != null) {
       to = right!.value;
       right!.value = null;
-    } else {
+    }
+    else {
       to = right!.token.text;
     }
 
     var tmp = left!.left!.solve();
     if (tmp == null) return null;
 
-    var ans = parser.convert(tmp, from, to);
+    var ans = parser.convert(tmp, from!, to!);
     if (ans == null) parser.setError(ErrorCode.unknownConversion);
 
     return ans;
@@ -2965,6 +2985,9 @@ class Parser {
     "τ": Number.tau(),
     "i": Number.i()
   };
+
+  // Getter for wordLen
+  int get wordlen => wordLen;
 
   // the following is a commented Vala code that defines the Parser constructor:
   // public Parser (string input, int number_base, int wordlen, AngleUnit angle_units)
@@ -4994,23 +5017,447 @@ class Parser {
     }
   }
 
+// The following is a commented Vala code that defines the following methods: variable,function_invocation, term andterm_2.
+//     private bool variable ()
+//     {
+//         var token = lexer.get_next_token ();
+//         if (token.type == LexerTokenType.FUNCTION)
+//         {
+//             lexer.roll_back ();
+//             if (!function_invocation ())
+//                 return false;
+//             return true;
+//         }
+//         else if (token.type == LexerTokenType.SUB_NUMBER)
+//         {
+//             var token_old = token;
+//             token = lexer.get_next_token ();
+//             if (token.type == LexerTokenType.ROOT)
+//             {
+//                 insert_into_tree_unary (new RootNode.WithToken (this, token, make_precedence_t (token.type), get_associativity (token), token_old));
+//                 if (!expression ())
+//                     return false;
+//
+//                 return true;
+//             }
+//             else
+//                 return false;
+//         }
+//         else if (token.type == LexerTokenType.ROOT)
+//         {
+//             insert_into_tree_unary (new RootNode (this, token, make_precedence_t (token.type), get_associativity (token), 2));
+//
+//             if (!expression ())
+//                 return false;
+//
+//             return true;
+//         }
+//         else if (token.type == LexerTokenType.ROOT_3)
+//         {
+//             insert_into_tree_unary (new RootNode (this, token, make_precedence_t (token.type), get_associativity (token), 3));
+//
+//             if (!expression ())
+//                 return false;
+//
+//             return true;
+//         }
+//         else if (token.type == LexerTokenType.ROOT_4)
+//         {
+//             insert_into_tree_unary (new RootNode (this, token, make_precedence_t (token.type), get_associativity (token), 4));
+//
+//             if (!expression ())
+//                 return false;
+//
+//             return true;
+//         }
+//         else if (token.type == LexerTokenType.VARIABLE)
+//         {
+//             lexer.roll_back ();
+//             //TODO: unknown function ERROR for (VARIABLE SUP_NUMBER expression).
+//             if (!term ())
+//                 return false;
+//
+//             return true;
+//         }
+//         else
+//             return false;
+//     }
+//
+//     private bool function_invocation ()
+//     {
+//         depth_level++;
+//         int num_token_parsed = 0;
+//         var fun_token = lexer.get_next_token ();
+//         num_token_parsed ++;
+//         string function_name = fun_token.text;
+//
+//         insert_into_tree (new FunctionNameNode (this, fun_token, make_precedence_p (Precedence.NUMBER_VARIABLE), get_associativity_p (Precedence.NUMBER_VARIABLE), function_name));
+//
+//         var token = lexer.get_next_token ();
+//         num_token_parsed++;
+//         string? power = null;
+//         if (token.type == LexerTokenType.SUP_NUMBER || token.type == LexerTokenType.NSUP_NUMBER)
+//         {
+//             power = token.text;
+//             token = lexer.get_next_token ();
+//             num_token_parsed++;
+//         }
+//
+//         insert_into_tree (new FunctionNode (this, fun_token, make_precedence_t (fun_token.type), get_associativity (fun_token), power));
+//
+//         if (token.type == LexerTokenType.L_R_BRACKET)
+//         {
+//             token = lexer.get_next_token ();
+//             num_token_parsed++;
+//             int m_depth = 1;
+//             string argument_list = "";
+//             List<LexerToken> token_list = new List<LexerToken>();
+//
+//             while (token.type != LexerTokenType.PL_EOS && token.type != LexerTokenType.ASSIGN)
+//             {
+//                 if (token.type == LexerTokenType.L_R_BRACKET)
+//                     m_depth++;
+//                 else if (token.type == LexerTokenType.R_R_BRACKET)
+//                 {
+//                     m_depth--;
+//                     if (m_depth == 0)
+//                         break;
+//                 }
+//                 else
+//                     token_list.append(token);
+//                 argument_list += token.text;
+//                 token = lexer.get_next_token ();
+//                 num_token_parsed++;
+//             }
+//
+//             if (token.type != LexerTokenType.R_R_BRACKET)
+//             {
+//                 while (num_token_parsed-- > 0)
+//                     lexer.roll_back ();
+//                 depth_level--;
+//                 return false;
+//             }
+//
+//             insert_into_tree (new FunctionArgumentsNode (this, token_list, make_precedence_p (Precedence.NUMBER_VARIABLE), get_associativity_p (Precedence.NUMBER_VARIABLE), argument_list));
+//         }
+//         else
+//         {
+//             lexer.roll_back ();
+//             if (!expression_1 ())
+//             {
+//                 lexer.roll_back ();
+//                 depth_level--;
+//                 return false;
+//             }
+//
+//             token = lexer.get_next_token ();
+//             if (token.type == LexerTokenType.FACTORIAL)
+//                 insert_into_tree_unary (new FactorialNode (this, token, make_precedence_t (token.type), get_associativity (token)));
+//             else
+//                 lexer.roll_back ();
+//
+//             depth_level--;
+//
+//             if (!expression_2 ())
+//             {
+//                 lexer.roll_back ();
+//                 return false;
+//             }
+//             return true;
+//         }
+//
+//         depth_level--;
+//         return true;
+//     }
+//
+//     private bool term ()
+//     {
+//         var token = lexer.get_next_token ();
+//
+//         if (token.type == LexerTokenType.VARIABLE)
+//         {
+//             var token_old = token;
+//             token = lexer.get_next_token ();
+//             /* Check if the token is a valid variable or not. */
+//             if (!check_variable (token_old.text))
+//             {
+//                 if (token.text == "(")
+//                     set_error (ErrorCode.UNKNOWN_FUNCTION, token_old.text, token_old.start_index, token_old.end_index);
+//                 else
+//                     set_error (ErrorCode.UNKNOWN_VARIABLE, token_old.text, token_old.start_index, token_old.end_index);
+//                 return false;
+//             }
+//             if (token.type == LexerTokenType.SUP_NUMBER)
+//                 insert_into_tree (new VariableWithPowerNode (this, token_old, make_precedence_t (token_old.type), get_associativity (token_old), token.text));
+//             else
+//             {
+//                 lexer.roll_back ();
+//                 insert_into_tree (new VariableNode (this, token_old, make_precedence_t (token_old.type), get_associativity (token_old)));
+//             }
+//
+//             if (!term_2 ())
+//                 return false;
+//
+//             return true;
+//         }
+//         else
+//             return false;
+//     }
+//
+//     private bool term_2 ()
+//     {
+//         var token = lexer.get_next_token ();
+//         lexer.roll_back ();
+//
+//         if (token.type == LexerTokenType.PL_EOS || token.type == LexerTokenType.ASSIGN)
+//             return true;
+//
+//         if (token.type == LexerTokenType.FUNCTION || token.type == LexerTokenType.VARIABLE || token.type == LexerTokenType.SUB_NUMBER || token.type == LexerTokenType.ROOT || token.type == LexerTokenType.ROOT_3 || token.type == LexerTokenType.ROOT_4)
+//         {
+//             /* Insert multiply in between variable and (function, variable, root) */
+//             insert_into_tree (new MultiplyNode (this, null, make_precedence_p (Precedence.MULTIPLY), get_associativity_p (Precedence.MULTIPLY)));
+//             if (!variable ())
+//                 return false;
+//             return true;
+//         }
+//         else
+//             return true;
+//     }
+//
+// this is the equivalent Dart code to the previous commented Vala code that defines the following methods: variable, functionInvocation, term and term2:
+  bool variable() {
+    var token = lexer.getNextToken();
+    if (token.type == LexerTokenType.function) {
+      lexer.rollBack();
+      if (!functionInvocation()) {
+        return false;
+      }
+      return true;
+    }
+    else if (token.type == LexerTokenType.subNumber) {
+      var tokenOld = token;
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.root) {
+        insertIntoTreeUnary(RootNode.withToken(
+            this, token, makePrecedenceT(token.type), getAssociativity(token),
+            tokenOld));
+        if (!expression()) {
+          return false;
+        }
 
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    else if (token.type == LexerTokenType.root) {
+      insertIntoTreeUnary(RootNode(
+          this, token, makePrecedenceT(token.type), getAssociativity(token),
+          2));
 
+      if (!expression()) {
+        return false;
+      }
 
+      return true;
+    }
+    else if (token.type == LexerTokenType.root_3) {
+      insertIntoTreeUnary(RootNode(
+          this, token, makePrecedenceT(token.type), getAssociativity(token),
+          3));
 
+      if (!expression()) {
+        return false;
+      }
 
+      return true;
+    }
+    else if (token.type == LexerTokenType.root_4) {
+      insertIntoTreeUnary(RootNode(
+          this, token, makePrecedenceT(token.type), getAssociativity(token),
+          4));
 
+      if (!expression()) {
+        return false;
+      }
 
+      return true;
+    }
+    else if (token.type == LexerTokenType.variable) {
+      lexer.rollBack();
+      // TODO: unknown function ERROR for (VARIABLE SUP_NUMBER expression).
+      if (!term()) {
+        return false;
+      }
 
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
 
+  bool functionInvocation() {
+    depthLevel++;
+    int numTokenParsed = 0;
+    var funToken = lexer.getNextToken();
+    numTokenParsed++;
+    String functionName = funToken.text;
 
+    insertIntoTree(FunctionNameNode(
+        this, funToken, makePrecedenceP(Precedence.numberVariable),
+        getAssociativityP(Precedence.numberVariable), functionName));
 
+    var token = lexer.getNextToken();
+    numTokenParsed++;
+    String? power;
+    if (token.type == LexerTokenType.supNumber ||
+        token.type == LexerTokenType.nSupNumber) {
+      power = token.text;
+      token = lexer.getNextToken();
+      numTokenParsed++;
+    }
 
+    insertIntoTree(FunctionNode(
+        this, funToken, makePrecedenceT(funToken.type),
+        getAssociativity(funToken),
+        power));
 
+    if (token.type == LexerTokenType.lRBracket) {
+      token = lexer.getNextToken();
+      numTokenParsed++;
+      int mDepth = 1;
+      String argumentList = "";
+      List<LexerToken> tokenList = [];
 
+      while (token.type != LexerTokenType.plEOS &&
+          token.type != LexerTokenType.assign) {
+        if (token.type == LexerTokenType.lRBracket) {
+          mDepth++;
+        }
+        else if (token.type == LexerTokenType.rRBracket) {
+          mDepth--;
+          if (mDepth == 0) {
+            break;
+          }
+        }
+        else {
+          tokenList.add(token);
+        }
+        argumentList += token.text;
+        token = lexer.getNextToken();
+        numTokenParsed++;
+      }
 
+      if (token.type != LexerTokenType.rRBracket) {
+        while (numTokenParsed-- > 0) {
+          lexer.rollBack();
+        }
+        depthLevel--;
+        return false;
+      }
 
+      insertIntoTree(FunctionArgumentsNode(
+          this, tokenList, makePrecedenceP(Precedence.numberVariable),
+          getAssociativityP(Precedence.numberVariable), argumentList));
+    }
+    else {
+      lexer.rollBack();
+      if (!expression1()) {
+        lexer.rollBack();
+        depthLevel--;
+        return false;
+      }
 
+      token = lexer.getNextToken();
+      if (token.type == LexerTokenType.factorial) {
+        insertIntoTreeUnary(FactorialNode(
+            this, token, makePrecedenceT(token.type), getAssociativity(token)));
+      }
+      else {
+        lexer.rollBack();
+      }
 
+      depthLevel--;
 
+      if (!expression2()) {
+        lexer.rollBack();
+        return false;
+      }
+
+      return true;
+    }
+
+    depthLevel--;
+    return true;
+  }
+
+  bool term() {
+    var token = lexer.getNextToken();
+
+    if (token.type == LexerTokenType.variable) {
+      var tokenOld = token;
+      token = lexer.getNextToken();
+      /* Check if the token is a valid variable or not. */
+      if (!checkVariable(tokenOld.text)) {
+        if (token.text == "(") {
+          setError(ErrorCode.unknownFunction, tokenOld.text, tokenOld.startIndex, tokenOld.endIndex);
+        }
+        else {
+          setError(ErrorCode.unknownVariable, tokenOld.text, tokenOld.startIndex, tokenOld.endIndex);
+        }
+        return false;
+      }
+      if (token.type == LexerTokenType.supNumber) {
+        insertIntoTree(VariableWithPowerNode(
+            this, tokenOld, makePrecedenceT(tokenOld.type),
+            getAssociativity(tokenOld), token.text));
+      }
+      else {
+        lexer.rollBack();
+        insertIntoTree(VariableNode(
+            this, tokenOld, makePrecedenceT(tokenOld.type),
+            getAssociativity(tokenOld)));
+      }
+
+      if (!term2()) {
+        return false;
+      }
+
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  bool term2() {
+    var token = lexer.getNextToken();
+    lexer.rollBack();
+
+    if (token.type == LexerTokenType.plEOS ||
+        token.type == LexerTokenType.assign) {
+      return true;
+    }
+
+    if (token.type == LexerTokenType.function ||
+        token.type == LexerTokenType.variable ||
+        token.type == LexerTokenType.subNumber ||
+        token.type == LexerTokenType.root ||
+        token.type == LexerTokenType.root_3 ||
+        token.type == LexerTokenType.root_4) {
+      /* Insert multiply in between variable and (function, variable, root) */
+      insertIntoTree(MultiplyNode(
+          this, null, makePrecedenceP(Precedence.multiply),
+          getAssociativityP(Precedence.multiply)));
+      if (!variable()) {
+        return false;
+      }
+      return true;
+    }
+    else {
+      return true;
+    }
+  }
 }
