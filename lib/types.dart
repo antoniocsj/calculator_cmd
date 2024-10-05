@@ -165,7 +165,7 @@ class ParseResult {
   final String? errorToken;
   final int errorStart;
   final int errorEnd;
-  final Number? result;
+  final Number? number;
 
   ParseResult({
     required this.representationBase,
@@ -173,6 +173,6 @@ class ParseResult {
     required this.errorToken,
     required this.errorStart,
     required this.errorEnd,
-    required this.result,
+    required this.number,
   });
 }

@@ -1,18 +1,23 @@
 import 'package:calculator/enums.dart';
 import 'package:calculator/number.dart';
 import 'package:calculator/types.dart';
+import 'package:calculator/equation_parser.dart';
+import 'package:calculator/function_manager.dart';
+import 'package:calculator/unit.dart';
 
 int subAtoi(String data) {
   const List<String> digits = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+  int value = 0;
 
   int index = 0;
   String c;
-  int value = 0;
   RefInt refIndex = RefInt(index);
   RefString refChar = RefString('');
 
   while (data.getNextChar(refIndex, refChar)) {
+    index = refIndex.value;
     c = refChar.value;
+
     bool isSubdigit = false;
     for (int i = 0; i < digits.length; i++) {
       if (c == digits[i]) {
@@ -34,18 +39,25 @@ int superAtoi(String data) {
   String c;
   RefInt refIndex = RefInt(index);
   RefString refChar = RefString('');
+
   data.getNextChar(refIndex, refChar);
+  index = refIndex.value;
   c = refChar.value;
+
   int sign = 1;
+
   if (c == '⁻') {
     sign = -1;
   } else {
-    refIndex.value = 0;
+    index = 0;
+    refIndex.value = index;
   }
 
   int value = 0;
   while (data.getNextChar(refIndex, refChar)) {
+    index = refIndex.value;
     c = refChar.value;
+
     bool isSuperdigit = false;
     for (int i = 0; i < digits.length; i++) {
       if (c == digits[i]) {
@@ -65,31 +77,33 @@ String mpErrorCodeToString(ErrorCode errorCode) {
 }
 
 class Equation {
-  int base;
-  int wordlen;
-  AngleUnit angleUnits;
+  late int base;
+  late int wordlen;
+  late AngleUnit angleUnits;
   String expression;
 
   Equation(this.expression);
 
   Number? parse({
     required RefInt representationBase,
-    required Ref<ErrorCode> errorCode,
-    required RefString errorToken,
+    required RefErrorCode errorCode,
+    required RefString? errorToken,
     required RefInt errorStart,
     required RefInt errorEnd,
   }) {
     var parser = EquationParser(this, expression);
     Number.error = null;
 
-    var z = parser.parse(
-      representationBase: representationBase,
-      errorCode: errorCode,
-      errorToken: errorToken,
-      errorStart: errorStart,
-      errorEnd: errorEnd,
-    );
+    var result = parser.parse();
+    representationBase.value = result.representationBase;
+    errorCode.value = result.errorCode;
+    errorToken?.value = result.errorToken??'';
+    errorStart.value = result.errorStart;
+    errorEnd.value = result.errorEnd;
 
+    var z = result.number;
+
+    /* Error during parsing */
     if (errorCode.value != ErrorCode.none) {
       return null;
     }
@@ -130,7 +144,7 @@ class Equation {
 }
 
 class ConvertEquation extends Equation {
-  ConvertEquation(String text) : super(text);
+  ConvertEquation(super.text);
 
   @override
   Number? convert(Number x, String xUnits, String zUnits) {
@@ -139,21 +153,23 @@ class ConvertEquation extends Equation {
 }
 
 class EquationParser extends Parser {
-  final Equation equation;
+  Equation equation;
 
-  EquationParser(this.equation, String expression)
-      : super(expression, equation.base, equation.wordlen, equation.angleUnits);
+  EquationParser(this.equation, String expression) :
+        super(expression, equation.base, equation.wordlen, equation.angleUnits) {
+    equation = equation;
+  }
 
   @override
   bool variableIsDefined(String name) {
-    if (CONSTANTS.contains(name)) return true;
+    if (Parser.constants.containsKey(name)) return true;
     return equation.variableIsDefined(name);
   }
 
   @override
   Number? getVariable(String name) {
-    if (CONSTANTS.contains(name)) {
-      return CONSTANTS.get(name);
+    if (Parser.constants.containsKey(name)) {
+      return Parser.constants[name];
     } else {
       return equation.getVariable(name);
     }
@@ -161,9 +177,18 @@ class EquationParser extends Parser {
 
   @override
   void setVariable(String name, Number x) {
-    if (CONSTANTS.contains(name)) return;
+    // Reserved words, e, π, mod, and, or, xor, not, abs, log, ln, sqrt, int, frac, sin, cos, ...
+    if (Parser.constants.containsKey(name)) {
+      return; // False
+    }
+
     equation.setVariable(name, x);
   }
+
+  // FIXME: Accept "2sin" not "2 sin", i.e. let the tokenizer collect the multiple
+  // Parser then distinguishes between "sin"="s*i*n" or "sin5" = "sin 5" = "sin (5)"
+  // i.e. numbers+letters = variable or function depending on following arg
+  // letters+numbers = numbers+letters+numbers = function
 
   @override
   bool functionIsDefined(String name) {

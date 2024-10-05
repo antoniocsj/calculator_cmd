@@ -725,7 +725,7 @@ class FunctionNode extends ParseNode {
         var errorEnd = 0;
 
         ParseResult result = argumentParser.parse();
-        var ans = result.result;
+        var ans = result.number;
         representationBase = result.representationBase;
         errorCode = result.errorCode;
         errorToken = result.errorToken;
@@ -3287,7 +3287,7 @@ class Parser {
           errorToken: result.errorToken,
           errorStart: result.errorStart,
           errorEnd: result.errorEnd,
-          result: null);
+          number: null);
     }
 
     var ans = root?.solve();
@@ -3299,7 +3299,7 @@ class Parser {
           errorToken: errorToken,
           errorStart: errorTokenStart,
           errorEnd: errorTokenEnd,
-          result: null);
+          number: null);
     }
 
     return ParseResult(
@@ -3308,7 +3308,7 @@ class Parser {
         errorToken: errorToken,
         errorStart: errorTokenStart,
         errorEnd: errorTokenEnd,
-        result: ans);
+        number: ans);
   }
 
   // The following is a commented Vala code that defines the following method get_precedence.
