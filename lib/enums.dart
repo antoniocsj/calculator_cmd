@@ -149,8 +149,11 @@ enum Precedence {
   }
 }
 
-
-
+enum NumberMode {
+  normal,
+  superscript,
+  subscript
+}
 
 
 
