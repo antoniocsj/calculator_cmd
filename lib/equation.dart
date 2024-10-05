@@ -85,31 +85,32 @@ class Equation {
   Equation(this.expression);
 
   Number? parse({
-    required RefInt representationBase,
-    required RefErrorCode errorCode,
-    required RefString? errorToken,
-    required RefInt errorStart,
-    required RefInt errorEnd,
+    RefInt? representationBase,
+    RefErrorCode? errorCode,
+    RefString? errorToken,
+    RefInt? errorStart,
+    RefInt? errorEnd,
   }) {
     var parser = EquationParser(this, expression);
     Number.error = null;
 
     var result = parser.parse();
-    representationBase.value = result.representationBase;
-    errorCode.value = result.errorCode;
+
+    representationBase?.value = result.representationBase;
+    errorCode?.value = result.errorCode;
     errorToken?.value = result.errorToken??'';
-    errorStart.value = result.errorStart;
-    errorEnd.value = result.errorEnd;
+    errorStart?.value = result.errorStart;
+    errorEnd?.value = result.errorEnd;
 
     var z = result.number;
 
     /* Error during parsing */
-    if (errorCode.value != ErrorCode.none) {
+    if (errorCode?.value != ErrorCode.none) {
       return null;
     }
 
     if (Number.error != null) {
-      errorCode.value = ErrorCode.mp;
+      errorCode?.value = ErrorCode.mp;
       return null;
     }
 

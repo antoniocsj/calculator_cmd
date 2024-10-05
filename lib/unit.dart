@@ -1,4 +1,7 @@
 import 'package:calculator/number.dart';
+import 'package:calculator/equation.dart';
+import 'package:calculator/serializer.dart';
+import 'package:calculator/enums.dart';
 
 UnitManager? defaultUnitManager;
 
@@ -10,154 +13,6 @@ class UnitManager {
   }
 
   static UnitManager getDefault() {
-    // Vala code:
-    // if (default_unit_manager != null)
-    //             return default_unit_manager;
-    //
-    //         default_unit_manager = new UnitManager ();
-    //
-    //         var angle_category = default_unit_manager.add_category ("angle", _("Angle"));
-    //         var length_category = default_unit_manager.add_category ("length", _("Length"));
-    //         var area_category = default_unit_manager.add_category ("area", _("Area"));
-    //         var volume_category = default_unit_manager.add_category ("volume", _("Volume"));
-    //         var weight_category = default_unit_manager.add_category ("weight", _("Mass"));
-    //         var speed_category = default_unit_manager.add_category ("speed", _("Speed"));
-    //         var duration_category = default_unit_manager.add_category ("duration", _("Duration"));
-    //         var frequency_category = default_unit_manager.add_category ("frequency", _("Frequency"));
-    //         var temperature_category = default_unit_manager.add_category ("temperature", _("Temperature"));
-    //         var energy_category = default_unit_manager.add_category("energy",_("Energy"));
-    //         var digitalstorage_category = default_unit_manager.add_category ("digitalstorage", _("Digital Storage"));
-    //
-    //         /* FIXME: Approximations of 1/(units in a circle), therefore, 360 deg != 400 grads */
-    //         angle_category.add_unit (new Unit ("degree", _("Degrees"), dpgettext2 (null, "unit-format", "%s degrees"), "π*x/180", "180x/π", dpgettext2 (null, "unit-symbols", "degree,degrees,deg")));
-    //         angle_category.add_unit (new Unit ("radian", _("Radians"), dpgettext2 (null, "unit-format", "%s radians"), "x", "x", dpgettext2 (null, "unit-symbols", "radian,radians,rad")));
-    //         angle_category.add_unit (new Unit ("gradian", _("Gradians"), dpgettext2 (null, "unit-format", "%s gradians"), "π*x/200", "200x/π", dpgettext2 (null, "unit-symbols", "gradian,gradians,grad")));
-    //         length_category.add_unit (new Unit ("parsec", _("Parsecs"), dpgettext2 (null, "unit-format", "%s pc"), "30857000000000000x", "x/30857000000000000", dpgettext2 (null, "unit-symbols", "parsec,parsecs,pc")));
-    //         length_category.add_unit (new Unit ("lightyear", _("Light Years"), dpgettext2 (null, "unit-format", "%s ly"), "9460730472580800x", "x/9460730472580800", dpgettext2 (null, "unit-symbols", "lightyear,lightyears,ly")));
-    //         length_category.add_unit (new Unit ("astronomical-unit", _("Astronomical Units"), dpgettext2 (null, "unit-format", "%s au"), "149597870700x", "x/149597870700", dpgettext2 (null, "unit-symbols", "au")));
-    //         length_category.add_unit (new Unit ("rack-unit", _("Rack Units"), dpgettext2 (null, "unit-format", "%sU"), "x/22.49718785151856", "22.49718785151856x", dpgettext2 (null, "unit-symbols", "U")));
-    //         length_category.add_unit (new Unit ("nautical-mile", _("Nautical Miles"), dpgettext2 (null, "unit-format", "%s nmi"), "1852x", "x/1852", dpgettext2 (null, "unit-symbols", "nmi")));
-    //         length_category.add_unit (new Unit ("mile", _("Miles"), dpgettext2 (null, "unit-format", "%s mi"), "1609.344x", "x/1609.344", dpgettext2 (null, "unit-symbols", "mile,miles,mi")));
-    //         length_category.add_unit (new Unit ("kilometer", _("Kilometers"), dpgettext2 (null, "unit-format", "%s km"), "1000x", "x/1000", dpgettext2 (null, "unit-symbols", "kilometer,kilometers,km,kms")));
-    //         length_category.add_unit (new Unit ("cable", _("Cables"), dpgettext2 (null, "unit-format", "%s cb"), "219.456x", "x/219.456", dpgettext2 (null, "unit-symbols", "cable,cables,cb")));
-    //         length_category.add_unit (new Unit ("fathom", _("Fathoms"), dpgettext2 (null, "unit-format", "%s ftm"), "1.8288x", "x/1.8288", dpgettext2 (null, "unit-symbols", "fathom,fathoms,ftm")));
-    //         length_category.add_unit (new Unit ("meter", _("Meters"), dpgettext2 (null, "unit-format", "%s m"), "x", "x", dpgettext2 (null, "unit-symbols", "meter,meters,m")));
-    //         length_category.add_unit (new Unit ("yard", _("Yards"), dpgettext2 (null, "unit-format", "%s yd"), "0.9144x", "x/0.9144", dpgettext2 (null, "unit-symbols", "yard,yards,yd")));
-    //         length_category.add_unit (new Unit ("foot", _("Feet"), dpgettext2 (null, "unit-format", "%s ft"), "0.3048x", "x/0.3048", dpgettext2 (null, "unit-symbols", "foot,feet,ft")));
-    //         length_category.add_unit (new Unit ("inch", _("Inches"), dpgettext2 (null, "unit-format", "%s in"), "0.0254x", "x/0.0254", dpgettext2 (null, "unit-symbols", "inch,inches,in")));
-    //         length_category.add_unit (new Unit ("centimeter", _("Centimeters"), dpgettext2 (null, "unit-format", "%s cm"), "x/100", "100x", dpgettext2 (null, "unit-symbols", "centimeter,centimeters,cm,cms")));
-    //         length_category.add_unit (new Unit ("millimeter", _("Millimeters"), dpgettext2 (null, "unit-format", "%s mm"), "x/1000", "1000x", dpgettext2 (null, "unit-symbols", "millimeter,millimeters,mm")));
-    //         length_category.add_unit (new Unit ("micrometer", _("Micrometers"), dpgettext2 (null, "unit-format", "%s μm"), "x/1000000", "1000000x", dpgettext2 (null, "unit-symbols", "micrometer,micrometers,um")));
-    //         length_category.add_unit (new Unit ("nanometer", _("Nanometers"), dpgettext2 (null, "unit-format", "%s nm"), "x/1000000000", "1000000000x", dpgettext2 (null, "unit-symbols", "nanometer,nanometers,nm")));
-    //         length_category.add_unit (new Unit ("point", _("Desktop Publishing Point"), dpgettext2 (null, "unit-format", "%s pt"), "0.000352777778x", "x/0.000352777778", dpgettext2 (null, "unit-symbols", "point,pt,points,pts")));
-    //         speed_category.add_unit (new Unit ("kilometers-hour", _("Kilometers per hour"), dpgettext2 (null, "unit-format", "%s km/h"), "x/3.6", "3.6x", dpgettext2 (null, "unit-symbols", "kilometers per hour,kmph,kmh,kph")));
-    //         speed_category.add_unit (new Unit ("miles-hour", _("Miles per hour"), dpgettext2 (null, "unit-format", "%s miles/h"), "x/2.23693629", "2.23693629x", dpgettext2 (null, "unit-symbols", "milesph,miles per hour,mi/h,miph,mph")));
-    //         speed_category.add_unit (new Unit ("meters-second", _("Meters per second"), dpgettext2 (null, "unit-format", "%s m/s"), "x", "x", dpgettext2 (null, "unit-symbols", "meters per second,mps")));
-    //         speed_category.add_unit (new Unit ("feet-second", _("Feet per second"), dpgettext2 (null, "unit-format", "%s feet/s"), "x/3.28084", "3.28084x", dpgettext2 (null, "unit-symbols", "fps,feet per second,feetps")));
-    //         speed_category.add_unit (new Unit ("knot", _("Knots"), dpgettext2 (null, "unit-format", "%s kt"), "x/1.94384449", "1.94384449x", dpgettext2 (null, "unit-symbols", "kt,kn,nd,knot,knots")));
-    //         area_category.add_unit (new Unit ("hectare", _("Hectares"), dpgettext2 (null, "unit-format", "%s ha"), "10000x", "x/10000", dpgettext2 (null, "unit-symbols", "hectare,hectares,ha")));
-    //         area_category.add_unit (new Unit ("acre", _("Acres"), dpgettext2 (null, "unit-format", "%s acres"), "4046.8564224x", "x/4046.8564224", dpgettext2 (null, "unit-symbols", "acre,acres")));
-    //         area_category.add_unit (new Unit ("square-foot", _("Square Foot"), dpgettext2 (null, "unit-format", "%s ft²"), "x/10.763910417", "10.763910417x", dpgettext2 (null, "unit-symbols", "ft²")));
-    //         area_category.add_unit (new Unit ("square-meter", _("Square Meters"), dpgettext2 (null, "unit-format", "%s m²"), "x", "x", dpgettext2 (null, "unit-symbols", "m²")));
-    //         area_category.add_unit (new Unit ("square-centimeter", _("Square Centimeters"), dpgettext2 (null, "unit-format", "%s cm²"), "0.0001x", "10000x", dpgettext2 (null, "unit-symbols", "cm²")));
-    //         area_category.add_unit (new Unit ("square-millimeter", _("Square Millimeters"), dpgettext2 (null, "unit-format", "%s mm²"), "0.000001x", "1000000x", dpgettext2 (null, "unit-symbols", "mm²")));
-    //         volume_category.add_unit (new Unit ("cubic-meter", _("Cubic Meters"), dpgettext2 (null, "unit-format", "%s m³"), "1000x", "x/1000", dpgettext2 (null, "unit-symbols", "m³")));
-    //         volume_category.add_unit (new Unit ("gallon", _("US Gallons"), dpgettext2 (null, "unit-format", "%s gal"), "3.785412x", "x/3.785412", dpgettext2 (null, "unit-symbols", "gallon,gallons,gal")));
-    //         volume_category.add_unit (new Unit ("litre", _("Liters"), dpgettext2 (null, "unit-format", "%s L"), "x", "x", dpgettext2 (null, "unit-symbols", "litre,litres,liter,liters,L")));
-    //         volume_category.add_unit (new Unit ("quart", _("US Quarts"), dpgettext2 (null, "unit-format", "%s qt"), "0.9463529x", "x/0.9463529", dpgettext2 (null, "unit-symbols", "quart,quarts,qt")));
-    //         volume_category.add_unit (new Unit ("pint", _("US Pints"), dpgettext2 (null, "unit-format", "%s pt"), "0.4731765x", "x/0.4731765", dpgettext2 (null, "unit-symbols", "pint,pints,pt")));
-    //         volume_category.add_unit (new Unit ("cup", _("Metric Cups"), dpgettext2 (null, "unit-format", "%s cup"), "0.25x", "4x", dpgettext2 (null, "unit-symbols", "cup,cups,cp")));
-    //         volume_category.add_unit (new Unit ("millilitre", _("Milliliters"), dpgettext2 (null, "unit-format", "%s mL"), "0.001x", "1000x", dpgettext2 (null, "unit-symbols", "millilitre,millilitres,milliliter,milliliters,mL,cm³")));
-    //         volume_category.add_unit (new Unit ("microlitre", _("Microliters"), dpgettext2 (null, "unit-format", "%s μL"), "0.000001x", "1000000x", dpgettext2 (null, "unit-symbols", "mm³,μL,uL")));
-    //         weight_category.add_unit (new Unit ("tonne", _("Tonnes"), dpgettext2 (null, "unit-format", "%s T"), "1000x", "x/1000", dpgettext2 (null, "unit-symbols", "tonne,tonnes")));
-    //         weight_category.add_unit (new Unit ("kilograms", _("Kilograms"), dpgettext2 (null, "unit-format", "%s kg"), "x", "x", dpgettext2 (null, "unit-symbols", "kilogram,kilograms,kilogramme,kilogrammes,kg,kgs")));
-    //         weight_category.add_unit (new Unit ("pound", _("Pounds"), dpgettext2 (null, "unit-format", "%s lb"), "0.45359237x", "x/0.45359237", dpgettext2 (null, "unit-symbols", "pound,pounds,lb,lbs")));
-    //         weight_category.add_unit (new Unit ("ounce", _("Ounces"), dpgettext2 (null, "unit-format", "%s oz"), "0.02834952x", "x/0.02834952", dpgettext2 (null, "unit-symbols", "ounce,ounces,oz")));
-    //         weight_category.add_unit (new Unit ("troy-ounce", _("Troy Ounces"), dpgettext2 (null, "unit-format", "%s ozt"), "0.0311034768x", "x/0.0311034768", dpgettext2 (null, "unit-symbols", "Troy ounce,Troy ounces,ozt")));
-    //         weight_category.add_unit (new Unit ("gram", _("Grams"), dpgettext2 (null, "unit-format", "%s g"), "0.001x", "1000x", dpgettext2 (null, "unit-symbols", "gram,grams,gramme,grammes,g")));
-    //         weight_category.add_unit (new Unit ("stone", _("Stone"), dpgettext2 (null, "unit-format", "%s st"), "6.350293x", "x/6.350293", dpgettext2 (null, "unit-symbols", "stone,st,stones")));
-    //         duration_category.add_unit (new Unit ("century", _("Centuries"), dpgettext2 (null, "unit-format", "%s centuries"), "3155760000x", "x/3155760000", dpgettext2 (null, "unit-symbols", "century,centuries")));
-    //         duration_category.add_unit (new Unit ("decade", _("Decades"), dpgettext2 (null, "unit-format", "%s decades"), "315576000x", "x/315576000", dpgettext2 (null, "unit-symbols", "decade,decades")));
-    //         duration_category.add_unit (new Unit ("year", _("Years"), dpgettext2 (null, "unit-format", "%s years"), "31557600x", "x/31557600", dpgettext2 (null, "unit-symbols", "year,years")));
-    //         duration_category.add_unit (new Unit ("month", _("Months"), dpgettext2 (null, "unit-format", "%s months"), "2629800x", "x/2629800", dpgettext2 (null, "unit-symbols", "month,months")));
-    //         duration_category.add_unit (new Unit ("week", _("Weeks"), dpgettext2 (null, "unit-format", "%s weeks"), "604800x", "x/604800", dpgettext2 (null, "unit-symbols", "week,weeks")));
-    //         duration_category.add_unit (new Unit ("day", _("Days"), dpgettext2 (null, "unit-format", "%s days"), "86400x", "x/86400", dpgettext2 (null, "unit-symbols", "day,days")));
-    //         duration_category.add_unit (new Unit ("hour", _("Hours"), dpgettext2 (null, "unit-format", "%s hours"), "3600x", "x/3600", dpgettext2 (null, "unit-symbols", "hour,hours")));
-    //         duration_category.add_unit (new Unit ("minute", _("Minutes"), dpgettext2 (null, "unit-format", "%s minutes"), "60x", "x/60", dpgettext2 (null, "unit-symbols", "minute,minutes")));
-    //         duration_category.add_unit (new Unit ("second", _("Seconds"), dpgettext2 (null, "unit-format", "%s s"), "x", "x", dpgettext2 (null, "unit-symbols", "second,seconds,s")));
-    //         duration_category.add_unit (new Unit ("millisecond", _("Milliseconds"), dpgettext2 (null, "unit-format", "%s ms"), "0.001x", "1000x", dpgettext2 (null, "unit-symbols", "millisecond,milliseconds,ms")));
-    //         duration_category.add_unit (new Unit ("microsecond", _("Microseconds"), dpgettext2 (null, "unit-format", "%s μs"), "0.000001x", "1000000x", dpgettext2 (null, "unit-symbols", "microsecond,microseconds,us,μs")));
-    //         temperature_category.add_unit (new Unit ("degree-celsius", _("Celsius"), dpgettext2 (null, "unit-format", "%s ˚C"), "x+273.15", "x-273.15", dpgettext2 (null, "unit-symbols", "degC,˚C,C,c,Celsius,celsius")));
-    //         temperature_category.add_unit (new Unit ("degree-fahrenheit", _("Fahrenheit"), dpgettext2 (null, "unit-format", "%s ˚F"), "(x+459.67)*5/9", "x*9/5-459.67", dpgettext2 (null, "unit-symbols", "degF,˚F,F,f,Fahrenheit,fahrenheit")));
-    //         temperature_category.add_unit (new Unit ("degree-kelvin", _("Kelvin"), dpgettext2 (null, "unit-format", "%s K"), "x", "x", dpgettext2 (null, "unit-symbols", "k,K,Kelvin,kelvin")));
-    //         temperature_category.add_unit (new Unit ("degree-rankine", _("Rankine"), dpgettext2 (null, "unit-format", "%s ˚R"), "x*5/9", "x*9/5", dpgettext2 (null, "unit-symbols", "degR,˚R,˚Ra,r,R,Rankine,rankine")));
-    //         /* We use IEC prefix for digital storage units. i.e. 1 kB = 1 KiloByte = 1000 bytes, and 1 KiB = 1 kibiByte = 1024 bytes */
-    //         digitalstorage_category.add_unit (new Unit ("bit", _("Bits"), dpgettext2 (null, "unit-format", "%s b"), "x/8", "8x", dpgettext2 (null, "unit-symbols", "bit,bits,b")));
-    //         digitalstorage_category.add_unit (new Unit ("byte", _("Bytes"), dpgettext2 (null, "unit-format", "%s B"), "x", "x", dpgettext2 (null, "unit-symbols", "byte,bytes,B")));
-    //         digitalstorage_category.add_unit (new Unit ("nibble", _("Nibbles"), dpgettext2 (null, "unit-format", "%s nibble"), "x/2", "2x", dpgettext2 (null, "unit-symbols", "nibble,nibbles")));
-    //         /* The SI symbol for kilo is k, however we also allow "KB" and "Kb", as they are widely used and accepted. */
-    //         digitalstorage_category.add_unit (new Unit ("kilobit", _("Kilobits"), dpgettext2 (null, "unit-format", "%s kb"), "1000x/8", "8x/1000", dpgettext2 (null, "unit-symbols", "kilobit,kilobits,kb,Kb")));
-    //         digitalstorage_category.add_unit (new Unit ("kilobyte", _("Kilobytes"), dpgettext2 (null, "unit-format", "%s kB"), "1000x", "x/1000", dpgettext2 (null, "unit-symbols", "kilobyte,kilobytes,kB,KB")));
-    //         digitalstorage_category.add_unit (new Unit ("kibibit", _("Kibibits"), dpgettext2 (null, "unit-format", "%s Kib"), "1024x/8", "8x/1024", dpgettext2 (null, "unit-symbols", "kibibit,kibibits,Kib")));
-    //         digitalstorage_category.add_unit (new Unit ("kibibyte", _("Kibibytes"), dpgettext2 (null, "unit-format", "%s KiB"), "1024x", "x/1024", dpgettext2 (null, "unit-symbols", "kibibyte,kibibytes,KiB")));
-    //         digitalstorage_category.add_unit (new Unit ("megabit", _("Megabits"), dpgettext2 (null, "unit-format", "%s Mb"), "1000000x/8", "8x/1000000", dpgettext2 (null, "unit-symbols", "megabit,megabits,Mb")));
-    //         digitalstorage_category.add_unit (new Unit ("megabyte", _("Megabytes"), dpgettext2 (null, "unit-format", "%s MB"), "1000000x", "x/1000000", dpgettext2 (null, "unit-symbols", "megabyte,megabytes,MB")));
-    //         digitalstorage_category.add_unit (new Unit ("mebibit", _("Mebibits"), dpgettext2 (null, "unit-format", "%s Mib"), "1048576x/8", "8x/1048576", dpgettext2 (null, "unit-symbols", "mebibit,mebibits,Mib")));
-    //         digitalstorage_category.add_unit (new Unit ("mebibyte", _("Mebibytes"), dpgettext2 (null, "unit-format", "%s MiB"), "1048576x", "x/1048576", dpgettext2 (null, "unit-symbols", "mebibyte,mebibytes,MiB")));
-    //         digitalstorage_category.add_unit (new Unit ("gigabit", _("Gigabits"), dpgettext2 (null, "unit-format", "%s Gb"), "1000000000x/8", "8x/1000000000", dpgettext2 (null, "unit-symbols", "gigabit,gigabits,Gb")));
-    //         digitalstorage_category.add_unit (new Unit ("gigabyte", _("Gigabytes"), dpgettext2 (null, "unit-format", "%s GB"), "1000000000x", "x/1000000000", dpgettext2 (null, "unit-symbols", "gigabyte,gigabytes,GB")));
-    //         digitalstorage_category.add_unit (new Unit ("gibibit", _("Gibibits"), dpgettext2 (null, "unit-format", "%s Gib"), "1073741824x/8", "8x/1073741824", dpgettext2 (null, "unit-symbols", "gibibit,gibibits,Gib")));
-    //         digitalstorage_category.add_unit (new Unit ("gibibyte", _("Gibibytes"), dpgettext2 (null, "unit-format", "%s GiB"), "1073741824x", "x/1073741824", dpgettext2 (null, "unit-symbols", "gibibyte,gibibytes,GiB")));
-    //         digitalstorage_category.add_unit (new Unit ("terabit", _("Terabits"), dpgettext2 (null, "unit-format", "%s Tb"), "1000000000000x/8", "8x/1000000000000", dpgettext2 (null, "unit-symbols", "terabit,terabits,Tb")));
-    //         digitalstorage_category.add_unit (new Unit ("terabyte", _("Terabytes"), dpgettext2 (null, "unit-format", "%s TB"), "1000000000000x", "x/1000000000000", dpgettext2 (null, "unit-symbols", "terabyte,terabytes,TB")));
-    //         digitalstorage_category.add_unit (new Unit ("tebibit", _("Tebibits"), dpgettext2 (null, "unit-format", "%s Tib"), "1099511627776x/8", "8x/1099511627776", dpgettext2 (null, "unit-symbols", "tebibit,tebibits,Tib")));
-    //         digitalstorage_category.add_unit (new Unit ("tebibyte", _("Tebibytes"), dpgettext2 (null, "unit-format", "%s TiB"), "1099511627776x", "x/1099511627776", dpgettext2 (null, "unit-symbols", "tebibyte,tebibytes,TiB")));
-    //         digitalstorage_category.add_unit (new Unit ("petabit", _("Petabits"), dpgettext2 (null, "unit-format", "%s Pb"), "1000000000000000x/8", "8x/1000000000000000", dpgettext2 (null, "unit-symbols", "petabit,petabits,Pb")));
-    //         digitalstorage_category.add_unit (new Unit ("petabyte", _("Petabytes"), dpgettext2 (null, "unit-format", "%s PB"), "1000000000000000x", "x/1000000000000000", dpgettext2 (null, "unit-symbols", "petabyte,petabytes,PB")));
-    //         digitalstorage_category.add_unit (new Unit ("pebibit", _("Pebibits"), dpgettext2 (null, "unit-format", "%s Pib"), "1125899906842624x/8", "8x/1125899906842624", dpgettext2 (null, "unit-symbols", "pebibit,pebibits,Pib")));
-    //         digitalstorage_category.add_unit (new Unit ("pebibyte", _("Pebibytes"), dpgettext2 (null, "unit-format", "%s PiB"), "1125899906842624x", "x/1125899906842624", dpgettext2 (null, "unit-symbols", "pebibyte,pebibytes,PiB")));
-    //         digitalstorage_category.add_unit (new Unit ("exabit", _("Exabits"), dpgettext2 (null, "unit-format", "%s Eb"), "1000000000000000000x/8", "8x/1000000000000000000", dpgettext2 (null, "unit-symbols", "exabit,exabits,Eb")));
-    //         digitalstorage_category.add_unit (new Unit ("exabyte", _("Exabytes"), dpgettext2 (null, "unit-format", "%s EB"), "1000000000000000000x", "x/1000000000000000000", dpgettext2 (null, "unit-symbols", "exabyte,exabytes,EB")));
-    //         digitalstorage_category.add_unit (new Unit ("exbibit", _("Exbibits"), dpgettext2 (null, "unit-format", "%s Eib"), "1152921504606846976x/8", "8x/1152921504606846976", dpgettext2 (null, "unit-symbols", "exbibit,exbibits,Eib")));
-    //         digitalstorage_category.add_unit (new Unit ("exbibyte", _("Exbibytes"), dpgettext2 (null, "unit-format", "%s EiB"), "1152921504606846976x", "x/1152921504606846976", dpgettext2 (null, "unit-symbols", "exbibyte,exbibytes,EiB")));
-    //         digitalstorage_category.add_unit (new Unit ("zettabit", _("Zettabits"), dpgettext2 (null, "unit-format", "%s Eb"), "1000000000000000000000x/8", "8x/1000000000000000000000", dpgettext2 (null, "unit-symbols", "zettabit,zettabits,Zb")));
-    //         digitalstorage_category.add_unit (new Unit ("zettabyte", _("Zettabytes"), dpgettext2 (null, "unit-format", "%s EB"), "1000000000000000000000x", "x/1000000000000000000000", dpgettext2 (null, "unit-symbols", "zettabyte,zettabytes,ZB")));
-    //         digitalstorage_category.add_unit (new Unit ("zebibit", _("Zebibits"), dpgettext2 (null, "unit-format", "%s Zib"), "1180591620717411303424x/8", "8x/1180591620717411303424", dpgettext2 (null, "unit-symbols", "zebibit,zebibits,Zib")));
-    //         digitalstorage_category.add_unit (new Unit ("zebibyte", _("Zebibytes"), dpgettext2 (null, "unit-format", "%s ZiB"), "1180591620717411303424x", "x/1180591620717411303424", dpgettext2 (null, "unit-symbols", "zebibyte,zebibytes,ZiB")));
-    //         digitalstorage_category.add_unit (new Unit ("yottabit", _("Yottabits"), dpgettext2 (null, "unit-format", "%s Yb"), "1000000000000000000000000x/8", "8x/1000000000000000000000000", dpgettext2 (null, "unit-symbols", "yottabit,yottabits,Yb")));
-    //         digitalstorage_category.add_unit (new Unit ("yottabyte", _("Yottabytes"), dpgettext2 (null, "unit-format", "%s YB"), "1000000000000000000000000x", "x/1000000000000000000000000", dpgettext2 (null, "unit-symbols", "yottabyte,yottabytes,YB")));
-    //         digitalstorage_category.add_unit (new Unit ("yobibit", _("Yobibits"), dpgettext2 (null, "unit-format", "%s Yib"), "1208925819614629174706176x/8", "8x/1208925819614629174706176", dpgettext2 (null, "unit-symbols", "yobibit,yobibits,Yib")));
-    //         digitalstorage_category.add_unit (new Unit ("yobibyte", _("Yobibytes"), dpgettext2 (null, "unit-format", "%s YiB"), "1208925819614629174706176x", "x/1208925819614629174706176", dpgettext2 (null, "unit-symbols", "yobibyte,yobibytes,YiB")));
-    //         frequency_category.add_unit (new Unit ("hertz", _("Hertz"), dpgettext2 (null, "unit-format", "%s Hz"), "x", "x", dpgettext2 (null, "unit-symbols", "hertz,Hz")));
-    //         frequency_category.add_unit (new Unit ("kilohertz", _("Kilohertz"), dpgettext2 (null, "unit-format", "%s kHz"), "1000x", "x/1000", dpgettext2 (null, "unit-symbols", "kilohertz,kHz")));
-    //         frequency_category.add_unit (new Unit ("megahertz", _("Megahertz"), dpgettext2 (null, "unit-format", "%s MHz"), "1000000x", "x/1000000", dpgettext2 (null, "unit-symbols", "megahertz,MHz")));
-    //         frequency_category.add_unit (new Unit ("gigahertz", _("Gigahertz"), dpgettext2 (null, "unit-format", "%s GHz"), "1000000000x", "x/1000000000", dpgettext2 (null, "unit-symbols", "gigahertz,GHz")));
-    //         frequency_category.add_unit (new Unit ("terahertz", _("Terahertz"), dpgettext2 (null, "unit-format", "%s THz"), "1000000000000x", "x/1000000000000" ,dpgettext2 (null, "unit-symbols", "terahertz,THz")));
-    //         energy_category.add_unit (new Unit ("joule", _("Joule"), dpgettext2 (null, "unit-format", "%s J"), "x", "x" ,dpgettext2 (null, "unit-symbols", "Joule,J,joule,joules")));
-    //         energy_category.add_unit (new Unit ("kilojoule", _("Kilojoules"), dpgettext2 (null, "unit-format", "%s KJ"), "1000x", "x/1000" ,dpgettext2 (null, "unit-symbols", "KJ,kilojoules,kilojoule")));
-    //         energy_category.add_unit (new Unit ("megajoule", _("Megajoules"), dpgettext2 (null, "unit-format", "%s MJ"), "100000x", "x/100000" ,dpgettext2 (null, "unit-symbols", "MJ,megajoules,megajoule")));
-    //         energy_category.add_unit (new Unit ("kilowatthour", _("KilowattHour"), dpgettext2 (null, "unit-format", "%s kWh"), "360000x", "x/360000" ,dpgettext2 (null, "unit-symbols", "kwh,kWh,kilowatt-hour,kilowatthour")));
-    //         energy_category.add_unit (new Unit ("btu", _("BTU"), dpgettext2 (null, "unit-format", "%s BTU"), "x*1054.350264489", "x/1054.350264489" ,dpgettext2 (null, "unit-symbols", "btu,BTU")));
-    //         energy_category.add_unit(new Unit ("calorie", _("Calorie"), dpgettext2 (null, "unit-format", "%s cal"), "x*4.184", "x/4.184", dpgettext2 (null, "unit-symbols", "calories,calorie,cal")));
-    //         energy_category.add_unit(new Unit ("erg", _("Erg"), dpgettext2 (null, "unit-format", "%s erg"), "x/10000000", "x*10000000", dpgettext2 (null, "unit-symbols", "ergs,erg")));
-    //         energy_category.add_unit(new Unit ("ev", _("eV"), dpgettext2 (null, "unit-format", "%s ev"), "x*1.602176634/10000000000000000000", "x*1.602176634*10000000000000000000", dpgettext2 (null, "unit-symbols", "electronvolt,electronvolts,ev")));
-    //         energy_category.add_unit(new Unit ("ftlb", _("Ft-lb"), dpgettext2 (null, "unit-format", "%s ft-lb"), "x*1.3558179483314004", "x/1.3558179483314004", dpgettext2 (null, "unit-symbols", "foot-pound,foot-pounds,ft-lb,ft-lbs")));
-    //
-    //         var currency_category = default_unit_manager.add_category ("currency", _("Currency"));
-    //         var currencies = CurrencyManager.get_default ().get_currencies ();
-    //         currencies.sort ((a, b) => { return a.display_name.collate (b.display_name); });
-    //         foreach (var currency in currencies)
-    //         {
-    //             /* Translators: result of currency conversion, %s is the symbol, %%s is the placeholder for amount, i.e.: USD100 */
-    //             var format = _("%s%%s").printf (currency.symbol);
-    //             var unit = new Unit (currency.name, currency.display_name, format, null, null, currency.name);
-    //             currency_category.add_unit ( unit);
-    //         }
-    //
-    //         return default_unit_manager;
-    //
-    // this following is the equivalent Dart code for the commented code above:
-    //
     if (defaultUnitManager != null) {
       return defaultUnitManager!;
     }
@@ -183,8 +38,126 @@ class UnitManager {
     lengthCategory.addUnit(Unit('parsec', 'Parsecs', '%s pc', '30857000000000000*x', 'x/30857000000000000', 'pc'));
     lengthCategory.addUnit(Unit('lightyear', 'Light Years', '%s ly', '9460730472580800*x', 'x/9460730472580800', 'ly'));
     lengthCategory.addUnit(Unit('astronomical-unit', 'Astronomical Units', '%s au', '149597870700*x', 'x/149597870700', 'au'));
+    lengthCategory.addUnit(Unit('rack-unit', 'Rack Units', '%s U', 'x/22.49718785151856', '22.49718785151856*x', 'U'));
+    lengthCategory.addUnit(Unit('nautical-mile', 'Nautical Miles', '%s nmi', '1852*x', 'x/1852', 'nmi'));
+    lengthCategory.addUnit(Unit('mile', 'Miles', '%s mi', '1609.344*x', 'x/1609.344', 'mi'));
+    lengthCategory.addUnit(Unit('kilometer', 'Kilometers', '%s km', '1000*x', 'x/1000', 'km'));
+    lengthCategory.addUnit(Unit('cable', 'Cables', '%s cb', '219.456*x', 'x/219.456', 'cb'));
+    lengthCategory.addUnit(Unit('fathom', 'Fathoms', '%s ftm', '1.8288*x', 'x/1.8288', 'ftm'));
+    lengthCategory.addUnit(Unit('meter', 'Meters', '%s m', 'x', 'x', 'm'));
+    lengthCategory.addUnit(Unit('yard', 'Yards', '%s yd', '0.9144*x', 'x/0.9144', 'yd'));
+    lengthCategory.addUnit(Unit('foot', 'Feet', '%s ft', '0.3048*x', 'x/0.3048', 'ft'));
+    lengthCategory.addUnit(Unit('inch', 'Inches', '%s in', '0.0254*x', 'x/0.0254', 'in'));
+    lengthCategory.addUnit(Unit('centimeter', 'Centimeters', '%s cm', 'x/100', '100*x', 'cm'));
+    lengthCategory.addUnit(Unit('millimeter', 'Millimeters', '%s mm', 'x/1000', '1000*x', 'mm'));
+    lengthCategory.addUnit(Unit('micrometer', 'Micrometers', '%s μm', 'x/1000000', '1000000*x', 'μm'));
+    lengthCategory.addUnit(Unit('nanometer', 'Nanometers', '%s nm', 'x/1000000000', '1000000000*x', 'nm'));
+    lengthCategory.addUnit(Unit('point', 'Desktop Publishing Point', '%s pt', '0.000352777778*x', 'x/0.000352777778', 'pt'));
+    speedCategory.addUnit(Unit('kilometers-hour', 'Kilometers per hour', '%s km/h', 'x/3.6', '3.6*x', 'km/h'));
+    speedCategory.addUnit(Unit('miles-hour', 'Miles per hour', '%s miles/h', 'x/2.23693629', '2.23693629*x', 'miles/h'));
+    speedCategory.addUnit(Unit('meters-second', 'Meters per second', '%s m/s', 'x', 'x', 'm/s'));
+    speedCategory.addUnit(Unit('feet-second', 'Feet per second', '%s feet/s', 'x/3.28084', '3.28084*x', 'feet/s'));
+    speedCategory.addUnit(Unit('knot', 'Knots', '%s kt', 'x/1.94384449', '1.94384449*x', 'kt'));
+    areaCategory.addUnit(Unit('hectare', 'Hectares', '%s ha', '10000*x', 'x/10000', 'ha'));
+    areaCategory.addUnit(Unit('acre', 'Acres', '%s acres', '4046.8564224*x', 'x/4046.8564224', 'acres'));
+    areaCategory.addUnit(Unit('square-foot', 'Square Foot', '%s ft²', 'x/10.763910417', '10.763910417*x', 'ft²'));
+    areaCategory.addUnit(Unit('square-meter', 'Square Meters', '%s m²', 'x', 'x', 'm²'));
+    areaCategory.addUnit(Unit('square-centimeter', 'Square Centimeters', '%s cm²', '0.0001*x', '10000*x', 'cm²'));
+    areaCategory.addUnit(Unit('square-millimeter', 'Square Millimeters', '%s mm²', '0.000001*x', '1000000*x', 'mm²'));
+    volumeCategory.addUnit(Unit('cubic-meter', 'Cubic Meters', '%s m³', '1000*x', 'x/1000', 'm³'));
+    volumeCategory.addUnit(Unit('gallon', 'US Gallons', '%s gal', '3.785412*x', 'x/3.785412', 'gal'));
+    volumeCategory.addUnit(Unit('litre', 'Liters', '%s L', 'x', 'x', 'L'));
+    volumeCategory.addUnit(Unit('quart', 'US Quarts', '%s qt', '0.9463529*x', 'x/0.9463529', 'qt'));
+    volumeCategory.addUnit(Unit('pint', 'US Pints', '%s pt', '0.4731765*x', 'x/0.4731765', 'pt'));
+    volumeCategory.addUnit(Unit('cup', 'Metric Cups', '%s cup', '0.25*x', '4*x', 'cup'));
+    volumeCategory.addUnit(Unit('millilitre', 'Milliliters', '%s mL', '0.001*x', '1000*x', 'mL'));
+    volumeCategory.addUnit(Unit('microlitre', 'Microliters', '%s μL', '0.000001*x', '1000000*x', 'μL'));
+    weightCategory.addUnit(Unit('tonne', 'Tonnes', '%s T', '1000*x', 'x/1000', 'T'));
+    weightCategory.addUnit(Unit('kilograms', 'Kilograms', '%s kg', 'x', 'x', 'kg'));
+    weightCategory.addUnit(Unit('pound', 'Pounds', '%s lb', '0.45359237*x', 'x/0.45359237', 'lb'));
+    weightCategory.addUnit(Unit('ounce', 'Ounces', '%s oz', '0.02834952*x', 'x/0.02834952', 'oz'));
+    weightCategory.addUnit(Unit('troy-ounce', 'Troy Ounces', '%s ozt', '0.0311034768*x', 'x/0.0311034768', 'ozt'));
+    weightCategory.addUnit(Unit('gram', 'Grams', '%s g', '0.001*x', '1000*x', 'g'));
+    weightCategory.addUnit(Unit('stone', 'Stone', '%s st', '6.350293*x', 'x/6.350293', 'st'));
+    durationCategory.addUnit(Unit('century', 'Centuries', '%s centuries', '3155760000*x', 'x/3155760000', 'centuries'));
+    durationCategory.addUnit(Unit('decade', 'Decades', '%s decades', '315576000*x', 'x/315576000', 'decades'));
+    durationCategory.addUnit(Unit('year', 'Years', '%s years', '31557600*x', 'x/31557600', 'years'));
+    durationCategory.addUnit(Unit('month', 'Months', '%s months', '2629800*x', 'x/2629800', 'months'));
+    durationCategory.addUnit(Unit('week', 'Weeks', '%s weeks', '604800*x', 'x/604800', 'weeks'));
+    durationCategory.addUnit(Unit('day', 'Days', '%s days', '86400*x', 'x/86400', 'days'));
+    durationCategory.addUnit(Unit('hour', 'Hours', '%s hours', '3600*x', 'x/3600', 'hours'));
+    durationCategory.addUnit(Unit('minute', 'Minutes', '%s minutes', '60*x', 'x/60', 'minutes'));
+    durationCategory.addUnit(Unit('second', 'Seconds', '%s s', 'x', 'x', 's'));
+    durationCategory.addUnit(Unit('millisecond', 'Milliseconds', '%s ms', '0.001*x', '1000*x', 'ms'));
+    durationCategory.addUnit(Unit('microsecond', 'Microseconds', '%s μs', '0.000001*x', '1000000*x', 'μs'));
+    temperatureCategory.addUnit(Unit('degree-celsius', 'Celsius', '%s ˚C', 'x+273.15', 'x-273.15', '˚C'));
+    temperatureCategory.addUnit(Unit('degree-fahrenheit', 'Fahrenheit', '%s ˚F', '(x+459.67)*5/9', 'x*9/5-459.67', '˚F'));
+    temperatureCategory.addUnit(Unit('degree-kelvin', 'Kelvin', '%s K', 'x', 'x', 'K'));
+    temperatureCategory.addUnit(Unit('degree-rankine', 'Rankine', '%s ˚R', 'x*5/9', 'x*9/5', '˚R'));
+    /* We use IEC prefix for digital storage units. i.e. 1 kB = 1 KiloByte = 1000 bytes, and 1 KiB = 1 kibiByte = 1024 bytes */
+    digitalStorageCategory.addUnit(Unit('bit', 'Bits', '%s b', 'x/8', '8*x', 'b'));
+    digitalStorageCategory.addUnit(Unit('byte', 'Bytes', '%s B', 'x', 'x', 'B'));
+    digitalStorageCategory.addUnit(Unit('nibble', 'Nibbles', '%s nibble', 'x/2', '2*x', 'nibble'));
+    /* The SI symbol for kilo is k, however we also allow "KB" and "Kb", as they are widely used and accepted. */
+    digitalStorageCategory.addUnit(Unit('kilobit', 'Kilobits', '%s kb', '1000*x/8', '8*x/1000', 'kb'));
+    digitalStorageCategory.addUnit(Unit('kilobyte', 'Kilobytes', '%s kB', '1000*x', 'x/1000', 'kB'));
+    digitalStorageCategory.addUnit(Unit('kibibit', 'Kibibits', '%s Kib', '1024*x/8', '8*x/1024', 'Kib'));
+    digitalStorageCategory.addUnit(Unit('kibibyte', 'Kibibytes', '%s KiB', '1024*x', 'x/1024', 'KiB'));
+    digitalStorageCategory.addUnit(Unit('megabit', 'Megabits', '%s Mb', '1000000*x/8', '8*x/1000000', 'Mb'));
+    digitalStorageCategory.addUnit(Unit('megabyte', 'Megabytes', '%s MB', '1000000*x', 'x/1000000', 'MB'));
+    digitalStorageCategory.addUnit(Unit('mebibit', 'Mebibits', '%s Mib', '1048576*x/8', '8*x/1048576', 'Mib'));
+    digitalStorageCategory.addUnit(Unit('mebibyte', 'Mebibytes', '%s MiB', '1048576*x', 'x/1048576', 'MiB'));
+    digitalStorageCategory.addUnit(Unit('gigabit', 'Gigabits', '%s Gb', '1000000000*x/8', '8*x/1000000000', 'Gb'));
+    digitalStorageCategory.addUnit(Unit('gigabyte', 'Gigabytes', '%s GB', '1000000000*x', 'x/1000000000', 'GB'));
+    digitalStorageCategory.addUnit(Unit('gibibit', 'Gibibits', '%s Gib', '1073741824*x/8', '8*x/1073741824', 'Gib'));
+    digitalStorageCategory.addUnit(Unit('gibibyte', 'Gibibytes', '%s GiB', '1073741824*x', 'x/1073741824', 'GiB'));
+    digitalStorageCategory.addUnit(Unit('terabit', 'Terabits', '%s Tb', '1000000000000*x/8', '8*x/1000000000000', 'Tb'));
+    digitalStorageCategory.addUnit(Unit('terabyte', 'Terabytes', '%s TB', '1000000000000*x', 'x/1000000000000', 'TB'));
+    digitalStorageCategory.addUnit(Unit('tebibit', 'Tebibits', '%s Tib', '1099511627776*x/8', '8*x/1099511627776', 'Tib'));
+    digitalStorageCategory.addUnit(Unit('tebibyte', 'Tebibytes', '%s TiB', '1099511627776*x', 'x/1099511627776', 'TiB'));
+    digitalStorageCategory.addUnit(Unit('petabit', 'Petabits', '%s Pb', '1000000000000000*x/8', '8*x/1000000000000000', 'Pb'));
+    digitalStorageCategory.addUnit(Unit('petabyte', 'Petabytes', '%s PB', '1000000000000000*x', 'x/1000000000000000', 'PB'));
+    digitalStorageCategory.addUnit(Unit('pebibit', 'Pebibits', '%s Pib', '1125899906842624*x/8', '8*x/1125899906842624', 'Pib'));
+    digitalStorageCategory.addUnit(Unit('pebibyte', 'Pebibytes', '%s PiB', '1125899906842624*x', 'x/1125899906842624', 'PiB'));
+    digitalStorageCategory.addUnit(Unit('exabit', 'Exabits', '%s Eb', '1000000000000000000*x/8', '8*x/1000000000000000000', 'Eb'));
+    digitalStorageCategory.addUnit(Unit('exabyte', 'Exabytes', '%s EB', '1000000000000000000*x', 'x/1000000000000000000', 'EB'));
+    digitalStorageCategory.addUnit(Unit('exbibit', 'Exbibits', '%s Eib', '1152921504606846976*x/8', '8*x/1152921504606846976', 'Eib'));
+    digitalStorageCategory.addUnit(Unit('exbibyte', 'Exbibytes', '%s EiB', '1152921504606846976*x', 'x/1152921504606846976', 'EiB'));
+    digitalStorageCategory.addUnit(Unit('zettabit', 'Zettabits', '%s Eb', '1000000000000000000000*x/8', '8*x/1000000000000000000000', 'Zb'));
+    digitalStorageCategory.addUnit(Unit('zettabyte', 'Zettabytes', '%s EB', '1000000000000000000000*x', 'x/1000000000000000000000', 'ZB'));
+    digitalStorageCategory.addUnit(Unit('zebibit', 'Zebibits', '%s Zib', '1180591620717411303424*x/8', '8*x/1180591620717411303424', 'Zib'));
+    digitalStorageCategory.addUnit(Unit('zebibyte', 'Zebibytes', '%s ZiB', '1180591620717411303424*x', 'x/1180591620717411303424', 'ZiB'));
+    digitalStorageCategory.addUnit(Unit('yottabit', 'Yottabits', '%s Yb', '1000000000000000000000000*x/8', '8*x/1000000000000000000000000', 'Yb'));
+    digitalStorageCategory.addUnit(Unit('yottabyte', 'Yottabytes', '%s YB', '1000000000000000000000000*x', 'x/1000000000000000000000000', 'YB'));
+    digitalStorageCategory.addUnit(Unit('yobibit', 'Yobibits', '%s Yib', '1208925819614629174706176*x/8', '8*x/1208925819614629174706176', 'Yib'));
+    digitalStorageCategory.addUnit(Unit('yobibyte', 'Yobibytes', '%s YiB', '1208925819614629174706176*x', 'x/1208925819614629174706176', 'YiB'));
+    frequencyCategory.addUnit(Unit('hertz', 'Hertz', '%s Hz', 'x', 'x', 'Hz'));
+    frequencyCategory.addUnit(Unit('kilohertz', 'Kilohertz', '%s kHz', '1000*x', 'x/1000', 'kHz'));
+    frequencyCategory.addUnit(Unit('megahertz', 'Megahertz', '%s MHz', '1000000*x', 'x/1000000', 'MHz'));
+    frequencyCategory.addUnit(Unit('gigahertz', 'Gigahertz', '%s GHz', '1000000000*x', 'x/1000000000', 'GHz'));
+    frequencyCategory.addUnit(Unit('terahertz', 'Terahertz', '%s THz', '1000000000000*x', 'x/1000000000000', 'THz'));
+    energyCategory.addUnit(Unit('joule', 'Joule', '%s J', 'x', 'x', 'J'));
+    energyCategory.addUnit(Unit('kilojoule', 'Kilojoules', '%s KJ', '1000*x', 'x/1000', 'KJ'));
+    energyCategory.addUnit(Unit('megajoule', 'Megajoules', '%s MJ', '1000000*x', 'x/1000000', 'MJ'));
+    energyCategory.addUnit(Unit('kilowatthour', 'KilowattHour', '%s kWh', '360000*x', 'x/360000', 'kWh'));
+    energyCategory.addUnit(Unit('btu', 'BTU', '%s BTU', 'x*1054.350264489', 'x/1054.350264489', 'BTU'));
+    energyCategory.addUnit(Unit('calorie', 'Calorie', '%s cal', 'x*4.184', 'x/4.184', 'cal'));
+    energyCategory.addUnit(Unit('erg', 'Erg', '%s erg', 'x/10000000', 'x*10000000', 'erg'));
+    energyCategory.addUnit(Unit('ev', 'eV', '%s ev', 'x*1.602176634/10000000000000000000', 'x*1.602176634*10000000000000000000', 'ev'));
+    energyCategory.addUnit(Unit('ftlb', 'Ft-lb', '%s ft-lb', 'x*1.3558179483314004', 'x/1.3558179483314004', 'ft-lb'));
 
+    var currencyCategory = defaultUnitManager!.addCategory("currency", "Currency");
+    var currencies = CurrencyManager.getDefault().getCurrencies();
+    currencies.sort((a, b) => a.displayName.compareTo(b.displayName));
 
+    for (var currency in currencies) {
+      /* Translators: result of currency conversion, %s is the symbol, %%s is the placeholder for amount, i.e.: USD100 */
+      var format = "${currency.symbol}%s";
+      var unit = Unit(currency.name, currency.displayName, format, '', '', currency.name);
+      currencyCategory.addUnit(unit);
+    }
+
+    return defaultUnitManager!;
   }
 
   UnitCategory addCategory(String name, String displayName) {
@@ -209,8 +182,24 @@ class UnitManager {
   UnitCategory? getCategoryOfUnit(String name) {
     int count = 0;
     UnitCategory? returnCategory;
+    
     for (var c in categories) {
-      if (c.hasUnit(name)) {
+      var unit = c.getUnitByName(name);
+      if (unit != null) {
+        count++;
+        returnCategory = c;
+      }
+    }
+
+    if (count > 1) {
+      return null;
+    } else if (count == 1) {
+      return returnCategory;
+    }
+
+    for (var c in categories) {
+      var unit = c.getUnitByName(name);
+      if (unit != null) {
         count++;
         returnCategory = c;
       }
@@ -225,7 +214,7 @@ class UnitManager {
     int count = 0;
     Unit? returnUnit;
     for (var c in categories) {
-      var unit = c.getUnit(name);
+      var unit = c.getUnitByName(name);
       if (unit != null) {
         count++;
         returnUnit = unit;
@@ -260,80 +249,224 @@ class UnitManager {
 
   Number? convertBySymbol(Number x, String xSymbol, String zSymbol) {
     for (var c in categories) {
-      var result = c.convertBySymbol(x, xSymbol, zSymbol);
-      if (result != null) {
-        return result;
+      var xUnits = c.getUnitBySymbol(xSymbol);
+      xUnits ??= c.getUnitByName(xSymbol, caseSensitive: false);
+
+      var zUnits = c.getUnitBySymbol(zSymbol);
+      zUnits ??= c.getUnitByName(zSymbol, caseSensitive: false);
+
+      if (xUnits != null && zUnits != null) {
+        return c.convert(x, xUnits, zUnits);
       }
     }
+
     return null;
   }
 }
 
 class UnitCategory {
-  String name;
-  String displayName;
-  List<Unit> units = [];
+  late final List<Unit> units;
 
-  UnitCategory(this.name, this.displayName);
+  late final String _name;
+  String get name => _name;
+
+  late final String _displayName;
+  String get displayName => _displayName;
+
+  UnitCategory(this._name, this._displayName) {
+    units = [];
+  }
 
   void addUnit(Unit unit) {
     units.add(unit);
   }
 
-  bool hasUnit(String name) {
-    return units.any((unit) => unit.name == name);
-  }
+  Unit? getUnitByName(String name, {bool caseSensitive = true}) {
+    int count = 0;
+    Unit? returnUnit;
 
-  Unit? getUnit(String name) {
-    return units.firstWhere((unit) => unit.name == name, orElse: () => null);
-  }
-
-  Unit? getUnitBySymbol(String symbol) {
-    return units.firstWhere((unit) => unit.symbols.contains(symbol), orElse: () => null);
-  }
-
-  Number? convertBySymbol(Number x, String xSymbol, String zSymbol) {
-    var fromUnit = getUnitBySymbol(xSymbol);
-    var toUnit = getUnitBySymbol(zSymbol);
-    if (fromUnit != null && toUnit != null) {
-      return fromUnit.convertTo(x, toUnit);
+    for (var unit in units) {
+      if ((caseSensitive && unit.name == name) || (!caseSensitive && unit.name.toLowerCase() == name.toLowerCase())) {
+        count++;
+        returnUnit = unit;
+      }
     }
+
+    if (count == 1) {
+      return returnUnit;
+    }
+
     return null;
+  }
+
+  Unit? getUnitBySymbol(String symbol, {bool caseSensitive = true}) {
+    int count = 0;
+    Unit? returnUnit;
+
+    for (var unit in units) {
+      if (unit.matchesSymbol(symbol)) {
+        count++;
+        returnUnit = unit;
+      }
+    }
+
+    if (count > 1) {
+      return null;
+    }
+    else if (count == 1) {
+      return returnUnit;
+    }
+
+    for (var unit in units) {
+      if (unit.matchesSymbol(symbol, caseSensitive: false)) {
+        count++;
+        returnUnit = unit;
+      }
+    }
+
+    if (count == 1) {
+      return returnUnit;
+    }
+
+    return null;
+  }
+
+  List<Unit> getUnits() {
+    return units;
+  }
+
+  Number? convert(Number x, Unit xUnits, Unit zUnits) {
+    var t = xUnits.convertFrom(x);
+
+    if (t == null) {
+      return null;
+    }
+
+    return zUnits.convertTo(t);
   }
 }
 
 class Unit {
-  String name;
-  String displayName;
-  String format;
-  String toBase;
-  String fromBase;
-  List<String> symbols;
+  late final String _name;
+  String get name => _name;
 
-  Unit(this.name, this.displayName, this.format, this.toBase, this.fromBase, String symbols)
-      : symbols = symbols.split(',');
+  late final String _displayName;
+  String get displayName => _displayName;
 
-  Number convertTo(Number x, Unit toUnit) {
-    // Implementar a lógica de conversão aqui
-    return x;
+  late final String _format;
+  late List<String> _symbols;
+  String? fromFunction;
+  String? toFunction;
+  late Serializer serializer;
+
+  Unit(this._name, this._displayName, this._format, this.fromFunction, this.toFunction, String symbols) {
+    serializer = Serializer(DisplayFormat.automatic, 10, 4);
+    serializer.setLeadingDigits(6);
+    serializer.setShowThousandsSeparators(true);
+
+    _symbols = [];
+    var symbolNames = symbols.split(",");
+    for (var symbolName in symbolNames) {
+      _symbols.add(symbolName);
+    }
   }
+
+  String getSymbolFromFormat() {
+    return _symbols.first;
+  }
+
+  bool matchesSymbol(String symbol, {bool caseSensitive = true}) {
+    for (var s in _symbols) {
+      if ((caseSensitive && s == symbol) || (!caseSensitive && s.toLowerCase() == symbol.toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  List<String> getSymbols() {
+    return _symbols;
+  }
+
+  Number? convertFrom(Number x) {
+    if (fromFunction != null) {
+      return solveFunction(fromFunction!, x);
+    } else {
+      // FIXME: Hack to make currency work
+      var r = CurrencyManager.getDefault().getValue(name);
+      if (r == null) {
+        return null;
+      }
+      return x.divide(r);
+    }
+  }
+
+  Number? convertTo(Number x) {
+    if (toFunction != null) {
+      return solveFunction(toFunction!, x);
+    } else {
+      // FIXME: Hack to make currency work
+      var r = CurrencyManager.getDefault().getValue(name);
+      if (r == null) {
+        return null;
+      }
+      return x.multiply(r);
+    }
+  }
+
+  String format(Number x) {
+    var numberText = serializer.serialize(x);
+    return _format.replaceAll("%s", numberText);
+  }
+
+  Number? solveFunction(String function, Number x) {
+    var equation = UnitSolveEquation(function, x);
+    equation.base = 10;
+    equation.wordlen = 32;
+    var z = equation.parse();
+    if (z == null) {
+      print("Failed to convert value: $function");
+    }
+    return z;
+  }
+
 }
 
+// the following is a Vala code that defines the class UnitSolveEquation:
+// private class UnitSolveEquation : Equation
+// {
+//     private Number x;
+//
+//     public UnitSolveEquation (string function, Number x)
+//     {
+//         base (function);
+//         this.x = x;
+//     }
+//
+//     public override bool variable_is_defined (string name)
+//     {
+//         return true;
+//     }
+//
+//     public override Number? get_variable (string name)
+//     {
+//         return x;
+//     }
+// }
+//
+// the following is the equivalent Dart code for the commented code above that defines the class UnitSolveEquation:
 class UnitSolveEquation extends Equation {
   Number x;
 
-  UnitSolveEquation(String function, this.x) : super(function);
+  UnitSolveEquation(super.function, this.x);
 
   @override
   bool variableIsDefined(String name) {
-    return name == "x";
+    return true;
   }
 
   @override
   Number? getVariable(String name) {
-    if (name == "x") {
-      return x;
-    }
-    return null;
+    return x;
   }
 }
