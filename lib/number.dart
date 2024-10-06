@@ -1185,9 +1185,8 @@ int parseLiteralPrefix(String str, RefInt prefixLen) {
   return newBase;
 }
 
-//* Returns a string representation in 'text'
-Number? mpSetFromString(String str,
-    [int defaultBase = 10, bool mayHavePrefix = true]) {
+// Returns a string representation in 'text'
+Number? mpSetFromString(String str, [int defaultBase = 10, bool mayHavePrefix = true]) {
   if (str.isEmpty) {
     return null;
   }
