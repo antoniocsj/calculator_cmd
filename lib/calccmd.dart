@@ -16,14 +16,14 @@ void solve(String equation) {
   e.angleUnits = AngleUnit.degrees;
 
   // variables to store the result of the parsing
-  var ret = ErrorCode.none;
+  var errorCode = ErrorCode.none;
   var representationBase = 10;
   var errorToken = '';
   var errorStart = 0;
   var errorEnd = 0;
 
   // reference to the variables above
-  var retRef = RefErrorCode(ret);
+  var errorCodeRef = RefErrorCode(errorCode);
   var representationBaseRef = RefInt(representationBase);
   var errorTokenRef = RefString(errorToken);
   var errorStartRef = RefInt(errorStart);
@@ -32,14 +32,14 @@ void solve(String equation) {
   // parse the equation
   var z = e.parse(
     representationBase: representationBaseRef,
-    errorCode: retRef,
+    errorCode: errorCodeRef,
     errorToken: errorTokenRef,
     errorStart: errorStartRef,
     errorEnd: errorEndRef,
   );
 
   // update the variables from the references
-  ret = retRef.value;
+  errorCode = errorCodeRef.value;
   representationBase = representationBaseRef.value;
   errorToken = errorTokenRef.value;
   errorStart = errorStartRef.value;
@@ -54,10 +54,10 @@ void solve(String equation) {
     } else {
       stdout.writeln(str);
     }
-  } else if (ret == ErrorCode.mp) {
+  } else if (errorCode == ErrorCode.mp) {
     stderr.writeln("Error ${Number.error ?? errorToken}");
   } else {
-    stderr.writeln("Error $ret");
+    stderr.writeln("Error $errorCode");
   }
 }
 
