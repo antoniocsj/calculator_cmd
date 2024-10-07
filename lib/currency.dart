@@ -1,23 +1,17 @@
+import 'dart:async';
 import 'package:calculator/number.dart';
 import 'package:calculator/currency_provider.dart';
 
 CurrencyManager? defaultCurrencyManager;
 
 class Currency {
+  final String name;
+  final String displayName;
+  final String symbol;
   Number? value;
+  String source;
 
-  final String _name;
-  String get name => _name;
-
-  final String _displayName;
-  String get displayName => _displayName;
-
-  final String _symbol;
-  String get symbol => _symbol;
-
-  late String source;
-
-  Currency(this._name, this._displayName, this._symbol);
+  Currency(this.name, this.displayName, this.symbol, {this.source = ''});
 
   void setValue(Number value) {
     this.value = value;
@@ -29,26 +23,18 @@ class Currency {
 }
 
 class CurrencyManager {
-  List<Currency> currencies = [];
-  List<CurrencyProvider> providers = [];
-
+  final List<Currency> currencies = [];
+  final List<CurrencyProvider> providers = [];
+  final StreamController<void> _updatedController = StreamController<void>.broadcast();
+  bool loaded = false;
   int _refreshInterval = 0;
+
   int get refreshInterval => _refreshInterval;
   set refreshInterval(int value) {
     _refreshInterval = value;
   }
 
-  bool loaded = false;
-
-  void Function()? updated;
-
-  List<String> getProviderLinks() {
-    List<String> links = [];
-    for (var p in providers) {
-      links.add('<a href="${p.attributionLink}">${p.providerName}</a>');
-    }
-    return links;
-  }
+  Stream<void> get updated => _updatedController.stream;
 
   void addProvider(CurrencyProvider provider) {
     providers.add(provider);
@@ -56,15 +42,15 @@ class CurrencyManager {
 
   void refreshSync() {
     loaded = false;
-    for (var p in providers) {
-      p.setRefreshInterval(_refreshInterval, false);
+    for (var provider in providers) {
+      provider.setRefreshInterval(_refreshInterval, false);
     }
   }
 
   void refreshAsync() {
     loaded = false;
-    for (var p in providers) {
-      p.setRefreshInterval(_refreshInterval, true);
+    for (var provider in providers) {
+      provider.setRefreshInterval(_refreshInterval, true);
     }
   }
 
@@ -74,159 +60,157 @@ class CurrencyManager {
     }
 
     defaultCurrencyManager = CurrencyManager();
-    defaultCurrencyManager!.currencies.add(Currency("AED", "UAE Dirham", "إ.د"));
-    defaultCurrencyManager!.currencies.add(Currency("ARS", "Argentine Peso", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("AUD", "Australian Dollar", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("BDT", "Bangladeshi Taka", "৳"));
-    defaultCurrencyManager!.currencies.add(Currency("BGN", "Bulgarian Lev", "лв"));
-    defaultCurrencyManager!.currencies.add(Currency("BHD", "Bahraini Dinar", ".ب.د"));
-    defaultCurrencyManager!.currencies.add(Currency("BND", "Brunei Dollar", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("BRL", "Brazilian Real", "R\$"));
-    defaultCurrencyManager!.currencies.add(Currency("BWP", "Botswana Pula", "P"));
-    defaultCurrencyManager!.currencies.add(Currency("CAD", "Canadian Dollar", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("CFA", "CFA Franc", "Fr"));
-    defaultCurrencyManager!.currencies.add(Currency("CHF", "Swiss Franc", "Fr"));
-    defaultCurrencyManager!.currencies.add(Currency("CLP", "Chilean Peso", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("CNY", "Chinese Yuan", "¥"));
-    defaultCurrencyManager!.currencies.add(Currency("COP", "Colombian Peso", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("CZK", "Czech Koruna", "Kč"));
-    defaultCurrencyManager!.currencies.add(Currency("DKK", "Danish Krone", "kr"));
-    defaultCurrencyManager!.currencies.add(Currency("DZD", "Algerian Dinar", "ج.د"));
-    defaultCurrencyManager!.currencies.add(Currency("EEK", "Estonian Kroon", "KR"));
-    defaultCurrencyManager!.currencies.add(Currency("EUR", "Euro", "€"));
-    defaultCurrencyManager!.currencies.add(Currency("GBP", "British Pound Sterling", "£"));
-    defaultCurrencyManager!.currencies.add(Currency("HKD", "Hong Kong Dollar", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("HRK", "Croatian Kuna", "kn"));
-    defaultCurrencyManager!.currencies.add(Currency("HUF", "Hungarian Forint", "Ft"));
-    defaultCurrencyManager!.currencies.add(Currency("IDR", "Indonesian Rupiah", "Rp"));
-    defaultCurrencyManager!.currencies.add(Currency("ILS", "Israeli New Shekel", "₪"));
-    defaultCurrencyManager!.currencies.add(Currency("INR", "Indian Rupee", "₹"));
-    defaultCurrencyManager!.currencies.add(Currency("IRR", "Iranian Rial", "﷼"));
-    defaultCurrencyManager!.currencies.add(Currency("ISK", "Icelandic Krona", "kr"));
-    defaultCurrencyManager!.currencies.add(Currency("JPY", "Japanese Yen", "¥"));
-    defaultCurrencyManager!.currencies.add(Currency("JMD", "Jamaican Dollar", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("KRW", "South Korean Won", "₩"));
-    defaultCurrencyManager!.currencies.add(Currency("KWD", "Kuwaiti Dinar", "ك.د"));
-    defaultCurrencyManager!.currencies.add(Currency("KZT", "Kazakhstani Tenge", "₸"));
-    defaultCurrencyManager!.currencies.add(Currency("LKR", "Sri Lankan Rupee", "Rs"));
-    defaultCurrencyManager!.currencies.add(Currency("LYD", "Libyan Dinar", "د.ل"));
-    defaultCurrencyManager!.currencies.add(Currency("MUR", "Mauritian Rupee", "Rs"));
-    defaultCurrencyManager!.currencies.add(Currency("MXN", "Mexican Peso", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("MYR", "Malaysian Ringgit", "RM"));
-    defaultCurrencyManager!.currencies.add(Currency("NGN", "Nigerian Naira", "₦"));
-    defaultCurrencyManager!.currencies.add(Currency("NOK", "Norwegian Krone", "kr"));
-    defaultCurrencyManager!.currencies.add(Currency("NPR", "Nepalese Rupee", "Rs"));
-    defaultCurrencyManager!.currencies.add(Currency("NZD", "New Zealand Dollar", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("OMR", "Omani Rial", "ع.ر."));
-    defaultCurrencyManager!.currencies.add(Currency("PEN", "Peruvian Nuevo Sol", "S/."));
-    defaultCurrencyManager!.currencies.add(Currency("PHP", "Philippine Peso", "₱"));
-    defaultCurrencyManager!.currencies.add(Currency("PKR", "Pakistani Rupee", "Rs"));
-    defaultCurrencyManager!.currencies.add(Currency("PLN", "Polish Zloty", "zł"));
-    defaultCurrencyManager!.currencies.add(Currency("QAR", "Qatari Riyal", "ق.ر"));
-    defaultCurrencyManager!.currencies.add(Currency("RON", "New Romanian Leu", "L"));
-    defaultCurrencyManager!.currencies.add(Currency("RUB", "Russian Rouble", "руб."));
-    defaultCurrencyManager!.currencies.add(Currency("SAR", "Saudi Riyal", "س.ر"));
-    defaultCurrencyManager!.currencies.add(Currency("RSD", "Serbian Dinar", "дин"));
-    defaultCurrencyManager!.currencies.add(Currency("SEK", "Swedish Krona", "kr"));
-    defaultCurrencyManager!.currencies.add(Currency("SGD", "Singapore Dollar", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("THB", "Thai Baht", "฿"));
-    defaultCurrencyManager!.currencies.add(Currency("TND", "Tunisian Dinar", "ت.د"));
-    defaultCurrencyManager!.currencies.add(Currency("TRY", "Turkish Lira", "₺"));
-    defaultCurrencyManager!.currencies.add(Currency("TTD", "T&T Dollar (TTD)", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("TWD", "New Taiwan Dollar", "NT\$"));
-    defaultCurrencyManager!.currencies.add(Currency("UAH", "Ukrainian Hryvnia", "₴"));
-    defaultCurrencyManager!.currencies.add(Currency("USD", "US Dollar", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("UYU", "Uruguayan Peso", "\$"));
-    defaultCurrencyManager!.currencies.add(Currency("VND", "Vietnamese Dong", "₫"));
-    defaultCurrencyManager!.currencies.add(Currency("ZAR", "South African Rand", "R"));
+    defaultCurrencyManager!._initializeDefaultCurrencies();
 
     if (defaultProviders) {
-      ImfCurrencyProvider(defaultCurrencyManager!);
-      EcbCurrencyProvider(defaultCurrencyManager!);
-      BCCurrencyProvider(defaultCurrencyManager!, "TWD", "fxtwdcad");
-      UnCurrencyProvider(defaultCurrencyManager!);
-      defaultCurrencyManager!.initializeProviders(asyncLoad);
+      defaultCurrencyManager!._initializeDefaultProviders(asyncLoad);
     }
 
     return defaultCurrencyManager!;
   }
 
+  void _initializeDefaultCurrencies() {
+    currencies.addAll([
+      Currency('AED', 'UAE Dirham', 'إ.د'),
+      Currency('ARS', 'Argentine Peso', '\$'),
+      Currency('AUD', 'Australian Dollar', '\$'),
+      Currency('BDT', 'Bangladeshi Taka', '৳'),
+      Currency('BGN', 'Bulgarian Lev', 'лв'),
+      Currency('BHD', 'Bahraini Dinar', '.ب.د'),
+      Currency('BND', 'Brunei Dollar', '\$'),
+      Currency('BRL', 'Brazilian Real', 'R\$'),
+      Currency('BWP', 'Botswana Pula', 'P'),
+      Currency('CAD', 'Canadian Dollar', '\$'),
+      Currency('CFA', 'CFA Franc', 'Fr'),
+      Currency('CHF', 'Swiss Franc', 'Fr'),
+      Currency('CLP', 'Chilean Peso', '\$'),
+      Currency('CNY', 'Chinese Yuan', '¥'),
+      Currency('COP', 'Colombian Peso', '\$'),
+      Currency('CZK', 'Czech Koruna', 'Kč'),
+      Currency('DKK', 'Danish Krone', 'kr'),
+      Currency('DZD', 'Algerian Dinar', 'ج.د'),
+      Currency('EEK', 'Estonian Kroon', 'KR'),
+      Currency('EUR', 'Euro', '€'),
+      Currency('GBP', 'British Pound Sterling', '£'),
+      Currency('HKD', 'Hong Kong Dollar', '\$'),
+      Currency('HRK', 'Croatian Kuna', 'kn'),
+      Currency('HUF', 'Hungarian Forint', 'Ft'),
+      Currency('IDR', 'Indonesian Rupiah', 'Rp'),
+      Currency('ILS', 'Israeli New Shekel', '₪'),
+      Currency('INR', 'Indian Rupee', '₹'),
+      Currency('IRR', 'Iranian Rial', '﷼'),
+      Currency('ISK', 'Icelandic Krona', 'kr'),
+      Currency('JPY', 'Japanese Yen', '¥'),
+      Currency('JMD', 'Jamaican Dollar', '\$'),
+      Currency('KRW', 'South Korean Won', '₩'),
+      Currency('KWD', 'Kuwaiti Dinar', 'ك.د'),
+      Currency('KZT', 'Kazakhstani Tenge', '₸'),
+      Currency('LKR', 'Sri Lankan Rupee', 'Rs'),
+      Currency('LYD', 'Libyan Dinar', 'د.ل'),
+      Currency('MUR', 'Mauritian Rupee', 'Rs'),
+      Currency('MXN', 'Mexican Peso', '\$'),
+      Currency('MYR', 'Malaysian Ringgit', 'RM'),
+      Currency('NGN', 'Nigerian Naira', '₦'),
+      Currency('NOK', 'Norwegian Krone', 'kr'),
+      Currency('NPR', 'Nepalese Rupee', 'Rs'),
+      Currency('NZD', 'New Zealand Dollar', '\$'),
+      Currency('OMR', 'Omani Rial', 'ع.ر.'),
+      Currency('PEN', 'Peruvian Nuevo Sol', 'S/.'),
+      Currency('PHP', 'Philippine Peso', '₱'),
+      Currency('PKR', 'Pakistani Rupee', 'Rs'),
+      Currency('PLN', 'Polish Zloty', 'zł'),
+      Currency('QAR', 'Qatari Riyal', 'ق.ر'),
+      Currency('RON', 'New Romanian Leu', 'L'),
+      Currency('RUB', 'Russian Rouble', 'руб.'),
+      Currency('SAR', 'Saudi Riyal', 'س.ر'),
+      Currency('RSD', 'Serbian Dinar', 'дин'),
+      Currency('SEK', 'Swedish Krona', 'kr'),
+      Currency('SGD', 'Singapore Dollar', '\$'),
+      Currency('THB', 'Thai Baht', '฿'),
+      Currency('TND', 'Tunisian Dinar', 'ت.د'),
+      Currency('TRY', 'Turkish Lira', '₺'),
+      Currency('TTD', 'T&T Dollar (TTD)', '\$'),
+      Currency('TWD', 'New Taiwan Dollar', 'NT\$'),
+      Currency('UAH', 'Ukrainian Hryvnia', '₴'),
+      Currency('USD', 'US Dollar', '\$'),
+      Currency('UYU', 'Uruguayan Peso', '\$'),
+      Currency('VND', 'Vietnamese Dong', '₫'),
+      Currency('ZAR', 'South African Rand', 'R'),
+    ]);
+  }
+
+  void _initializeDefaultProviders(bool asyncLoad) {
+    addProvider(ImfCurrencyProvider(this));
+    // addProvider(EcbCurrencyProvider(this));
+    // addProvider(BCCurrencyProvider(this, 'TWD', 'fxtwdcad'));
+    // addProvider(UnCurrencyProvider(this));
+    initializeProviders(asyncLoad);
+  }
+
   void update() {
     loaded = false;
-    for (var p in providers) {
-      if (p.isLoaded()) {
+    for (var provider in providers) {
+      if (provider.isLoaded()) {
         loaded = true;
         break;
       }
     }
-    updated?.call();
+    _updatedController.add(null);
   }
 
-  void initializeProviders({bool asyncLoad = true}) {
-    for (var p in providers) {
-      p.updated = () {
+  void initializeProviders([bool asyncLoad = true]) {
+    for (var provider in providers) {
+      // Vala code:
+      // p.updated.connect ( () => { update (); });
+      // equivalent Dart code:
+      provider.updated.listen((_) {
         update();
-      };
-      p.updateRates(asyncLoad);
+      });
+      provider.updateRates(asyncLoad: asyncLoad);
     }
   }
 
   List<Currency> getCurrencies() {
-    List<Currency> r = [];
-    for (var c in currencies) {
-      r.add(c);
-    }
-    return r;
+    return List.from(currencies);
   }
 
   Currency? getCurrency(String name) {
-    for (var c in currencies) {
-      if (name == c.name) {
-        var value = c.getValue();
+    for (var currency in currencies) {
+      if (name == currency.name) {
+        var value = currency.getValue();
         if (value == null || value.isNegative() || value.isZero()) {
           return null;
         } else {
-          return c;
+          return currency;
         }
       }
     }
-
     return null;
   }
 
   Number? getValue(String currency) {
     var c = getCurrency(currency);
-    if (c != null) {
-      return c.getValue();
-    } else {
-      return null;
-    }
+    return c?.getValue();
   }
 
   Currency addCurrency(String shortName, String source) {
-    for (var c in currencies) {
-      if (c.name == shortName) {
-        c.source = source;
-        return c;
+    for (var currency in currencies) {
+      if (currency.name == shortName) {
+        currency.source = source;
+        return currency;
       }
     }
-
-    print("Currency $shortName is not in the currency table");
-    var c = Currency(shortName, shortName, shortName);
-    c.source = source;
-    currencies.add(c);
-    return c;
+    print('Currency $shortName is not in the currency table');
+    var currency = Currency(shortName, shortName, shortName, source: source);
+    currencies.add(currency);
+    return currency;
   }
 
   List<Currency> currenciesEligibleForAutocompletionForText(String displayText) {
-    List<Currency> eligibleCurrencies = [];
-    String displayTextCaseInsensitive = displayText.toUpperCase();
-    for (var currency in currencies) {
-      String currencyNameCaseInsensitive = currency.name.toUpperCase();
-      if (currencyNameCaseInsensitive.startsWith(displayTextCaseInsensitive)) {
-        eligibleCurrencies.add(currency);
-      }
-    }
-    return eligibleCurrencies;
+    var displayTextCaseInsensitive = displayText.toUpperCase();
+    return currencies.where((currency) {
+      var currencyNameCaseInsensitive = currency.name.toUpperCase();
+      return currencyNameCaseInsensitive.startsWith(displayTextCaseInsensitive);
+    }).toList();
   }
 }
