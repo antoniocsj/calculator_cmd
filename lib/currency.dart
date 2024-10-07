@@ -1,4 +1,5 @@
 import 'package:calculator/number.dart';
+import 'package:calculator/currency_provider.dart';
 
 CurrencyManager? defaultCurrencyManager;
 

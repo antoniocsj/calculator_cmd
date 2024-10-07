@@ -11,8 +11,10 @@ abstract class CurrencyProvider {
 }
 
 abstract class AbstractCurrencyProvider implements CurrencyProvider {
+  @override
   String get attributionLink;
 
+  @override
   String get providerName;
 
   String get rateFilepath;
@@ -21,25 +23,28 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
 
   String get sourceName;
 
-  int refreshInterval;
+  late int refreshInterval;
 
+  @override
   void setRefreshInterval(int interval, {bool asyncLoad = true}) {
     loaded = false;
     updated();
 
-    this.refreshInterval = interval;
+    refreshInterval = interval;
     updateRates(asyncLoad: asyncLoad);
   }
 
+  @override
   bool isLoaded() {
     return loaded;
   }
 
-  bool loading;
-  bool loaded;
-  List<Currency> currencies;
-  CurrencyManager currencyManager;
+  late bool loading;
+  late bool loaded;
+  late List<Currency> currencies;
+  late CurrencyManager currencyManager;
 
+  @override
   void clear() {
     FileUtils.remove(rateFilepath);
   }
@@ -50,29 +55,30 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
     return currency;
   }
 
+  @override
   void updateRates({bool asyncLoad = true}) {
-    debug("Updating ${sourceName} rates");
+    print("Updating $sourceName rates");
 
     if (loading || loaded) return;
 
     if (refreshInterval == 0) return;
 
-    debug("Checking ${sourceName} rates");
+    print("Checking $sourceName rates");
 
     if (!fileNeedsUpdate(rateFilepath, refreshInterval)) {
       doLoadRates();
       return;
     }
 
-    debug("Loading ${sourceName} rates");
+    print("Loading $sourceName rates");
 
     loading = true;
 
     if (asyncLoad) {
-      debug("Downloading ${sourceName} rates async");
+      print("Downloading $sourceName rates async");
       downloadFileAsync(rateSourceUrl, rateFilepath, sourceName);
     } else {
-      debug("Downloading ${sourceName} rates sync");
+      print("Downloading $sourceName rates sync");
       downloadFileSync(rateSourceUrl, rateFilepath, sourceName);
       doLoadRates();
     }
@@ -83,7 +89,7 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
   }
 
   void doLoadRates() {
-    debug("Loaded ${sourceName} rates");
+    print("Loaded $sourceName rates");
     loaded = true;
     updated();
   }
@@ -113,23 +119,28 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
 }
 
 class ImfCurrencyProvider extends AbstractCurrencyProvider {
+  @override
   String get rateFilepath {
     return Path.buildFilename(
         Environment.getUserCacheDir(), "calculator", "rms_five.xls");
   }
 
+  @override
   String get rateSourceUrl {
     return "https://www.imf.org/external/np/fin/data/rms_five.aspx?tsvflag=Y";
   }
 
+  @override
   String get attributionLink {
     return "https://www.imf.org/external/np/fin/data/rms_five.aspx";
   }
 
+  @override
   String get providerName {
     return "International Monetary Fund";
   }
 
+  @override
   String get sourceName {
     return "IMF";
   }
@@ -190,6 +201,7 @@ class ImfCurrencyProvider extends AbstractCurrencyProvider {
     };
   }
 
+  @override
   void doLoadRates() {
     var nameMap = getNameMap();
 
@@ -197,7 +209,7 @@ class ImfCurrencyProvider extends AbstractCurrencyProvider {
     try {
       FileUtils.getContents(rateFilepath, data);
     } catch (Error e) {
-      warning("Failed to read exchange rates: ${e.message}");
+      print("Failed to read exchange rates: ${e.message}");
       return;
     }
 
@@ -231,13 +243,13 @@ class ImfCurrencyProvider extends AbstractCurrencyProvider {
             var c = getCurrency(symbol);
             var value = mpSetFromString(tokens[valueIndex]);
             if (c == null && value != null) {
-              debug("Using IMF rate of ${tokens[valueIndex]} for ${symbol}");
+              print("Using IMF rate of ${tokens[valueIndex]} for $symbol");
               c = registerCurrency(symbol, sourceName);
               value = value.reciprocal();
               if (c != null) c.setValue(value);
             }
           } else {
-            warning("Unknown currency '${tokens[0]}'");
+            print("Unknown currency '${tokens[0]}'");
           }
         }
       }
@@ -253,9 +265,9 @@ class ImfCurrencyProvider extends AbstractCurrencyProvider {
 class OfflineImfCurrencyProvider extends ImfCurrencyProvider {
   String sourceFile;
 
-  OfflineImfCurrencyProvider(CurrencyManager currencyManager, this.sourceFile)
-      : super(currencyManager);
+  OfflineImfCurrencyProvider(super.currencyManager, this.sourceFile);
 
+  @override
   void downloadFileSync(String uri, String filename, String source) {
     var directory = Path.dirname(filename);
     FileUtils.createWithParents(directory, 0o755);
@@ -268,12 +280,13 @@ class OfflineImfCurrencyProvider extends ImfCurrencyProvider {
       output.splice(bodyinput, OutputStreamSpliceFlags.closeSource | OutputStreamSpliceFlags.closeTarget);
       loading = false;
       doLoadRates();
-      debug("${source} rates updated");
+      print("$source rates updated");
     } catch (Error e) {
-      warning("Couldn't download ${source} currency rate file: ${e.message}");
+      print("Couldn't download $source currency rate file: ${e.message}");
     }
   }
 
+  @override
   void downloadFileAsync(String uri, String filename, String source) {
     var directory = Path.dirname(filename);
     FileUtils.createWithParents(directory, 0o755);
@@ -286,38 +299,44 @@ class OfflineImfCurrencyProvider extends ImfCurrencyProvider {
       output.spliceAsync(bodyinput, OutputStreamSpliceFlags.closeSource | OutputStreamSpliceFlags.closeTarget, Priority.default);
       loading = false;
       doLoadRates();
-      debug("${source} rates updated");
+      print("$source rates updated");
     } catch (Error e) {
-      warning("Couldn't download ${source} currency rate file: ${e.message}");
+      print("Couldn't download $source currency rate file: ${e.message}");
     }
   }
 }
 
 class EcbCurrency extends AbstractCurrencyProvider {
+  @override
   String get rateFilepath {
     return Path.buildFilename(Environment.getUserCacheDir(), "calculator", "eurofxref-daily.xml");
   }
 
+  @override
   String get rateSourceUrl {
     return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
   }
 
+  @override
   String get attributionLink {
     return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
   }
 
+  @override
   String get providerName {
     return "European Central Bank";
   }
 
+  @override
   String get sourceName {
     return "ECB";
   }
 
+  @override
   void doLoadRates() {
     var eurRate = getCurrency("EUR");
     if (eurRate == null) {
-      warning("Cannot use ECB rates as don't have EUR rate");
+      print("Cannot use ECB rates as don't have EUR rate");
       return;
     }
 
@@ -328,20 +347,20 @@ class EcbCurrency extends AbstractCurrencyProvider {
 
     var document = XmlParser.readFromFile(rateFilepath);
     if (document == null) {
-      warning("Couldn't parse ECB rate file ${rateFilepath}");
+      print("Couldn't parse ECB rate file $rateFilepath");
       return;
     }
 
     var xpathCtx = Xml.XPath.Context(document);
     if (xpathCtx == null) {
-      warning("Couldn't create XPath context");
+      print("Couldn't create XPath context");
       return;
     }
 
     xpathCtx.registerNs("xref", "http://www.ecb.int/vocabulary/2002-08-01/eurofxref");
     var xpathObj = xpathCtx.evalExpression("//xref:Cube[@currency][@rate]");
     if (xpathObj == null) {
-      warning("Couldn't create XPath object");
+      print("Couldn't create XPath object");
       return;
     }
 
@@ -368,22 +387,22 @@ class EcbCurrency extends AbstractCurrencyProvider {
     }
 
     if (name != null && value != null && getCurrency(name) == null) {
-      debug("Using ECB rate of ${value} for ${name}");
+      print("Using ECB rate of $value for $name");
       var c = registerCurrency(name, sourceName);
       var r = mpSetFromString(value);
       var v = eurRate.getValue();
-      v = v.multiply(r);
-      if (c != null) c.setValue(v);
+      v = v?.multiply(r!);
+      c.setValue(v!);
     }
   }
 
   void setEcbFixedRate(String name, String value, Currency eurRate) {
-    debug("Using ECB fixed rate of ${value} for ${name}");
-    var c = registerCurrency(name, "${sourceName}#fixed");
+    print("Using ECB fixed rate of $value for $name");
+    var c = registerCurrency(name, "$sourceName#fixed");
     var r = mpSetFromString(value);
     var v = eurRate.getValue();
-    v = v.divide(r);
-    if (c != null) c.setValue(v);
+    v = v?.divide(r!);
+    c.setValue(v!);
   }
 
   EcbCurrency(CurrencyManager currencyManager) {
@@ -395,42 +414,48 @@ class BcCurrencyProvider extends AbstractCurrencyProvider {
   String currency;
   String currencyFilename;
 
+  @override
   String get rateFilepath {
-    return Path.buildFilename(Environment.getUserCacheDir(), "calculator", "${currencyFilename}.xml");
+    return Path.buildFilename(Environment.getUserCacheDir(), "calculator", "$currencyFilename.xml");
   }
 
+  @override
   String get rateSourceUrl {
-    return "https://www.bankofcanada.ca/valet/observations/${currencyFilename}/xml?recent=1";
+    return "https://www.bankofcanada.ca/valet/observations/$currencyFilename/xml?recent=1";
   }
 
+  @override
   String get attributionLink {
-    return "https://www.bankofcanada.ca/valet/observations/${currencyFilename}/xml?recent=1";
+    return "https://www.bankofcanada.ca/valet/observations/$currencyFilename/xml?recent=1";
   }
 
+  @override
   String get providerName {
     return "Bank of Canada";
   }
 
+  @override
   String get sourceName {
-    return "BC-${currency}";
+    return "BC-$currency";
   }
 
+  @override
   void doLoadRates() {
     var document = XmlParser.readFromFile(rateFilepath);
     if (document == null) {
-      warning("Couldn't parse rate file ${rateFilepath}");
+      print("Couldn't parse rate file $rateFilepath");
       return;
     }
 
     var xpathCtx = Xml.XPath.Context(document);
     if (xpathCtx == null) {
-      warning("Couldn't create XPath context");
+      print("Couldn't create XPath context");
       return;
     }
 
     var xpathObj = xpathCtx.evalExpression("//observations/o[last()]/v");
     if (xpathObj == null) {
-      warning("Couldn't create XPath object");
+      print("Couldn't create XPath object");
       return;
     }
 
@@ -439,7 +464,7 @@ class BcCurrencyProvider extends AbstractCurrencyProvider {
 
     var cadRate = getCurrency("CAD");
     if (cadRate == null) {
-      warning("Cannot use BC rates as don't have CAD rate");
+      print("Cannot use BC rates as don't have CAD rate");
       return;
     }
 
@@ -449,12 +474,12 @@ class BcCurrencyProvider extends AbstractCurrencyProvider {
   }
 
   void setRate(String name, String value, Currency cadRate) {
-    debug("Using BC rate of ${value} for ${name}");
+    print("Using BC rate of $value for $name");
     var c = registerCurrency(name, sourceName);
     var r = mpSetFromString(value);
     var v = cadRate.getValue();
-    v = v.divide(r);
-    if (c != null) c.setValue(v);
+    v = v?.divide(r!);
+    c.setValue(v!);
   }
 
   BcCurrencyProvider(CurrencyManager currencyManager, this.currency, this.currencyFilename) {
@@ -463,22 +488,27 @@ class BcCurrencyProvider extends AbstractCurrencyProvider {
 }
 
 class UnCurrencyProvider extends AbstractCurrencyProvider {
+  @override
   String get rateFilepath {
     return Path.buildFilename(Environment.getUserCacheDir(), "calculator", "un-daily.xls");
   }
 
+  @override
   String get rateSourceUrl {
     return "https://treasury.un.org/operationalrates/xsql2CSV.php";
   }
 
+  @override
   String get attributionLink {
     return "https://treasury.un.org/operationalrates/OperationalRates.php";
   }
 
+  @override
   String get providerName {
     return "United Nations Treasury";
   }
 
+  @override
   String get sourceName {
     return "UNT";
   }
@@ -493,13 +523,14 @@ class UnCurrencyProvider extends AbstractCurrencyProvider {
     };
   }
 
+  @override
   void doLoadRates() {
     var currencyMap = getCurrencyMap();
     String data;
     try {
       FileUtils.getContents(rateFilepath, data);
     } catch (Error e) {
-      warning("Failed to read exchange rates: ${e.message}");
+      print("Failed to read exchange rates: ${e.message}");
       return;
     }
 
@@ -508,7 +539,7 @@ class UnCurrencyProvider extends AbstractCurrencyProvider {
     var inData = false;
     var usdRate = getCurrency("USD");
     if (usdRate == null) {
-      warning("Cannot use UN rates as don't have USD rate");
+      print("Cannot use UN rates as don't have USD rate");
       return;
     }
     for (var line in lines) {
@@ -533,10 +564,10 @@ class UnCurrencyProvider extends AbstractCurrencyProvider {
         if (name != null && value != null && getCurrency(name) == null && currencyMap[name] != null) {
           var c = registerCurrency(name, sourceName);
           var r = mpSetFromString(value);
-          debug("Registering ${name} with value '${value}'");
+          print("Registering $name with value '$value'");
           var v = usdRate.getValue();
-          v = v.multiply(r);
-          c.setValue(v);
+          v = v?.multiply(r!);
+          c.setValue(v!);
         }
       }
     }
