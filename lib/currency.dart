@@ -27,13 +27,11 @@ class CurrencyManager {
   final List<CurrencyProvider> providers = [];
   final StreamController<void> _updatedController = StreamController<void>.broadcast();
   bool loaded = false;
-  int _refreshInterval = 0;
+  int refreshInterval = 0;
 
-  int get refreshInterval => _refreshInterval;
-  set refreshInterval(int value) {
-    _refreshInterval = value;
-  }
-
+  // Vala code:
+  // public signal void updated ();
+  // equivalent Dart code:
   Stream<void> get updated => _updatedController.stream;
 
   void addProvider(CurrencyProvider provider) {
@@ -43,14 +41,14 @@ class CurrencyManager {
   void refreshSync() {
     loaded = false;
     for (var provider in providers) {
-      provider.setRefreshInterval(_refreshInterval, false);
+      provider.setRefreshInterval(refreshInterval, false);
     }
   }
 
   void refreshAsync() {
     loaded = false;
     for (var provider in providers) {
-      provider.setRefreshInterval(_refreshInterval, true);
+      provider.setRefreshInterval(refreshInterval, true);
     }
   }
 
@@ -70,7 +68,7 @@ class CurrencyManager {
   }
 
   void _initializeDefaultCurrencies() {
-    currencies.addAll([
+    defaultCurrencyManager?.currencies.addAll([
       Currency('AED', 'UAE Dirham', 'إ.د'),
       Currency('ARS', 'Argentine Peso', '\$'),
       Currency('AUD', 'Australian Dollar', '\$'),
@@ -140,11 +138,11 @@ class CurrencyManager {
   }
 
   void _initializeDefaultProviders(bool asyncLoad) {
-    addProvider(ImfCurrencyProvider(this));
-    // addProvider(EcbCurrencyProvider(this));
-    // addProvider(BCCurrencyProvider(this, 'TWD', 'fxtwdcad'));
-    // addProvider(UnCurrencyProvider(this));
-    initializeProviders(asyncLoad);
+    defaultCurrencyManager?.addProvider(ImfCurrencyProvider(defaultCurrencyManager!));
+    // addProvider(EcbCurrencyProvider(defaultCurrencyManager!));
+    // addProvider(BCCurrencyProvider(defaultCurrencyManager!, 'TWD', 'fxtwdcad'));
+    // addProvider(UnCurrencyProvider(defaultCurrencyManager!));
+    defaultCurrencyManager?.initializeProviders(asyncLoad);
   }
 
   void update() {
@@ -155,7 +153,10 @@ class CurrencyManager {
         break;
       }
     }
-    _updatedController.add(null);
+    // Vala code:
+    // updated(); // a call to the signal updated
+    // equivalent Dart code:
+    _updatedController.add(null); // this will notify all listeners
   }
 
   void initializeProviders([bool asyncLoad = true]) {

@@ -2,6 +2,7 @@ import 'package:calculator/number.dart';
 import 'package:calculator/equation.dart';
 import 'package:calculator/serializer.dart';
 import 'package:calculator/enums.dart';
+import 'package:calculator/currency.dart';
 
 UnitManager? defaultUnitManager;
 

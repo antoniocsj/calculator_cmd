@@ -5,10 +5,8 @@ import 'package:calculator/number.dart';
 import 'package:calculator/currency.dart';
 
 abstract class CurrencyProvider {
-  // Getter for the updated stream
+  // Getter and setter for the updated stream
   Stream<void> get updated;
-
-  // Setter for the updated stream
   set updated(Stream<void> value);
 
   Future<void> updateRates({bool asyncLoad = true});
@@ -21,6 +19,9 @@ abstract class CurrencyProvider {
 
 abstract class AbstractCurrencyProvider implements CurrencyProvider {
   final _updatedController = StreamController<void>.broadcast();
+  String get rateFilepath;
+  String get rateSourceUrl;
+  String get sourceName;
   bool loading = false;
   bool loaded = false;
   int refreshInterval = 0;
@@ -61,17 +62,24 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
 
   @override
   Future<void> updateRates({bool asyncLoad = true}) async {
+    print("Updating $sourceName rates");
+
     if (loading || loaded || refreshInterval == 0) return;
+
+    print("Checking $sourceName rates ");
 
     if (!fileNeedsUpdate(rateFilepath, refreshInterval as double)) {
       doLoadRates();
       return;
     }
 
+    print("Loading $sourceName rates");
+
     loading = true;
     if (asyncLoad) {
       await downloadFileAsync(rateSourceUrl, rateFilepath, sourceName);
-    } else {
+    }
+    else {
       downloadFileSync(rateSourceUrl, rateFilepath, sourceName);
       doLoadRates();
     }
@@ -95,6 +103,7 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
       response.pipe(dest.openWrite()).then((_) {
         loading = false;
         doLoadRates();
+        print("$source rates updated");
       });
     }).catchError((e) {
       print("Couldn't download $source currency rate file: $e");
@@ -114,13 +123,10 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
   }
 
   void doLoadRates() {
+    print("Loaded $sourceName rates");
     loaded = true;
     _updatedController.add(null);
   }
-
-  String get rateFilepath;
-  String get rateSourceUrl;
-  String get sourceName;
 }
 
 class ImfCurrencyProvider extends AbstractCurrencyProvider {
