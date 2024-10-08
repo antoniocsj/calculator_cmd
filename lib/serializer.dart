@@ -328,7 +328,7 @@ class Serializer {
       int multiplier = 1;
       int b = numberBase;
 
-      while (numberBase / multiplier != 0) {
+      while (numberBase ~/ multiplier != 0) {
         multiplier *= 10;
       }
 
@@ -450,4 +450,85 @@ class Serializer {
       string.append(superDigits[superValue[i].codeUnitAt(0) - '0'.codeUnitAt(0)]);
     }
   }
+}
+
+// Tests for the Serializer class
+
+void testSerializer() {
+  var s = Serializer(DisplayFormat.automatic, 10, 10);
+  var x = Number.fromDouble(3.6, 1.8);
+  print('x: ${s.serialize(x)}');
+
+  s.setBase(2);
+  print('x: ${s.serialize(x)}');
+
+  s.setBase(8);
+  print('x: ${s.serialize(x)}');
+
+  s.setBase(16);
+  print('x: ${s.serialize(x)}');
+
+  s.setBase(10);
+  print('x: ${s.serialize(x)}');
+
+  s.setRepresentationBase(2);
+  print('x: ${s.serialize(x)}');
+
+  s.setRepresentationBase(8);
+  print('x: ${s.serialize(x)}');
+
+  s.setRepresentationBase(16);
+  print('x: ${s.serialize(x)}');
+
+  s.setRepresentationBase(10);
+  print('x: ${s.serialize(x)}');
+
+  s.setRadix(',');
+  print('x: ${s.serialize(x)}');
+
+  s.setRadix('.');
+  print('x: ${s.serialize(x)}');
+
+  s.setThousandsSeparator(' ');
+  print('x: ${s.serialize(x)}');
+
+  s.setThousandsSeparatorCount(4);
+  print('x: ${s.serialize(x)}');
+
+  s.setShowThousandsSeparators(true);
+  print('x: ${s.serialize(x)}');
+
+  s.setShowThousandsSeparators(false);
+  print('x: ${s.serialize(x)}');
+
+  s.setShowTrailingZeroes(true);
+  print('x: ${s.serialize(x)}');
+
+  s.setShowTrailingZeroes(false);
+  print('x: ${s.serialize(x)}');
+
+  s.setLeadingDigits(16);
+  print('x: ${s.serialize(x)}');
+
+  s.setTrailingDigits(16);
+  print('x: ${s.serialize(x)}');
+
+  s.setNumberFormat(DisplayFormat.fixed);
+  print('x: ${s.serialize(x)}');
+
+  s.setNumberFormat(DisplayFormat.scientific);
+  print('x: ${s.serialize(x)}');
+
+  s.setNumberFormat(DisplayFormat.engineering);
+  print('x: ${s.serialize(x)}');
+
+  s.setNumberFormat(DisplayFormat.automatic);
+  print('x: ${s.serialize(x)}');
+
+  var y = s.fromString('3.6');
+  print('y: ${s.serialize(y!)}');
+}
+
+void main() {
+  testSerializer();
 }
