@@ -176,3 +176,34 @@ class ParseResult {
     required this.number,
   });
 }
+
+// Tests for getNextChar and getPrevChar.
+// It iterates over a string and prints the next and previous characters.
+void test_1() {
+  // String str = 'a𝄞b';
+  String str = 'abcde';
+  RefInt index = RefInt(0);
+  RefString outChar = RefString('');
+
+  while (str.getNextChar(index, outChar)) {
+    print('Index: ${index.value}, char: ${outChar.value}');
+  }
+
+  while (str.getNextChar(index, outChar)) {
+    print('Index: ${index.value}, char: ${outChar.value}');
+  }
+
+  while (str.getPrevChar(index, outChar)) {
+    print('Index: ${index.value}, char: ${outChar.value}');
+  }
+
+  while (str.getPrevChar(index, outChar)) {
+    print('Index: ${index.value}, char: ${outChar.value}');
+  }
+}
+
+
+// main
+void main() {
+  test_1();
+}
