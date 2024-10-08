@@ -104,7 +104,7 @@ void test_4a([int n = 1000]) {
   print('e: ${e.num.getString()}, ${e.num.getString1()}');
   print('f: ${f.num.getString()}, ${f.num.getString1()}');
 
-  var h = Number().mpSetFromString('3.60000000000000000000000000000000000000000');
+  var h = mpSetFromString('3.60000000000000000000000000000000000000000');
   if (h == null) {
     print('h is null');
   } else {
@@ -126,10 +126,10 @@ void test_4b([int n = 1000]) {
   print('b: ${b.num.getString()}, ${b.num.getString1()}');
   print('c: ${c.num.getString()}, ${c.num.getString1()}');
 
-  var d = Number().mpSetFromString('3.6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001002003');
-  var e = Number().mpSetFromString('1.8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002003004');
-  var f = Number().mpSetFromString('0.0');
-  var g = Number().mpSetFromString('0.0');
+  var d = mpSetFromString('3.6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001002003');
+  var e = mpSetFromString('1.8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002003004');
+  var f = mpSetFromString('0.0');
+  var g = mpSetFromString('0.0');
 
   if (d == null || e == null || f == null || g == null) {
     print('d, e, f, or g is null');
