@@ -22,6 +22,37 @@ class Number {
     precision = value;
   }
 
+  // Obter a precisão em dígitos decimais
+  static int get precisionInDigits => _calulatePrecisionInDigits;
+
+  // calcular a precisão em dígitos decimais a partir da precisão em bits.
+  // fórmula usada: n_digits = floor(n_bits * log10(2))
+  static int get _calulatePrecisionInDigits {
+    return (precision * log(2) / log(10)).floor();
+  }
+
+  // calcular a precisão em bits a partir da precisão em dígitos decimais.
+  // fórmula usada: n_bits = ceil(n_digits * log2(10))
+  // int get _calulatePrecisionInBits {
+  //   return (precisionInDigits * math.log(10) / math.log(2)).ceil();
+  // }
+
+  // calcular o número de dígitos a partir do número de bits e da base
+  static int _calculateDigits(int bits, int base) {
+    if (base <= 1) {
+      throw ArgumentError('Base must be greater than 1');
+    }
+    return (bits * log(2) / log(base)).floor();
+  }
+
+  // calcular o número de bits a partir do número de dígitos e da base
+  // static int _calculateBits(int digits, int base) {
+  //   if (base <= 1) {
+  //     throw ArgumentError('Base must be greater than 1');
+  //   }
+  //   return (digits * log(base) / log(2)).ceil();
+  // }
+
   // Construtor padrão
   Number() {
     num = Complex(precision);
@@ -564,12 +595,13 @@ class Number {
 
     while (!expValue.isZero()) {
       bool isEven = expValue.modulusDivide(two).isZero();
+
       if (!isEven) {
         ans = ans.multiply(baseValue).modulusDivide(mod);
-      } else {
-        baseValue = baseValue.multiply(baseValue).modulusDivide(mod);
-        expValue = expValue.divideInteger(2).floor();
       }
+
+      baseValue = baseValue.multiply(baseValue).modulusDivide(mod);
+      expValue = expValue.divideInteger(2).floor();
     }
 
     return ans.modulusDivide(mod);
@@ -1154,7 +1186,7 @@ class Number {
   // Return a string representation of the number
   @override
   String toString() {
-    var serializer = Serializer(DisplayFormat.fixed, 10, 32);
+    var serializer = Serializer(DisplayFormat.fixed, 10, 64);
     return serializer.serialize(this);
   }
 }
@@ -1322,7 +1354,8 @@ Number? mpSetFromString(String str, [int defaultBase = 10, bool mayHavePrefix = 
           index = rIndex.value;
           c = rChar.value;
           return z;
-        } else {
+        }
+        else {
           return null;
         }
       }
@@ -1331,7 +1364,8 @@ Number? mpSetFromString(String str, [int defaultBase = 10, bool mayHavePrefix = 
 /* Check for decimal point */
     if (c == '.') {
       hasFraction = true;
-    } else {
+    }
+    else {
       str.getPrevChar(rIndex, rChar);
       index = rIndex.value;
       c = rChar.value;
@@ -1488,7 +1522,42 @@ bool mpIsOverflow(Number x, int wordlen) {
 // Tests for the mpSetFromString function
 void testSetFromString() {
   var testCases = [
-    '10'
+    '-10',
+    '-10.0',
+    '-0',
+    '-0.0',
+    '0',
+    '0.0',
+    '+0',
+    '+0.0',
+    '10',
+    '10.0',
+    '+10',
+    '+10.0',
+    '-0.1',
+    '-0.01',
+    '-0.001',
+    '-0.0001',
+    '-0.00001',
+    '-0.000001',
+    '-0.0000001',
+    '0.1',
+    '0.01',
+    '0.001',
+    '0.0001',
+    '0.00001',
+    '0.000001',
+    '0.0000001',
+    '+0.1',
+    '+0.01',
+    '+0.001',
+    '+0.0001',
+    '+0.00001',
+    '+0.000001',
+    '+0.0000001',
+    '-123456789123456789123456789123456789123456789123456789.123456789123456789123456789123456789123456789123456789',
+    '123456789123456789123456789123456789123456789123456789.123456789123456789123456789123456789123456789123456789',
+    '+123456789123456789123456789123456789123456789123456789.123456789123456789123456789123456789123456789123456789',
   ];
 
   for (var i = 0; i < testCases.length; i++) {
@@ -1498,7 +1567,111 @@ void testSetFromString() {
   }
 }
 
+// tests for operations on numbers
+void testOperations() {
+  var x = Number.fromInt(10);
+  var y = Number.fromInt(3);
+
+  var z = x.add(y);
+  print('Addition: ${z.toString()}');
+
+  z = x.subtract(y);
+  print('Subtraction: ${z.toString()}');
+
+  z = x.multiply(y);
+  print('Multiplication: ${z.toString()}');
+
+  z = x.divide(y);
+  print('Division: ${z.toString()}');
+
+  z = x.modulusDivide(y);
+  print('Modulus Division: ${z.toString()}');
+
+  z = x.modularExponentiation(y, Number.fromInt(33));
+  print('Modular Exponentiation: ${z.toString()}');
+
+  z = x.factorial();
+  print('Factorial: ${z.toString()}');
+
+  z = x.sin();
+  print('Sine: ${z.toString()}');
+
+  z = x.cos();
+  print('Cosine: ${z.toString()}');
+
+  z = x.tan();
+  print('Tangent: ${z.toString()}');
+
+  z = x.asin();
+  print('Arc Sine: ${z.toString()}');
+
+  z = x.acos();
+  print('Arc Cosine: ${z.toString()}');
+
+  z = x.atan();
+  print('Arc Tangent: ${z.toString()}');
+
+  z = x.sinh();
+  print('Hyperbolic Sine: ${z.toString()}');
+
+  z = x.cosh();
+  print('Hyperbolic Cosine: ${z.toString()}');
+
+  z = x.tanh();
+  print('Hyperbolic Tangent: ${z.toString()}');
+
+  z = x.asinh();
+  print('Hyperbolic Arc Sine: ${z.toString()}');
+
+  z = x.acosh();
+  print('Hyperbolic Arc Cosine: ${z.toString()}');
+
+  z = x.atanh();
+  print('Hyperbolic Arc Tangent: ${z.toString()}');
+
+  z = x.ln();
+  print('Natural Logarithm: ${z.toString()}');
+
+  z = x.logarithm(2);
+  print('Logarithm base 2: ${z.toString()}');
+
+  z = x.logarithm(10);
+  print('Logarithm base 10: ${z.toString()}');
+
+  z = x.sqrt();
+  print('Square Root: ${z.toString()}');
+
+  z = x.root(3);
+  print('Cube Root: ${z.toString()}');
+
+  z = x.xpowy(y);
+  print('Power: ${z.toString()}');
+
+  z = x.xpowyInteger(3);
+  print('Power Integer: ${z.toString()}');
+
+  z = x.reciprocal();
+  print('Reciprocal: ${z.toString()}');
+
+  z = x.invertSign();
+  print('Invert Sign: ${z.toString()}');
+
+  z = x.abs();
+  print('Absolute Value: ${z.toString()}');
+
+  z = x.floor();
+  print('Floor: ${z.toString()}');
+
+  z = x.ceiling();
+  print('Ceiling: ${z.toString()}');
+
+  z = x.round();
+  print('Round: ${z.toString()}');
+}
+
+
 // main
 void main() {
-  testSetFromString();
+  // testSetFromString();
+  testOperations();
 }

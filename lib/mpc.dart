@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ffi';
 import 'package:calculator/mpfr_bindings.dart';
 import 'package:calculator/mpc_bindings.dart';
@@ -89,6 +90,37 @@ class Complex implements Finalizable {
 
   // Getter para acessar a precisão do número complexo
   int get precision => _precision;
+
+  // Obter a precisão em dígitos decimais
+  int get precisionInDigits => _calulatePrecisionInDigits;
+
+  // calcular a precisão em dígitos decimais a partir da precisão em bits.
+  // fórmula usada: n_digits = floor(n_bits * log10(2))
+  int get _calulatePrecisionInDigits {
+    return (_precision * math.log(2) / math.log(10)).floor();
+  }
+
+  // calcular a precisão em bits a partir da precisão em dígitos decimais.
+  // fórmula usada: n_bits = ceil(n_digits * log2(10))
+  // int get _calulatePrecisionInBits {
+  //   return (precisionInDigits * math.log(10) / math.log(2)).ceil();
+  // }
+
+  // calcular o número de dígitos a partir do número de bits e da base
+  int _calculateDigits(int bits, int base) {
+    if (base <= 1) {
+      throw ArgumentError('Base must be greater than 1');
+    }
+    return (bits * math.log(2) / math.log(base)).floor();
+  }
+
+  // calcular o número de bits a partir do número de dígitos e da base
+  // int _calculateBits(int digits, int base) {
+  //   if (base <= 1) {
+  //     throw ArgumentError('Base must be greater than 1');
+  //   }
+  //   return (digits * math.log(base) / math.log(2)).ceil();
+  // }
 
   // Setter para alterar o número complexo
   void setComplex(Complex complex) {
