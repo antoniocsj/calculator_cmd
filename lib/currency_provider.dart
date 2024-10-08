@@ -112,14 +112,19 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
 
   Future<void> downloadFileAsync(String uri, String filename, String source) async {
     var directory = path.dirname(filename);
-    await Directory(directory).create(recursive: true);
-    var dest = File(filename);
-    var session = HttpClient();
-    var request = await session.getUrl(Uri.parse(uri));
-    var response = await request.close();
-    await response.pipe(dest.openWrite());
-    loading = false;
-    doLoadRates();
+    try {
+      await Directory(directory).create(recursive: true);
+      var dest = File(filename);
+      var session = HttpClient();
+      var request = await session.getUrl(Uri.parse(uri));
+      var response = await request.close();
+      await response.pipe(dest.openWrite());
+      loading = false;
+      doLoadRates();
+      print("$source rates updated");
+    } catch (e) {
+      print("Couldn't download $source currency rate file: $e");
+    }
   }
 
   void doLoadRates() {
@@ -133,7 +138,7 @@ class ImfCurrencyProvider extends AbstractCurrencyProvider {
   ImfCurrencyProvider(super.currencyManager);
 
   @override
-  String get rateFilepath => path.join(Directory.systemTemp.path, 'gnome-calculator', 'rms_five.xls');
+  String get rateFilepath => path.join(Directory.systemTemp.path, 'calculator', 'rms_five.xls');
 
   @override
   String get rateSourceUrl => 'https://www.imf.org/external/np/fin/data/rms_five.aspx?tsvflag=Y';
@@ -206,17 +211,29 @@ class ImfCurrencyProvider extends AbstractCurrencyProvider {
   @override
   void doLoadRates() {
     var nameMap = getNameMap();
-    var data = File(rateFilepath).readAsStringSync();
+    String data;
+
+    try {
+      data = File(rateFilepath).readAsStringSync();
+    }
+    catch (e) {
+      print("Couldn't read IMF currency rate file: $e");
+      return;
+    }
+
     var lines = data.split('\n');
     var inData = false;
 
     for (var line in lines) {
       line = line.trim();
+
+      // Start after first blank line, stop on next. Skip header line.
       if (line.isEmpty) {
         if (!inData) {
           inData = true;
           continue;
-        } else {
+        }
+        else {
           break;
         }
       }
@@ -231,11 +248,13 @@ class ImfCurrencyProvider extends AbstractCurrencyProvider {
             var currency = getCurrency(symbol);
             var value = mpSetFromString(tokens[valueIndex]);
             if (currency == null && value != null) {
+              print("Using IMF rate of ${tokens[valueIndex]} for $symbol");
               currency = registerCurrency(symbol, sourceName);
               value = value.reciprocal();
               currency.setValue(value);
             }
-          } else {
+          }
+          else {
             print("Unknown currency '${tokens[0]}'");
           }
         }
