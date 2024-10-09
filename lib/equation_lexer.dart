@@ -203,9 +203,9 @@ class Lexer {
 
   void scan() {
     while (true) {
-      var tokenType = prelexer.getNextToken();
-      insertToken(tokenType);
-      if (tokenType == LexerTokenType.plEOS) {
+      var token = insertNextToken();
+      tokens.add(token);
+      if (token.type == LexerTokenType.plEOS) {
         break;
       }
     }

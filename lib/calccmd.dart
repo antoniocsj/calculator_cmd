@@ -61,28 +61,33 @@ void solve(String equation) {
   }
 }
 
-void main(List<String> args) {
-  var requiresNewLine = false;
+// void main(List<String> args) {
+//   var requiresNewLine = false;
+//
+//   resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
+//
+//   while (true) {
+//     stdout.write("> ");
+//     var line = stdin.readLineSync();
+//     if (line != null) {
+//       line = line.trim();
+//     } else {
+//       requiresNewLine = true;
+//     }
+//
+//     if (line == null || line == "exit" || line == "quit" || line == "") {
+//       break;
+//     }
+//
+//     solve(line);
+//   }
+//
+//   if (requiresNewLine) {
+//     stdout.writeln();
+//   }
+// }
 
-  resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
-
-  while (true) {
-    stdout.write("> ");
-    var line = stdin.readLineSync();
-    if (line != null) {
-      line = line.trim();
-    } else {
-      requiresNewLine = true;
-    }
-
-    if (line == null || line == "exit" || line == "quit" || line == "") {
-      break;
-    }
-
-    solve(line);
-  }
-
-  if (requiresNewLine) {
-    stdout.writeln();
-  }
+void main() {
+  String line = '3.6 + 1.8';
+  solve(line);
 }

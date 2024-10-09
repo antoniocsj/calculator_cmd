@@ -3800,7 +3800,8 @@ class Parser {
 
         return true;
       }
-    } else {
+    }
+    else {
       lexer.rollBack();
       if (!expression()) {
         return false;
