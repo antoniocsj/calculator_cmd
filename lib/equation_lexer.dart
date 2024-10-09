@@ -19,9 +19,16 @@ class PreLexer {
   void rollBack() {
     if (eos) {
       eos = false;
-    } else if (index > 0) {
-      index--;
+      return;
     }
+
+    String c = '';
+    RefInt rIndex = RefInt(index);
+    RefString rC = RefString('');
+
+    stream.getPrevChar(rIndex, rC);
+    index = rIndex.value;
+    c = rC.value;
   }
 
   // Set marker index. To be used for highlighting and error reporting.
@@ -36,15 +43,19 @@ class PreLexer {
 
   // Pre-Lexer tokenizer. To be called only by Lexer.
   LexerTokenType getNextToken() {
-    if (index >= stream.length) {
-      // We have to flag if we ran out of chars, as roll_back from PL_EOS should have no effect
+    String c = '';
+    RefInt rIndex = RefInt(index);
+    RefString rC = RefString('');
+
+    if (!stream.getNextChar(rIndex, rC)) {
+      index = rIndex.value;
+      c = rC.value;
+
       eos = true;
       return LexerTokenType.plEOS;
     }
-
-    eos = false;
-
-    var c = stream[index++];
+    index = rIndex.value;
+    c = rC.value;
 
     if (c == ',' || c == '.') {
       return LexerTokenType.plDecimal;

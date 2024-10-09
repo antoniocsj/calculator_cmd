@@ -28,6 +28,8 @@ int subAtoi(String data) {
     }
     if (!isSubdigit) return -1;
   }
+  index = refIndex.value;
+  c = refChar.value;
 
   return value;
 }
@@ -68,6 +70,8 @@ int superAtoi(String data) {
     }
     if (!isSuperdigit) return 0;
   }
+  index = refIndex.value;
+  c = refChar.value;
 
   return sign * value;
 }

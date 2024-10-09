@@ -1263,9 +1263,11 @@ Number? mpSetFromString(String str, [int defaultBase = 10, bool mayHavePrefix = 
     numberBase += value * baseMultiplier;
     baseMultiplier *= 10;
   }
+  index = rIndex.value;
+  c = rChar.value;
 
   if (mayHavePrefix) {
-    RefInt refBasePrefix = RefInt(0);
+    RefInt refBasePrefix = RefInt(basePrefix);
     literalBase = parseLiteralPrefix(str, refBasePrefix);
     basePrefix = refBasePrefix.value;
   }
@@ -1317,6 +1319,8 @@ Number? mpSetFromString(String str, [int defaultBase = 10, bool mayHavePrefix = 
 
     z = z.multiplyInteger(numberBase).add(Number.fromInt(i));
   }
+  index = rIndex.value;
+  c = rChar.value;
 
 /* Look for fraction characters, e.g. ⅚ */
   const List<String> fractions = [
@@ -1371,6 +1375,8 @@ Number? mpSetFromString(String str, [int defaultBase = 10, bool mayHavePrefix = 
       c = rChar.value;
     }
   }
+  index = rIndex.value;
+  c = rChar.value;
 
 /* Convert fractional part */
   if (hasFraction) {
@@ -1393,6 +1399,8 @@ Number? mpSetFromString(String str, [int defaultBase = 10, bool mayHavePrefix = 
       numerator = numerator.multiplyInteger(numberBase);
       numerator = numerator.add(Number.fromInt(i));
     }
+    index = rIndex.value;
+    c = rChar.value;
 
     numerator = numerator.divide(denominator);
     z = z.add(numerator);
@@ -1454,10 +1462,10 @@ Number? setFromSexagesimal(String str) {
   }
 
   var minuteStart = degreeIndex;
-  var rIndex = RefInt(minuteStart);
+  var rMinuteStart = RefInt(minuteStart);
   var rChar = RefString('');
-  str.getNextChar(rIndex, rChar);
-  minuteStart = rIndex.value;
+  str.getNextChar(rMinuteStart, rChar);
+  minuteStart = rMinuteStart.value;
   var c = rChar.value;
 
   if (str[minuteStart] == '0') {
@@ -1478,9 +1486,9 @@ Number? setFromSexagesimal(String str) {
   degrees = degrees.add(minutes.divideInteger(60));
 
   var secondStart = minuteIndex;
-  rIndex = RefInt(secondStart);
-  str.getNextChar(rIndex, rChar);
-  secondStart = rIndex.value;
+  var rSecondStart = RefInt(secondStart);
+  str.getNextChar(rSecondStart, rChar);
+  secondStart = rSecondStart.value;
   c = rChar.value;
 
   if (str[secondStart] == '0') {
@@ -1500,9 +1508,9 @@ Number? setFromSexagesimal(String str) {
 
   degrees = degrees.add(seconds.divideInteger(3600));
 
-  rIndex = RefInt(secondIndex);
-  str.getNextChar(rIndex, rChar);
-  secondIndex = rIndex.value;
+  var rSecondIndex = RefInt(secondIndex);
+  str.getNextChar(rSecondIndex, rChar);
+  secondIndex = rSecondIndex.value;
   c = rChar.value;
 
 /* Skip over second marker and expect no more characters */
