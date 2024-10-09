@@ -31,7 +31,7 @@ class PreLexer {
 
   // Get marked substring. To be used for error reporting.
   String getMarkedSubstring() {
-    return stream.substring(markIndex, index - markIndex);
+    return stream.substring(markIndex, index);
   }
 
   // Pre-Lexer tokenizer. To be called only by Lexer.

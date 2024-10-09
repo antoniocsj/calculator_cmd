@@ -3784,7 +3784,8 @@ class Parser {
         }
 
         return true;
-      } else {
+      }
+      else {
         lexer.rollBack();
         lexer.rollBack();
 

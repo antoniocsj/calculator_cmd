@@ -9,7 +9,7 @@ const int maxLine = 1024;
 
 late Serializer resultSerializer;
 
-void solve(String equation) {
+String? solve(String equation) {
   var e = Equation(equation);
   e.base = 10;
   e.wordlen = 32;
@@ -46,19 +46,27 @@ void solve(String equation) {
   errorEnd = errorEndRef.value;
 
   resultSerializer.setRepresentationBase(representationBase);
+  String? output = '';
+
   if (z != null) {
     var str = resultSerializer.serialize(z);
     if (resultSerializer.error != null) {
-      stderr.writeln(resultSerializer.error);
+      // stderr.writeln(resultSerializer.error);
+      output = resultSerializer.error;
       resultSerializer.error = null;
     } else {
-      stdout.writeln(str);
+      // stdout.writeln(str);
+      output = str;
     }
   } else if (errorCode == ErrorCode.mp) {
-    stderr.writeln("Error ${Number.error ?? errorToken}");
+    // stderr.writeln("Error ${Number.error ?? errorToken}");
+    output = "Error ${Number.error ?? errorToken}";
   } else {
-    stderr.writeln("Error $errorCode");
+    // stderr.writeln("Error $errorCode");
+    output = "Error $errorCode";
   }
+
+  return output;
 }
 
 // void main(List<String> args) {
@@ -87,7 +95,58 @@ void solve(String equation) {
 //   }
 // }
 
+// void main() {
+//   resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
+//
+//   String line = '3.6 + 1.8';
+//   solve(line);
+// }
+
+// tests for the solve function
 void main() {
-  String line = '3.6 + 1.8';
-  solve(line);
+  resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
+
+  var testCases = [
+    ['3.6 + 1.8', '5.4'],
+    ['3.6 - 1.8', '1.8'],
+    ['3.6 * 1.8', '6.48'],
+    ['3.6 / 1.8', '2'],
+    ['3.6 ^ 1.8', '10.031006259'],
+    ['36 mod 18', '0'],
+    ['3.6 + 1.8 * 2', '7.2'],
+    ['3.6 * 1.8 + 2', '9.48'],
+    ['3.6 + 1.8 / 2', '4.5'],
+    ['3.6 / 1.8 + 2', '3'],
+    ['3.6 - 1.8 * 2', '0'],
+    ['3.6 * 1.8 - 2', '4.48'],
+    ['3.6 - 1.8 / 2', '2.7'],
+    ['3.6 / 1.8 - 2', '0'],
+    ['3.6 ^ 1.8 * 2', '9.331854'],
+    ['3.6 * 1.8 ^ 2', '11.664'],
+    ['3.6 ^ 1.8 / 2', '2.332963'],
+    ['3.6 / 1.8 ^ 2', '1'],
+    ['3.6 ^ 1.8 + 2', '6.065927'],
+    ['3.6 + 1.8 ^ 2', '6.24'],
+    ['3.6 ^ 1.8 - 2', '2.465927'],
+    ['3.6 - 1.8 ^ 2', '1.44'],
+    ['3.6 ^ 1.8 % 2', '1.665927'],
+    ['3.6 % 1.8 ^ 2', '0'],
+    ['3.6 % 1.8 % 2', '0'],
+    ['3.6 % 1.8 + 2', '4.4'],
+    ['3.6 + 1.8 % 2', '5.4'],
+  ];
+
+  for (var testCase in testCases) {
+    var input = testCase[0];
+    var expected = testCase[1];
+    var output = solve(input);
+
+    if (output != expected) {
+      stderr.writeln('Test failed: $input => $output, expected $expected');
+    }
+    else {
+      stdout.writeln('Test passed: $input => $output');
+    }
+
+  }
 }
