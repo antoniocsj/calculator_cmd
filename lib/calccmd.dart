@@ -134,6 +134,7 @@ void main() {
     ['36 mod 8 mod 3', '1'],
     ['36 mod 11 + 2', '5'],
     ['36 + 19 mod 2', '37'],
+    ['2 ^ 1000', '1.071508607×10³⁰¹'],
   ];
 
   for (var testCase in testCases) {
