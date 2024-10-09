@@ -471,6 +471,7 @@ class Lexer {
       return insertHexDec();
     }
     else {
+      prelexer.rollBack();
       return insertToken(LexerTokenType.number);
     }
   }
