@@ -1,28 +1,43 @@
 import 'dart:collection';
 import 'dart:io';
+import 'dart:async';
 import 'package:calculator/enums.dart';
 import 'package:calculator/number.dart';
 import 'package:calculator/math_function.dart';
 import 'package:calculator/serializer.dart';
 import 'package:calculator/equation_parser.dart';
 
+FunctionManager? defaultFunctionManager;
+
 class FunctionManager {
-  static FunctionManager? _defaultFunctionManager;
   final String fileName;
   final HashMap<String, MathFunction> functions;
   final Serializer serializer;
 
+  final StreamController<MathFunction> _functionAddedController = StreamController<MathFunction>.broadcast();
+  final StreamController<MathFunction> _functionEditedController = StreamController<MathFunction>.broadcast();
+  final StreamController<MathFunction> _functionRemovedController = StreamController<MathFunction>.broadcast();
+
+  static final _finalizer = Finalizer<FunctionManager>((manager) {
+    manager.dispose();
+  });
+
+  Stream<MathFunction> get functionAdded => _functionAddedController.stream;
+  Stream<MathFunction> get functionEdited => _functionEditedController.stream;
+  Stream<MathFunction> get functionRemoved => _functionRemovedController.stream;
+
   FunctionManager()
-      : fileName = '${Directory.systemTemp.path}/gnome-calculator/custom-functions',
+      : fileName = '${Directory.systemTemp.path}/calculator/custom-functions',
         functions = HashMap<String, MathFunction>(),
         serializer = Serializer(DisplayFormat.scientific, 10, 50) {
     serializer.setRadix('.');
     reloadFunctions();
+    _finalizer.attach(this, this);
   }
 
   static FunctionManager getDefaultFunctionManager() {
-    _defaultFunctionManager ??= FunctionManager();
-    return _defaultFunctionManager!;
+    defaultFunctionManager ??= FunctionManager();
+    return defaultFunctionManager!;
   }
 
   void reloadFunctions() {
@@ -79,11 +94,13 @@ class FunctionManager {
         }
       }
     } catch (e) {
-      // Handle file read error
+      return;
     }
   }
 
   MathFunction? parseFunctionFromString(String? data) {
+    // pattern: <name> (<a1>;<a2>;<a3>;...) = <expression> @ <description>
+
     if (data == null) return null;
 
     final i = data.indexOf('=');
@@ -144,8 +161,10 @@ class FunctionManager {
     functions[newFunction.name] = newFunction;
     if (existingFunction != null) {
       // Emit function_edited signal
+      _functionEditedController.add(newFunction);
     } else {
       // Emit function_added signal
+      _functionAddedController.add(newFunction);
     }
 
     return true;
@@ -176,6 +195,7 @@ class FunctionManager {
       functions.remove(name);
       save();
       // Emit function_deleted signal
+      _functionRemovedController.add(function);
     }
   }
 
@@ -217,5 +237,11 @@ class FunctionManager {
       }
     });
     return arraySortMathFunction(eligibleFunctions);
+  }
+
+  void dispose() {
+    _functionAddedController.close();
+    _functionEditedController.close();
+    _functionRemovedController.close();
   }
 }

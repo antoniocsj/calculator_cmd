@@ -741,42 +741,6 @@ class Lexer {
   }
 
   LexerToken insertLetter() {
-    // Code in Vala:
-    // /* Get string of letters */
-    // var type = prelexer.get_next_token ();
-    // while (type == LexerTokenType.PL_LETTER || type == LexerTokenType.PL_HEX)
-    //   type = prelexer.get_next_token ();
-    //
-    // /* Allow a subdigit suffix */
-    // while (type == LexerTokenType.PL_SUB_DIGIT)
-    //   type = prelexer.get_next_token ();
-    //
-    // prelexer.roll_back ();
-    //
-    // var name = prelexer.get_marked_substring ().down ();
-    // if (name == "mod")
-    //   return insert_token (LexerTokenType.MOD);
-    // if (name == "and")
-    //   return insert_token (LexerTokenType.AND);
-    // if (name == "\\cdot")
-    //   return insert_token (LexerTokenType.MULTIPLY);
-    // if (name == "or")
-    //   return insert_token (LexerTokenType.OR);
-    // if (name == "xor")
-    //   return insert_token (LexerTokenType.XOR);
-    // if (name == "not")
-    //   return insert_token (LexerTokenType.NOT);
-    // // Translators: conversion keyword, used e.g. 1 EUR in USD, 1 EUR to USD
-    // if (name == _("in") || name == _("to"))
-    //   return insert_token (LexerTokenType.IN);
-    // if (check_if_function ())
-    //   return insert_token (LexerTokenType.FUNCTION);
-    // if (check_if_unit ())
-    //   return insert_token (LexerTokenType.UNIT);
-    // else
-    //   return insert_token (LexerTokenType.VARIABLE);
-
-    // The equivalent Dart code is:
     var type = prelexer.getNextToken();
     while (type == LexerTokenType.plLetter || type == LexerTokenType.plHex) {
       type = prelexer.getNextToken();
