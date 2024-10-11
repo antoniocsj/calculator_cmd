@@ -292,7 +292,7 @@ class FunctionNode extends ParseNode {
       var temp = '';
       var depth = 0;
       for (var i = 0; i < argumentList!.length; i++) {
-        var ss = argumentList.substring(i, 1);
+        var ss = argumentList.substring2(i, 1);
         if (ss == '(') {
           depth++;
         }
