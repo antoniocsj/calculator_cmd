@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:calculator/enums.dart';
 import 'package:calculator/mpfr.dart';
 import 'package:calculator/mpfr_bindings.dart';
@@ -28,7 +28,7 @@ class Number {
   // calcular a precisão em dígitos decimais a partir da precisão em bits.
   // fórmula usada: n_digits = floor(n_bits * log10(2))
   static int get _calulatePrecisionInDigits {
-    return (precision * log(2) / log(10)).floor();
+    return (precision * math.log(2) / math.log(10)).floor();
   }
 
   // calcular a precisão em bits a partir da precisão em dígitos decimais.
@@ -42,7 +42,7 @@ class Number {
     if (base <= 1) {
       throw ArgumentError('Base must be greater than 1');
     }
-    return (bits * log(2) / log(base)).floor();
+    return (bits * math.log(2) / math.log(base)).floor();
   }
 
   // calcular o número de bits a partir do número de dígitos e da base
@@ -111,7 +111,7 @@ class Number {
   }
 
   Number.random() {
-    var rnd = Random().nextDouble();
+    var rnd = math.Random().nextDouble();
     num = Complex.fromDouble(rnd, rnd, precision);
     // pesquisar como fazer isso usando a biblioteca mpfr e mpc.
   }
@@ -613,8 +613,9 @@ class Number {
 
     if (isComplex()) {
       z.num.setComplex(num);
-    } else {
-      mpcFromRadians(z.num, num, unit);
+    }
+    else {
+      mpcToRadians(z.num, num, unit);
     }
 
     z.num.sin(z.num);
@@ -627,8 +628,9 @@ class Number {
 
     if (isComplex()) {
       z.num.setComplex(num);
-    } else {
-      mpcFromRadians(z.num, num, unit);
+    }
+    else {
+      mpcToRadians(z.num, num, unit);
     }
 
     z.num.cos(z.num);
@@ -651,7 +653,8 @@ class Number {
 
     if (isComplex()) {
       z.num.setComplex(num);
-    } else {
+    }
+    else {
       mpcToRadians(z.num, num, unit);
     }
 
@@ -818,7 +821,7 @@ class Number {
 
     offset = len > offset ? len - offset : 0;
 
-    var z = mpSetFromString(text.substring(offset), 16, false);
+    var z = mpSetFromString(text.substring2(offset), 16, false);
 
     if (z == null) {
       error = 'Invalid hexadecimal string';
@@ -841,7 +844,8 @@ class Number {
     // If positive shift return x*operand
     if (count >= 0) {
       return multiply(operand);
-    } else {
+    }
+    else {
       // If negative return floor ( x/operand )
       if (compare(operand) < 0) {
         error = 'Shift operation underflow';
@@ -1456,7 +1460,7 @@ Number? setFromSexagesimal(String str) {
     return null;
   }
 
-  var degrees = mpSetFromString(str.substring(0, degreeIndex));
+  var degrees = mpSetFromString(str.substring2(0, degreeIndex));
   if (degrees == null) {
     return null;
   }
@@ -1478,7 +1482,7 @@ Number? setFromSexagesimal(String str) {
   }
 
   var minutes =
-      mpSetFromString(str.substring(minuteStart, minuteIndex - minuteStart));
+      mpSetFromString(str.substring2(minuteStart, minuteIndex - minuteStart));
   if (minutes == null) {
     return null;
   }
@@ -1501,7 +1505,7 @@ Number? setFromSexagesimal(String str) {
   }
 
   var seconds =
-      mpSetFromString(str.substring(secondStart, secondIndex - secondStart));
+      mpSetFromString(str.substring2(secondStart, secondIndex - secondStart));
   if (seconds == null) {
     return null;
   }

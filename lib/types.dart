@@ -106,6 +106,37 @@ extension StringExtensions on String {
     return true;
   }
 
+  String substring2(int offset, [int len = -1]) {
+    int stringLength = length;
+
+    // Calcula o comprimento da string se offset e len são positivos
+    if (offset >= 0 && len >= 0) {
+      stringLength = offset + len <= stringLength ? offset + len : stringLength;
+    }
+
+    // Ajusta o offset se for negativo
+    if (offset < 0) {
+      offset = stringLength + offset;
+      if (offset < 0) {
+        throw ArgumentError("Offset out of range");
+      }
+    } else if (offset > stringLength) {
+      throw ArgumentError("Offset out of range");
+    }
+
+    // Ajusta o comprimento se for negativo
+    if (len < 0) {
+      len = stringLength - offset;
+    }
+
+    // Verifica se o comprimento está dentro dos limites
+    if (offset + len > stringLength) {
+      throw ArgumentError("Length out of range");
+    }
+
+    return substring(offset, offset + len);
+  }
+
 }
 
 extension StringBuilder on StringBuffer {
@@ -202,8 +233,23 @@ void test_1() {
   }
 }
 
+void test_2() {
+  String str = "Hello, World!";
+
+  // Testando a função substring
+  String sub1 = str.substring2(7, 5); // "World"
+  print(sub1); // Output: World
+
+  String sub2 = str.substring2(-6, 5); // "World"
+  print(sub2); // Output: World
+
+  String sub3 = str.substring2(7); // "World!"
+  print(sub3); // Output: World!
+}
+
 
 // main
 void main() {
-  test_1();
+  // test_1();
+  test_2();
 }

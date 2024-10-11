@@ -64,6 +64,7 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
   @override
   Future<void> updateRates({bool asyncLoad = true}) async {
     print("Updating $sourceName rates");
+    print("Rate file filepath: $rateFilepath");
 
     if (loading || loaded || refreshInterval == 0) return;
 
@@ -96,19 +97,25 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
   }
 
   void downloadFileSync(String uri, String filename, String source) {
-    var directory = path.dirname(filename);
-    Directory(directory).createSync(recursive: true);
-    var dest = File(filename);
-    var session = HttpClient();
-    session.getUrl(Uri.parse(uri)).then((request) => request.close()).then((response) {
-      response.pipe(dest.openWrite()).then((_) {
-        loading = false;
-        doLoadRates();
-        print("$source rates updated");
+    try {
+      var directory = path.dirname(filename);
+      Directory(directory).createSync(recursive: true);
+      var dest = File(filename);
+      var session = HttpClient();
+      session.getUrl(Uri.parse(uri)).then((request) => request.close()).then((response) {
+        response.pipe(dest.openWrite()).then((_) {
+          loading = false;
+          doLoadRates();
+          print("$source rates updated");
+        });
+      }).catchError((e) {
+        print("Couldn't download $source currency rate file: $e");
       });
-    }).catchError((e) {
+    }
+    catch (e) {
       print("Couldn't download $source currency rate file: $e");
-    });
+    }
+
   }
 
   Future<void> downloadFileAsync(String uri, String filename, String source) async {

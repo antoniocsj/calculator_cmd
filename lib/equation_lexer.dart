@@ -38,7 +38,7 @@ class PreLexer {
 
   // Get marked substring. To be used for error reporting.
   String getMarkedSubstring() {
-    return stream.substring(markIndex, index);
+    return stream.substring2(markIndex, index - markIndex);
   }
 
   // Pre-Lexer tokenizer. To be called only by Lexer.
@@ -518,37 +518,6 @@ class Lexer {
   }
 
   LexerToken insertDecimal() {
-    // Code in Vala:
-    // var type = prelexer.get_next_token ();
-    // if (type == LexerTokenType.PL_DIGIT)
-    // {
-    //   while ((type = prelexer.get_next_token ()) == LexerTokenType.PL_DIGIT);
-    //   if (type == LexerTokenType.PL_DEGREE)
-    //     return insert_token (LexerTokenType.NUMBER);
-    //   else if (type == LexerTokenType.PL_HEX)
-    //     return insert_decimal_hex ();
-    //   else if (type == LexerTokenType.PL_SUB_DIGIT)
-    //   {
-    //     while (prelexer.get_next_token () == LexerTokenType.PL_SUB_DIGIT);
-    //     prelexer.roll_back ();
-    //     return insert_token (LexerTokenType.NUMBER);
-    //   }
-    //   else
-    //   {
-    //     prelexer.roll_back ();
-    //     return insert_token (LexerTokenType.NUMBER);
-    //   }
-    // }
-    // else if (type == LexerTokenType.PL_HEX)
-    //   return insert_decimal_hex ();
-    // else
-    // {
-    //   /* ERROR: expected LexerTokenType.PL_DIGIT | LexerTokenType.PL_HEX */
-    //   parser.set_error (ErrorCode.MP, prelexer.get_marked_substring (), prelexer.mark_index, prelexer.index);
-    //   return insert_token (LexerTokenType.UNKNOWN);
-    // }
-
-    // The equivalent Dart code is:
     var type = prelexer.getNextToken();
     if (type == LexerTokenType.plDigit) {
       while ((type = prelexer.getNextToken()) == LexerTokenType.plDigit) {}
@@ -677,28 +646,6 @@ class Lexer {
   }
 
   LexerToken insertHexDec() {
-    // Code in Vala:
-    // var type = prelexer.get_next_token ();
-    // while (type == LexerTokenType.PL_DIGIT || type == LexerTokenType.PL_HEX)
-    //   type = prelexer.get_next_token ();
-    //
-    // if (type == LexerTokenType.PL_DECIMAL)
-    //   return insert_decimal_hex ();
-    // else if (type == LexerTokenType.PL_SUB_DIGIT)
-    // {
-    //   while (prelexer.get_next_token () == LexerTokenType.PL_SUB_DIGIT);
-    //   prelexer.roll_back ();
-    //   return insert_token (LexerTokenType.NUMBER);
-    // }
-    // else
-    // {
-    //   if (check_if_number ())
-    //     return insert_token (LexerTokenType.NUMBER);
-    //   /* ERROR: expected LexerTokenType.PL_DECIMAL | LexerTokenType.PL_DIGIT | LexerTokenType.PL_HEX */
-    //   parser.set_error (ErrorCode.MP, prelexer.get_marked_substring (), prelexer.mark_index, prelexer.index);
-    //   return insert_token (LexerTokenType.UNKNOWN);
-    // }
-
     // The equivalent Dart code is:
     var type = prelexer.getNextToken();
     while (type == LexerTokenType.plDigit || type == LexerTokenType.plHex) {

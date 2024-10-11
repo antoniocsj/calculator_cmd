@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:calculator/enums.dart';
 import 'package:calculator/number.dart';
+import 'package:calculator/types.dart';
 import 'package:calculator/math_function.dart';
 import 'package:calculator/serializer.dart';
 import 'package:calculator/equation_parser.dart';
@@ -18,8 +19,19 @@ class FunctionManager {
   final StreamController<MathFunction> _functionEditedController = StreamController<MathFunction>.broadcast();
   final StreamController<MathFunction> _functionRemovedController = StreamController<MathFunction>.broadcast();
 
-  static final _finalizer = Finalizer<FunctionManager>((manager) {
-    manager.dispose();
+  static final _finalizerAddedController = Finalizer<StreamController>((controller) {
+    print('Disposing _functionAddedController');
+    controller.close();
+  });
+
+  static final _finalizerEditedController = Finalizer<StreamController>((controller) {
+    print('Disposing _functionEditedController');
+    controller.close();
+  });
+
+  static final _finalizerRemovedController = Finalizer<StreamController>((controller) {
+    print('Disposing _functionRemovedController');
+    controller.close();
   });
 
   Stream<MathFunction> get functionAdded => _functionAddedController.stream;
@@ -33,7 +45,9 @@ class FunctionManager {
     serializer.setRadix('.');
     reloadFunctions();
 
-    _finalizer.attach(this, FunctionManager());
+    _finalizerAddedController.attach(this, _functionAddedController, detach: this);
+    _finalizerEditedController.attach(this, _functionEditedController, detach: this);
+    _finalizerRemovedController.attach(this, _functionRemovedController, detach: this);
   }
 
   static FunctionManager getDefaultFunctionManager() {
@@ -106,8 +120,8 @@ class FunctionManager {
 
     final i = data.indexOf('=');
     if (i < 0) return null;
-    final left = data.substring(0, i).trim();
-    final right = data.substring(i + 1).trim();
+    final left = data.substring2(0, i).trim();
+    final right = data.substring2(i + 1).trim();
     if (left.isEmpty || right.isEmpty) return null;
 
     var expression = '';
@@ -115,16 +129,17 @@ class FunctionManager {
     final j = right.indexOf('@');
     if (j < 0) {
       expression = right;
-    } else {
-      expression = right.substring(0, j).trim();
-      description = right.substring(j + 1).trim();
+    }
+    else {
+      expression = right.substring2(0, j).trim();
+      description = right.substring2(j + 1).trim();
     }
     if (expression.isEmpty) return null;
 
     final k = left.indexOf('(');
     if (k < 0) return null;
-    final name = left.substring(0, k).trim();
-    var argumentList = left.substring(k + 1).trim();
+    final name = left.substring2(0, k).trim();
+    var argumentList = left.substring2(k + 1).trim();
     if (name.isEmpty || argumentList.isEmpty) return null;
 
     argumentList = argumentList.replaceAll(')', '');
@@ -202,15 +217,15 @@ class FunctionManager {
 
   bool isFunctionDefined(String name) {
     final lowerName = name.toLowerCase();
-    if (lowerName.startsWith('log') && int.tryParse(lowerName.substring(3)) != null) return true;
+    if (lowerName.startsWith('log') && int.tryParse(lowerName.substring2(3)) != null) return true;
     return functions.containsKey(name) || functions.containsKey(lowerName);
   }
 
   Number? evaluateFunction(String name, List<Number> arguments, Parser parser) {
     var lowerName = name.toLowerCase();
     var args = arguments;
-    if (lowerName.startsWith('log') && int.tryParse(lowerName.substring(3)) != null) {
-      final logBase = Number.fromInt(int.parse(lowerName.substring(3)));
+    if (lowerName.startsWith('log') && int.tryParse(lowerName.substring2(3)) != null) {
+      final logBase = Number.fromInt(int.parse(lowerName.substring2(3)));
       args = [...args, logBase];
       name = 'log';
     }
@@ -241,6 +256,9 @@ class FunctionManager {
   }
 
   void dispose() {
+    _finalizerAddedController.detach(this);
+    _finalizerEditedController.detach(this);
+    _finalizerRemovedController.detach(this);
     _functionAddedController.close();
     _functionEditedController.close();
     _functionRemovedController.close();
