@@ -15,13 +15,13 @@ class MathFunction {
   String? get description => _description;
 
   MathFunction(this._name, this._arguments, String? expression, String? description) {
-    if (_expression != null) {
+    if (expression != null) {
       _expression = expression;
     }
     else {
       _expression = '';
     }
-    if (_description != null) {
+    if (description != null) {
       _description = description;
     }
     else {

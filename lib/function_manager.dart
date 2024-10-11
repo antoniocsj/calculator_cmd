@@ -32,7 +32,8 @@ class FunctionManager {
         serializer = Serializer(DisplayFormat.scientific, 10, 50) {
     serializer.setRadix('.');
     reloadFunctions();
-    _finalizer.attach(this, this);
+
+    _finalizer.attach(this, FunctionManager());
   }
 
   static FunctionManager getDefaultFunctionManager() {
