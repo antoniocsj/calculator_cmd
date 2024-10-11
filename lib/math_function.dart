@@ -125,7 +125,7 @@ class ExpressionParser extends Parser {
   final Parser? _rootParser;
 
   ExpressionParser(String expression, [this._rootParser])
-      : super(expression, _rootParser!.numberBase, _rootParser!.wordlen, _rootParser!.angleUnits);
+      : super(expression, _rootParser!.numberBase, _rootParser.wordlen, _rootParser.angleUnits);
 
   @override
   bool variableIsDefined(String name) {
@@ -209,11 +209,13 @@ Number? evaluateBuiltInFunction(String name, List<Number> args, [Parser? rootPar
   if (lowerName == 'log') {
     if (args.length <= 1) {
       return x.logarithm(10); // FIXME: Default to ln
-    } else {
+    }
+    else {
       var logBase = args[1].toInteger();
       if (logBase < 0) {
         return null;
-      } else {
+      }
+      else {
         return x.logarithm(logBase);
       }
     }
