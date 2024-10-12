@@ -78,7 +78,6 @@ class Real implements Finalizable {
     _number = calloc<mpfr_struct>();
     mpfr.mpfr_init2(_number, _precision);
     mpfr.mpfr_set_d(_number, value, mpfr_rnd_t.MPFR_RNDN);
-    // _finalizer.attach(this, _number.cast(), detach: this);
     _finalizer.attach(this, _number, detach: this);
   }
 
@@ -87,7 +86,6 @@ class Real implements Finalizable {
     _number = calloc<mpfr_struct>();
     mpfr.mpfr_init2(_number, _precision);
     mpfr.mpfr_set_si(_number, value, mpfr_rnd_t.MPFR_RNDN);
-    // _finalizer.attach(this, _number.cast(), detach: this);
     _finalizer.attach(this, _number, detach: this);
   }
 
@@ -96,7 +94,6 @@ class Real implements Finalizable {
     _number = calloc<mpfr_struct>();
     mpfr.mpfr_init2(_number, _precision);
     mpfr.mpfr_set_ui(_number, value, mpfr_rnd_t.MPFR_RNDN);
-    // _finalizer.attach(this, _number.cast(), detach: this);
     _finalizer.attach(this, _number, detach: this);
   }
 
@@ -105,7 +102,6 @@ class Real implements Finalizable {
     _number = calloc<mpfr_struct>();
     mpfr.mpfr_init2(_number, _precision);
     mpfr.mpfr_set_str(_number, value.toNativeUtf8().cast<Utf8>(), base, mpfr_rnd_t.MPFR_RNDN);
-    // _finalizer.attach(this, _number.cast(), detach: this);
     _finalizer.attach(this, _number, detach: this);
   }
 
@@ -114,12 +110,30 @@ class Real implements Finalizable {
     _number = calloc<mpfr_struct>();
     mpfr.mpfr_init2(_number, value._precision);
     mpfr.mpfr_set(_number, value._number, mpfr_rnd_t.MPFR_RNDN);
-    // _finalizer.attach(this, _number.cast(), detach: this);
     _finalizer.attach(this, _number, detach: this);
   }
 
-  // Construtor da constante de Euler
-  Real.eulers(this._precision) {
+  // Construtor do número de Euler e = exp(1) = 2.718281828...
+  Real.e(this._precision) {
+    _number = calloc<mpfr_struct>();
+    var one = calloc<mpfr_struct>();
+
+    mpfr.mpfr_init2(_number, _precision);
+    mpfr.mpfr_init2(one, _precision);
+
+    mpfr.mpfr_set_si(one, 1, mpfr_rnd_t.MPFR_RNDN);
+
+    // Calcula o número de Euler (e) usando exp(1)
+    mpfr.mpfr_exp(_number, one, mpfr_rnd_t.MPFR_RNDN);
+
+    mpfr.mpfr_clear(one);
+    calloc.free(one);
+
+    _finalizer.attach(this, _number, detach: this);
+  }
+
+  // Construtor da constante de Euler-Mascheroni γ = 0.57721566...
+  Real.em(this._precision) {
     _number = calloc<mpfr_struct>();
     mpfr.mpfr_init2(_number, _precision);
     mpfr.mpfr_const_euler(_number, mpfr_rnd_t.MPFR_RNDN);
@@ -155,7 +169,6 @@ class Real implements Finalizable {
     _finalizer.detach(this);
     mpfr.mpfr_clear(_number);
     calloc.free(_number);
-    print('Real object disposed');
   }
 
   // Atribui um valor double ao número real
@@ -671,4 +684,11 @@ class Real implements Finalizable {
     return mpfr.mpfr_underflow_p() != 0;
   }
 
+}
+
+// Teste da classe Real
+void main() {
+  Real r = Real.e(256);
+  print(r.getString());
+  r.dispose();
 }

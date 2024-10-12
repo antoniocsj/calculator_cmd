@@ -804,7 +804,9 @@ class Parser {
   late int representationBase;
 
   static Map<String, Number> constants = {
-    "e": Number.eulers(),
+    "e": Number.e(), // Euler's number
+    "em": Number.em(), // Euler-Mascheroni constant
+    "𝛾": Number.em(),
     "pi": Number.pi(),
     "tau": Number.tau(),
     "π": Number.pi(),

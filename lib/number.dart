@@ -84,18 +84,23 @@ class Number {
   }
 
   Number.fromComplex(Number r, Number i) {
-    num = Complex.fromComplex(r.num, i.num);
+    num = Complex.fromComplex(r.num, i.num, precision);
   }
 
   Number.polar(Number r, Number theta, [AngleUnit unit = AngleUnit.radians]) {
     var x = theta.cos(unit).multiply(r);
     var y = theta.sin(unit).multiply(r);
-    num = Complex.fromComplex(x.num, y.num);
+    num = Complex.fromComplex(x.num, y.num, precision);
   }
 
-  // // Construtor da constante de Euler
-  Number.eulers() {
-    num = Complex.eulers();
+  // Construtor do número de Euler: 2.718281828
+  Number.e() {
+    num = Complex.e(precision);
+  }
+
+  // Construtor da constante de Euler-Mascheroni: 0.577215665
+  Number.em() {
+    num = Complex.em(precision);
   }
 
   Number.i() {
@@ -103,11 +108,11 @@ class Number {
   }
 
   Number.pi() {
-    num = Complex.pi();
+    num = Complex.pi(precision);
   }
 
   Number.tau() {
-    num = Complex.tau();
+    num = Complex.tau(precision);
   }
 
   Number.random() {
@@ -1685,5 +1690,10 @@ void testOperations() {
 // main
 void main() {
   // testSetFromString();
-  testOperations();
+  // testOperations();
+
+  Number n = Number.e();
+  print(n.toString());
+  n = Number.pi();
+  print(n.toString());
 }

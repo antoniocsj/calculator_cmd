@@ -173,8 +173,28 @@ class Complex implements Finalizable {
     _finalizer.attach(this, _complex, detach: this);
   }
 
-  // Construtor da constante de Euler
-  Complex.eulers([this._precision = 256]) {
+  // Construtor do número de Euler: 2.718281828
+  Complex.e([this._precision = 256]) {
+    _complex = calloc<mpc_struct>();
+    mpc.mpc_init2(_complex, _precision);
+    setInt(0, 0);
+    var rePtr = getRealPointer();
+
+    var one = calloc<mpfr_struct>();
+    mpfr.mpfr_init2(one, _precision);
+    mpfr.mpfr_set_si(one, 1, mpfr_rnd_t.MPFR_RNDN);
+
+    // Calcula o número de Euler (e) usando exp(1)
+    mpfr.mpfr_exp(rePtr, one, mpfr_rnd_t.MPFR_RNDN);
+
+    mpfr.mpfr_clear(one);
+    calloc.free(one);
+
+    _finalizer.attach(this, _complex, detach: this);
+  }
+
+  // Construtor da constante de Euler-Mascheroni: 0.577215665
+  Complex.em([this._precision = 256]) {
     _complex = calloc<mpc_struct>();
     mpc.mpc_init2(_complex, _precision);
     setInt(0, 0);
@@ -458,4 +478,17 @@ class Complex implements Finalizable {
   double getImaginaryAsDouble() {
     return mpfr.mpfr_get_d(getImaginaryPointer(), mpfr_rnd_t.MPFR_RNDN);
   }
+}
+
+
+// Teste da classe Complex
+void main() {
+  // Cria um número complexo com precisão de 256 bits
+  Complex c = Complex.e();
+
+  // Imprime o número complexo
+  print(c.getString());
+
+  // Libera a memória alocada para o número complexo
+  c.dispose();
 }
