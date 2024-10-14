@@ -10,7 +10,8 @@ abstract class CurrencyProvider {
   Stream<void> get updated;
   set updated(Stream<void> value);
 
-  Future<void> updateRates({bool asyncLoad = false});
+  // Future<void> updateRates({bool asyncLoad = false});
+  void updateRates2();
   void setRefreshInterval(int interval, [bool asyncLoad = false]);
   void clear();
   bool isLoaded();
@@ -25,7 +26,7 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
   String get sourceName;
   bool loading = false;
   bool loaded = false;
-  int refreshInterval = 0;
+  int refreshInterval = 15;
   List<Currency> currencies = [];
   CurrencyManager currencyManager;
 
@@ -44,7 +45,8 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
     loaded = false;
     _updatedController.add(null);
     refreshInterval = interval;
-    updateRates(asyncLoad: asyncLoad);
+    // updateRates(asyncLoad: asyncLoad);
+    updateRates2();
   }
 
   @override
@@ -61,8 +63,51 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
     return currency;
   }
 
+  // @override
+  // Future<void> updateRates({bool asyncLoad = false}) async {
+  //   print("Updating $sourceName rates");
+  //   print("Rate file filepath: $rateFilepath");
+  //
+  //   if (loading || loaded) {
+  //     print("Already loading or loaded $sourceName rates");
+  //     return;
+  //   }
+  //
+  //   if (refreshInterval == 0) {
+  //     print("Skipping $sourceName rates update");
+  //     return;
+  //   }
+  //
+  //   print("Checking $sourceName rates ");
+  //
+  //   if (!fileNeedsUpdate(rateFilepath, refreshInterval.toDouble())) {
+  //     print("$sourceName rates are up to date");
+  //     doLoadRates();
+  //     return;
+  //   }
+  //
+  //   var file = File(rateFilepath);
+  //   if (file.existsSync()) {
+  //     print("Deleting old $sourceName rates file");
+  //     clear(); // Clear the file to force an update
+  //   }
+  //
+  //   print("Loading $sourceName rates");
+  //
+  //   loading = true;
+  //   if (asyncLoad) {
+  //     print("Downloading $sourceName rates asynchronously");
+  //     await downloadFileAsync(rateSourceUrl, rateFilepath, sourceName);
+  //   }
+  //   else {
+  //     print("Downloading $sourceName rates synchronously");
+  //     downloadFileSync(rateSourceUrl, rateFilepath, sourceName);
+  //     doLoadRates();
+  //   }
+  // }
+
   @override
-  Future<void> updateRates({bool asyncLoad = false}) async {
+  void updateRates2() {
     print("Updating $sourceName rates");
     print("Rate file filepath: $rateFilepath");
 
@@ -84,24 +129,19 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
       return;
     }
 
-    var file = File(rateFilepath);
-    if (file.existsSync()) {
-      print("Deleting old $sourceName rates file");
-      clear(); // Clear the file to force an update
-    }
+    // var file = File(rateFilepath);
+    // if (file.existsSync()) {
+    //   print("Deleting old $sourceName rates file");
+    //   clear(); // Clear the file to force an update
+    // }
 
     print("Loading $sourceName rates");
 
     loading = true;
-    if (asyncLoad) {
-      print("Downloading $sourceName rates asynchronously");
-      await downloadFileAsync(rateSourceUrl, rateFilepath, sourceName);
-    }
-    else {
-      print("Downloading $sourceName rates synchronously");
-      downloadFileSync(rateSourceUrl, rateFilepath, sourceName);
-      doLoadRates();
-    }
+
+    print("Downloading $sourceName rates synchronously");
+    downloadFileSync(rateSourceUrl, rateFilepath, sourceName);
+    doLoadRates();
   }
 
   bool fileNeedsUpdate(String filename, double maxAge) {
@@ -116,40 +156,23 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
     return diff > maxAge;
   }
 
-  // void downloadFileSync(String uri, String filename, String source) {
-  //   try {
-  //     var directory = path.dirname(filename);
-  //     Directory(directory).createSync(recursive: true);
-  //     var dest = File(filename);
-  //     var session = HttpClient();
-  //     session.getUrl(Uri.parse(uri)).then((request) => request.close()).then((response) {
-  //       response.pipe(dest.openWrite()).then((_) {
-  //         loading = false;
-  //         doLoadRates();
-  //         print("$source rates updated");
-  //       });
-  //     }).catchError((e) {
-  //       print("Couldn't download $source currency rate file: $e");
-  //     });
-  //   }
-  //   catch (e) {
-  //     print("Couldn't download $source currency rate file: $e");
-  //   }
-  // }
-
-  void downloadFileSync(String uri, String filename, String source) async {
+  void downloadFileSync(String uri, String filename, String source) {
     try {
       var directory = path.dirname(filename);
-      await Directory(directory).create(recursive: true);
+      Directory(directory).createSync(recursive: true);
       var dest = File(filename);
       var session = HttpClient();
-      var request = await session.getUrl(Uri.parse(uri));
-      var response = await request.close();
-      await response.pipe(dest.openWrite());
-      loading = false;
-      doLoadRates();
-      print("$source rates updated");
-    } catch (e) {
+      session.getUrl(Uri.parse(uri)).then((request) => request.close()).then((response) {
+        response.pipe(dest.openWrite()).then((_) {
+          loading = false;
+          doLoadRates();
+          print("$source rates updated");
+        });
+      }).catchError((e) {
+        print("Couldn't download $source currency rate file: $e");
+      });
+    }
+    catch (e) {
       print("Couldn't download $source currency rate file: $e");
     }
   }
@@ -182,7 +205,8 @@ class ImfCurrencyProvider extends AbstractCurrencyProvider {
   ImfCurrencyProvider(super.currencyManager);
 
   @override
-  String get rateFilepath => path.join(Directory.systemTemp.path, 'calculator', 'rms_five.xls');
+  // String get rateFilepath => path.join(Directory.systemTemp.path, 'calculator', 'rms_five.xls');
+  String get rateFilepath => path.join('.', 'temp', 'rms_five.xls');
 
   @override
   String get rateSourceUrl => 'https://www.imf.org/external/np/fin/data/rms_five.aspx?tsvflag=Y';

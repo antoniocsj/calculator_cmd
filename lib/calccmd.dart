@@ -71,7 +71,7 @@ String? solve(String equation) {
   return output;
 }
 
-void testCases0() async {
+void testCases0() {
   CurrencyManager? currencyManager = CurrencyManager.getDefault();
   currencyManager.refreshInterval = 15;
   currencyManager.refreshSync();

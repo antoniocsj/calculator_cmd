@@ -164,10 +164,11 @@ class CurrencyManager {
       // Vala code:
       // p.updated.connect ( () => { update (); });
       // equivalent Dart code:
-      provider.updated.listen((_) {
-        update();
-      });
-      provider.updateRates(asyncLoad: asyncLoad);
+      // provider.updated.listen((_) {
+      //   update();
+      // });
+      // provider.updateRates(asyncLoad: asyncLoad);
+      provider.updateRates2();
     }
   }
 
