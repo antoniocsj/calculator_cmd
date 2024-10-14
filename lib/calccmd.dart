@@ -4,6 +4,7 @@ import 'package:calculator/types.dart';
 import 'package:calculator/serializer.dart';
 import 'package:calculator/number.dart';
 import 'package:calculator/equation.dart';
+import 'package:calculator/currency.dart';
 
 const int maxLine = 1024;
 
@@ -70,41 +71,12 @@ String? solve(String equation) {
   return output;
 }
 
-// void main(List<String> args) {
-//   var requiresNewLine = false;
-//
-//   resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
-//
-//   while (true) {
-//     stdout.write("> ");
-//     var line = stdin.readLineSync();
-//     if (line != null) {
-//       line = line.trim();
-//     } else {
-//       requiresNewLine = true;
-//     }
-//
-//     if (line == null || line == "exit" || line == "quit" || line == "") {
-//       break;
-//     }
-//
-//     solve(line);
-//   }
-//
-//   if (requiresNewLine) {
-//     stdout.writeln();
-//   }
-// }
-
-// void main() {
-//   resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
-//
-//   String line = '3.6 + 1.8';
-//   solve(line);
-// }
-
 // tests for the solve function
 void main() {
+  CurrencyManager? currencyManager = CurrencyManager.getDefault();
+  currencyManager.refreshInterval = 30;
+  currencyManager.refreshSync();
+
   resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
 
   var testCases = [
@@ -189,7 +161,8 @@ void main() {
     // ['¬¬¬0', '4294967295'],
     // ['2^3^3', '134217728'],
     // ['100*½', '50'],
-    ['1USD in BRL', '5.519110025']
+    ['1USD in BRL', '5.519110025'],
+    ['1BRL to USD', '5.519110025'],
   ];
 
   for (var testCase in testCases) {

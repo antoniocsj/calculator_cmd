@@ -27,7 +27,7 @@ class CurrencyManager {
   final List<CurrencyProvider> providers = [];
   final StreamController<void> _updatedController = StreamController<void>.broadcast();
   bool loaded = false;
-  int refreshInterval = 0;
+  int refreshInterval = 10;
 
   // Vala code:
   // public signal void updated ();
@@ -140,8 +140,8 @@ class CurrencyManager {
   void _initializeDefaultProviders(bool asyncLoad) {
     defaultCurrencyManager?.addProvider(ImfCurrencyProvider(defaultCurrencyManager!));
     // addProvider(EcbCurrencyProvider(defaultCurrencyManager!));
-    addProvider(BCCurrencyProvider(defaultCurrencyManager!, 'TWD', 'fxtwdcad'));
-    addProvider(UnCurrencyProvider(defaultCurrencyManager!));
+    // addProvider(BCCurrencyProvider(defaultCurrencyManager!, 'TWD', 'fxtwdcad'));
+    // addProvider(UnCurrencyProvider(defaultCurrencyManager!));
     defaultCurrencyManager?.initializeProviders(asyncLoad);
   }
 

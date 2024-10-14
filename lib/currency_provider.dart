@@ -70,7 +70,7 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
 
     print("Checking $sourceName rates ");
 
-    if (!fileNeedsUpdate(rateFilepath, refreshInterval as double)) {
+    if (!fileNeedsUpdate(rateFilepath, refreshInterval.toDouble())) {
       doLoadRates();
       return;
     }
