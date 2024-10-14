@@ -154,7 +154,7 @@ class UnitManager {
     for (var currency in currencies) {
       /* Translators: result of currency conversion, %s is the symbol, %%s is the placeholder for amount, i.e.: USD100 */
       var format = "${currency.symbol}%s";
-      var unit = Unit(currency.name, currency.displayName, format, '', '', currency.name);
+      var unit = Unit(currency.name, currency.displayName, format, null, null, currency.name);
       currencyCategory.addUnit(unit);
     }
 
