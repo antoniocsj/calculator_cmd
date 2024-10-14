@@ -69,7 +69,7 @@ class PreLexer {
       return LexerTokenType.plHex;
     }
     if (c == '⁰' || c == '¹' || c == '²' || c == '³' || c == '⁴' || c == '⁵' || c == '⁶' || c == '⁷' || c == '⁸' || c == '⁹') {
-      return LexerTokenType.plSubDigit;
+      return LexerTokenType.plSuperDigit;
     }
     if (c == '⁻') {
       return LexerTokenType.plSuperMinus;

@@ -71,7 +71,7 @@ class Number {
       numerator = -numerator;
       denominator = -denominator;
     }
-    num = Complex.fromInt(numerator, precision);
+    num = Complex.fromInt(numerator, 0, precision);
     num.divideUInt(num, denominator);
   }
 

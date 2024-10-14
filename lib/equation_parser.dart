@@ -624,14 +624,7 @@ class XPowYIntegerNode extends ParseNode {
     val ??= Number.fromInt(superAtoi(left!.token.text));
 
     int pow;
-
-    if (right!.token != null) {
-      pow = superAtoi(right!.token!.text);
-    } else {
-      pow = right!.solve()!.toInteger();
-    }
-
-    if (val == null) return null;
+    pow = superAtoi(right!.token.text);
 
     var z = val.xpowyInteger(pow);
 
