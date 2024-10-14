@@ -27,7 +27,7 @@ class CurrencyManager {
   final List<CurrencyProvider> providers = [];
   final StreamController<void> _updatedController = StreamController<void>.broadcast();
   bool loaded = false;
-  int refreshInterval = 10;
+  int refreshInterval = 60;
 
   // Vala code:
   // public signal void updated ();
@@ -52,7 +52,7 @@ class CurrencyManager {
     }
   }
 
-  static CurrencyManager getDefault({bool asyncLoad = true, bool defaultProviders = true}) {
+  static CurrencyManager getDefault({bool asyncLoad = false, bool defaultProviders = true}) {
     if (defaultCurrencyManager != null) {
       return defaultCurrencyManager!;
     }
@@ -156,10 +156,10 @@ class CurrencyManager {
     // Vala code:
     // updated(); // a call to the signal updated
     // equivalent Dart code:
-    _updatedController.add(null); // this will notify all listeners
+    _updatedController.add(null);
   }
 
-  void initializeProviders([bool asyncLoad = true]) {
+  void initializeProviders([bool asyncLoad = false]) {
     for (var provider in providers) {
       // Vala code:
       // p.updated.connect ( () => { update (); });

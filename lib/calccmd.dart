@@ -71,11 +71,48 @@ String? solve(String equation) {
   return output;
 }
 
+void testCases0() async {
+  CurrencyManager? currencyManager = CurrencyManager.getDefault();
+  currencyManager.refreshInterval = 15;
+  currencyManager.refreshSync();
+
+  // while (!currencyManager.loaded) {
+  //   print('Loading currencies...');
+  //   currencyManager.refreshSync();
+  //   // delay for 1 second
+  //   await Future.delayed(Duration(seconds: 1));
+  // }
+
+  print('Currencies loaded');
+
+  resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
+
+  var testCases = [
+    ['1USD in BRL', '5.519110025'],
+    ['1BRL to USD', '5.519110025'],
+  ];
+
+  for (var testCase in testCases) {
+    var input = testCase[0];
+    var expected = testCase[1];
+    var output = solve(input);
+
+    if (output != expected) {
+      stderr.writeln('Test failed: $input => $output, expected $expected');
+    }
+    else {
+      stdout.writeln('Test passed: $input => $output');
+    }
+
+  }
+}
+
 // tests for the solve function
-void main() {
+void testCases1() {
   CurrencyManager? currencyManager = CurrencyManager.getDefault();
   currencyManager.refreshInterval = 30;
   currencyManager.refreshSync();
+
 
   resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
 
@@ -178,4 +215,31 @@ void main() {
     }
 
   }
+}
+
+void loopReadSolve() {
+  CurrencyManager? currencyManager = CurrencyManager.getDefault();
+  currencyManager.refreshInterval = 30;
+  currencyManager.refreshSync();
+
+  resultSerializer = Serializer(DisplayFormat.automatic, 10, 9);
+
+  while (true) {
+    stdout.write('< ');
+    var line = stdin.readLineSync();
+    if (line == null) {
+      break;
+    }
+    if (line.isEmpty) {
+      break;
+    }
+    var output = solve(line);
+    stdout.writeln(output);
+  }
+}
+
+void main() {
+  testCases0();
+  // testCases1();
+  // loopReadSolve();
 }

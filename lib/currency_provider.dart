@@ -10,8 +10,8 @@ abstract class CurrencyProvider {
   Stream<void> get updated;
   set updated(Stream<void> value);
 
-  Future<void> updateRates({bool asyncLoad = true});
-  void setRefreshInterval(int interval, [bool asyncLoad = true]);
+  Future<void> updateRates({bool asyncLoad = false});
+  void setRefreshInterval(int interval, [bool asyncLoad = false]);
   void clear();
   bool isLoaded();
   String get attributionLink;
@@ -40,7 +40,7 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
   }
 
   @override
-  void setRefreshInterval(int interval, [bool asyncLoad = true]) {
+  void setRefreshInterval(int interval, [bool asyncLoad = false]) {
     loaded = false;
     _updatedController.add(null);
     refreshInterval = interval;
@@ -62,60 +62,96 @@ abstract class AbstractCurrencyProvider implements CurrencyProvider {
   }
 
   @override
-  Future<void> updateRates({bool asyncLoad = true}) async {
+  Future<void> updateRates({bool asyncLoad = false}) async {
     print("Updating $sourceName rates");
     print("Rate file filepath: $rateFilepath");
 
-    if (loading || loaded || refreshInterval == 0) return;
+    if (loading || loaded) {
+      print("Already loading or loaded $sourceName rates");
+      return;
+    }
+
+    if (refreshInterval == 0) {
+      print("Skipping $sourceName rates update");
+      return;
+    }
 
     print("Checking $sourceName rates ");
 
     if (!fileNeedsUpdate(rateFilepath, refreshInterval.toDouble())) {
+      print("$sourceName rates are up to date");
       doLoadRates();
       return;
+    }
+
+    var file = File(rateFilepath);
+    if (file.existsSync()) {
+      print("Deleting old $sourceName rates file");
+      clear(); // Clear the file to force an update
     }
 
     print("Loading $sourceName rates");
 
     loading = true;
     if (asyncLoad) {
+      print("Downloading $sourceName rates asynchronously");
       await downloadFileAsync(rateSourceUrl, rateFilepath, sourceName);
     }
     else {
+      print("Downloading $sourceName rates synchronously");
       downloadFileSync(rateSourceUrl, rateFilepath, sourceName);
       doLoadRates();
     }
   }
 
   bool fileNeedsUpdate(String filename, double maxAge) {
+    print("Checking if $sourceName rates need updating. Max age: $maxAge");
     if (maxAge == 0) return false;
     var file = File(filename);
     if (!file.existsSync()) return true;
     var modifyTime = file.lastModifiedSync();
     var now = DateTime.now();
-    return now.difference(modifyTime).inSeconds > maxAge;
+    var diff = now.difference(modifyTime).inSeconds;
+    print("File $filename was last modified $diff seconds ago");
+    return diff > maxAge;
   }
 
-  void downloadFileSync(String uri, String filename, String source) {
+  // void downloadFileSync(String uri, String filename, String source) {
+  //   try {
+  //     var directory = path.dirname(filename);
+  //     Directory(directory).createSync(recursive: true);
+  //     var dest = File(filename);
+  //     var session = HttpClient();
+  //     session.getUrl(Uri.parse(uri)).then((request) => request.close()).then((response) {
+  //       response.pipe(dest.openWrite()).then((_) {
+  //         loading = false;
+  //         doLoadRates();
+  //         print("$source rates updated");
+  //       });
+  //     }).catchError((e) {
+  //       print("Couldn't download $source currency rate file: $e");
+  //     });
+  //   }
+  //   catch (e) {
+  //     print("Couldn't download $source currency rate file: $e");
+  //   }
+  // }
+
+  void downloadFileSync(String uri, String filename, String source) async {
     try {
       var directory = path.dirname(filename);
-      Directory(directory).createSync(recursive: true);
+      await Directory(directory).create(recursive: true);
       var dest = File(filename);
       var session = HttpClient();
-      session.getUrl(Uri.parse(uri)).then((request) => request.close()).then((response) {
-        response.pipe(dest.openWrite()).then((_) {
-          loading = false;
-          doLoadRates();
-          print("$source rates updated");
-        });
-      }).catchError((e) {
-        print("Couldn't download $source currency rate file: $e");
-      });
-    }
-    catch (e) {
+      var request = await session.getUrl(Uri.parse(uri));
+      var response = await request.close();
+      await response.pipe(dest.openWrite());
+      loading = false;
+      doLoadRates();
+      print("$source rates updated");
+    } catch (e) {
       print("Couldn't download $source currency rate file: $e");
     }
-
   }
 
   Future<void> downloadFileAsync(String uri, String filename, String source) async {
