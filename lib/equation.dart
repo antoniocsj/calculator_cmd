@@ -81,12 +81,12 @@ String mpErrorCodeToString(ErrorCode errorCode) {
 }
 
 class Equation {
-  late int base;
-  late int wordlen;
-  late AngleUnit angleUnits;
+  int base;
+  int wordlen;
+  AngleUnit angleUnits;
   String expression;
 
-  Equation(this.expression);
+  Equation(this.expression, {this.base = 10, this.wordlen = 32, this.angleUnits = AngleUnit.degrees});
 
   Number? parse({
     RefInt? representationBase,

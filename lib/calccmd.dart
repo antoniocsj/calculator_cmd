@@ -10,10 +10,11 @@ const int maxLine = 1024;
 late Serializer resultSerializer;
 
 String? solve(String equation) {
-  var e = Equation(equation);
-  e.base = 10;
-  e.wordlen = 32;
-  e.angleUnits = AngleUnit.degrees;
+  // var e = Equation(equation);
+  var e = ConvertEquation(equation);
+  // e.base = 10;
+  // e.wordlen = 32;
+  // e.angleUnits = AngleUnit.degrees;
 
   // variables to store the result of the parsing
   var errorCode = ErrorCode.none;
@@ -163,9 +164,32 @@ void main() {
     // ['(sin(2.3605)/-5.69)/(cos(sin(1/3.1415)*2)+0.05)-1/tan[(0.589)^(0.123)+1.28]+{cosh(4.36+(6.87^3.4+9.7)/3.1415)+log(4.456)}*(atan(1/acosh(1.2^2^2)))', '-8.146815842'],
     // ['√2', '1.414213562'],
     // ['2¹⁰', '1024'],
-    ['½', '0.5'],
+    // ['½', '0.5'],
+    // ['⅓', '0.333333333'],
+    // ['½+⅓', '0.833333333'],
+    // ['½/⅓', '1.5'],
+    // ['½²', '0.25'],
+    // ['sin⁻¹(½²)²', '209.598359094'],
+    // ['0 ∧ 0', '0'],
+    // ['0 ∧ 1', '0'],
+    // ['1 ∧ 0', '0'],
+    // ['1 ∧ 1', '1'],
+    // ['0 ∨ 0', '0'],
+    // ['0 ∨ 1', '1'],
+    // ['1 ∨ 0', '1'],
+    // ['1 ∨ 1', '1'],
+    // ['0 ⊻ 0', '0'],
+    // ['0 ⊻ 1', '1'],
+    // ['1 ⊻ 0', '1'],
+    // ['1 ⊻ 1', '0'],
+    // ['¬0', '4294967295'],
+    // ['¬1', '4294967294'],
+    // ['¬¬0', '0'],
+    // ['¬¬1', '1'],
+    // ['¬¬¬0', '4294967295'],
     // ['2^3^3', '134217728'],
-    // ['100*½', '50']
+    // ['100*½', '50'],
+    ['1USD in BRL', '5.519110025']
   ];
 
   for (var testCase in testCases) {
