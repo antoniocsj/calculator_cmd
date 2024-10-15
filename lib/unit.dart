@@ -2,7 +2,6 @@ import 'package:calculator/number.dart';
 import 'package:calculator/equation.dart';
 import 'package:calculator/serializer.dart';
 import 'package:calculator/enums.dart';
-import 'package:calculator/currency.dart';
 
 UnitManager? defaultUnitManager;
 
@@ -146,17 +145,6 @@ class UnitManager {
     energyCategory.addUnit(Unit('erg', 'Erg', '%s erg', 'x/10000000', 'x*10000000', 'erg'));
     energyCategory.addUnit(Unit('ev', 'eV', '%s ev', 'x*1.602176634/10000000000000000000', 'x*1.602176634*10000000000000000000', 'ev'));
     energyCategory.addUnit(Unit('ftlb', 'Ft-lb', '%s ft-lb', 'x*1.3558179483314004', 'x/1.3558179483314004', 'ft-lb'));
-
-    var currencyCategory = defaultUnitManager!.addCategory("currency", "Currency");
-    var currencies = CurrencyManager.getDefault().getCurrencies();
-    currencies.sort((a, b) => a.displayName.compareTo(b.displayName));
-
-    for (var currency in currencies) {
-      /* Translators: result of currency conversion, %s is the symbol, %%s is the placeholder for amount, i.e.: USD100 */
-      var format = "${currency.symbol}%s";
-      var unit = Unit(currency.name, currency.displayName, format, null, null, currency.name);
-      currencyCategory.addUnit(unit);
-    }
 
     return defaultUnitManager!;
   }
@@ -392,26 +380,18 @@ class Unit {
   Number? convertFrom(Number x) {
     if (fromFunction != null) {
       return solveFunction(fromFunction!, x);
-    } else {
-      // FIXME: Hack to make currency work
-      var r = CurrencyManager.getDefault().getValue(name);
-      if (r == null) {
-        return null;
-      }
-      return x.divide(r);
+    }
+    else {
+      return x;
     }
   }
 
   Number? convertTo(Number x) {
     if (toFunction != null) {
       return solveFunction(toFunction!, x);
-    } else {
-      // FIXME: Hack to make currency work
-      var r = CurrencyManager.getDefault().getValue(name);
-      if (r == null) {
-        return null;
-      }
-      return x.multiply(r);
+    }
+    else {
+      return x;
     }
   }
 
@@ -433,29 +413,6 @@ class Unit {
 
 }
 
-// the following is a Vala code that defines the class UnitSolveEquation:
-// private class UnitSolveEquation : Equation
-// {
-//     private Number x;
-//
-//     public UnitSolveEquation (string function, Number x)
-//     {
-//         base (function);
-//         this.x = x;
-//     }
-//
-//     public override bool variable_is_defined (string name)
-//     {
-//         return true;
-//     }
-//
-//     public override Number? get_variable (string name)
-//     {
-//         return x;
-//     }
-// }
-//
-// the following is the equivalent Dart code for the commented code above that defines the class UnitSolveEquation:
 class UnitSolveEquation extends Equation {
   Number x;
 

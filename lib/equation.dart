@@ -109,7 +109,7 @@ class Equation {
     var z = result.number;
 
     /* Error during parsing */
-    if (errorCode?.value != ErrorCode.none) {
+    if (result.errorCode != ErrorCode.none) {
       return null;
     }
 

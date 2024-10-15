@@ -1150,17 +1150,6 @@ class Parser {
       return true;
     }
 
-    // Consider the following lines of commented Vala code:
-    // /* If has more than one character then assume a multiplication of variables */
-    // var index = 0;
-    // unichar c;
-    // while (name.get_next_char (ref index, out c))
-    // {
-    //   if (!variable_is_defined (c.to_string ()))
-    //     return false;
-    // }
-    //
-    // this is the equivalent of the above Vala code:
     /* If has more than one character then assume a multiplication of variables */
     var index = 0;
     String c;

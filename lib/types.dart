@@ -191,12 +191,12 @@ class CreateParseTreeResult {
 }
 
 class ParseResult {
-  final int representationBase;
-  final ErrorCode errorCode;
-  final String? errorToken;
-  final int errorStart;
-  final int errorEnd;
-  final Number? number;
+  int representationBase;
+  ErrorCode errorCode;
+  String? errorToken;
+  int errorStart;
+  int errorEnd;
+  Number? number;
 
   ParseResult({
     required this.representationBase,
