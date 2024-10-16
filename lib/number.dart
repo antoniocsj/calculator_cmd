@@ -425,7 +425,7 @@ class Number {
       p = n;
     }
 
-    if (!isComplex() && (!isNegative() || p % 2 == 1)) {
+    if (!isComplex() && (!isNegative() || (p & 1) == 1)) {
       // If x is real and non-negative or n is odd, we can take the real version of the nth root
       var rePtrZ = z.num.getRealPointer();
       var imPtrZ = z.num.getImaginaryPointer();
