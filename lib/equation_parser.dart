@@ -95,10 +95,13 @@ abstract class LRNode extends ParseNode {
 }
 
 class ConstantNode extends ParseNode {
-  ConstantNode(super.parser, super.token, super.precedence, super.associativity);
+  ConstantNode(super.parser, super.token, super.precedence, super.associativity) {
+    print('ConstantNode: ${token.text}, ${token.type}, $precedence, $associativity');
+  }
 
   @override
   Number? solve() {
+    print('ConstantNode.solve');
     return mpSetFromString(token.text, parser.numberBase);
   }
 }
@@ -362,10 +365,13 @@ class FunctionNode extends ParseNode {
 }
 
 class UnaryMinusNode extends RNode {
-  UnaryMinusNode(super.parser, super.token, super.precedence, super.associativity);
+  UnaryMinusNode(super.parser, super.token, super.precedence, super.associativity) {
+    print('UnaryMinusNode: ${token.text}, ${token.type}, $precedence, $associativity');
+  }
 
   @override
   Number? solveR(Number r) {
+    print('UnaryMinusNode.solveR');
     return r.invertSign();
   }
 }
@@ -583,10 +589,12 @@ class RootNode extends RNode {
   LexerToken? tokenN;
 
   RootNode(super.parser, super.token, super.precedence, super.associativity, this.n) {
+    print('RootNode: ${token.text}, ${token.type}, $precedence, $associativity');
     tokenN = null;
   }
 
   RootNode.withToken(super.parser, super.token, super.precedence, super.associativity, LexerToken this.tokenN) {
+    print('RootNode.withToken: ${token.text}, ${token.type}, $precedence, $associativity');
     n = 0;
   }
 
@@ -977,7 +985,7 @@ class Parser {
       return;
     }
 
-    print('token: ${node.token.text} parent: ${node.parent}, precedence: (${node.precedence}), '
+    print('  token: ${node.token.text} parent: ${node.parent}, precedence: (${node.precedence}), '
         'left: ${node.left?.token.text}, right: ${node.right?.token.text}');
     printTreeRecursive(node.left, depth + 1);
     printTreeRecursive(node.right, depth + 1);
@@ -1070,12 +1078,16 @@ class Parser {
 
   /* Generate precedence for a node from precedence value. Includes depthLevel. */
   int makePrecedenceP(Precedence p) {
-    return p.value + (depthLevel * Precedence.depth.value);
+    int precedence = p.value + (depthLevel * Precedence.depth.value);
+    print('makePrecedenceP: p.value: ${p.value}, depthLevel: $depthLevel, precedence: $precedence');
+    return precedence;
   }
 
   /* Generate precedence for a node from lexer token type. Includes depthLevel. */
   int makePrecedenceT(LexerTokenType type) {
-    return getPrecedence(type).value + (depthLevel * Precedence.depth.value);
+    int precedence = getPrecedence(type).value + (depthLevel * Precedence.depth.value);
+    print('makePrecedenceT: type: $type (${getPrecedence(type).value}), depthLevel: $depthLevel, precedence: $precedence');
+    return precedence;
   }
 
   /* Compares two nodes to decide, which will be parent and which will be child. */
@@ -1199,6 +1211,8 @@ class Parser {
   }
 
   bool statement() {
+    print('statement');
+
     var token = lexer.getNextToken();
     if (token.type == LexerTokenType.variable || token.type == LexerTokenType.function) {
       var tokenOld = token;
@@ -1350,6 +1364,9 @@ class Parser {
   }
 
   bool expression() {
+    print('expression');
+    printTree();
+
     if (!expression1()) {
       return false;
     }
@@ -1364,6 +1381,9 @@ class Parser {
   }
 
   bool expression1() {
+    print('expression1');
+    printTree();
+
     var token = lexer.getNextToken();
 
     if (token.type == LexerTokenType.plEOS ||
@@ -1373,6 +1393,7 @@ class Parser {
     }
 
     if (token.type == LexerTokenType.lRBracket) {
+      print('token.type == LexerTokenType.lRBracket');
       depthLevel++;
 
       if (!expression()) {
@@ -1381,6 +1402,7 @@ class Parser {
 
       token = lexer.getNextToken();
       if (token.type == LexerTokenType.rRBracket) {
+        print('token.type == LexerTokenType.rRBracket');
         depthLevel--;
         token = lexer.getNextToken();
         lexer.rollBack();
@@ -1486,9 +1508,12 @@ class Parser {
       return true;
     }
     else if (token.type == LexerTokenType.number) {
-      var node = ConstantNode(this, token, makePrecedenceT(token.type), getAssociativity(token));
+      print('token.type == LexerTokenType.number');
+      int precedence = makePrecedenceT(token.type);
+      Associativity associativity = getAssociativity(token);
+      var node = ConstantNode(this, token, precedence, associativity);
       insertIntoTree(node);
-      print('insertIntoTree: ${node.token.text}');
+      print('insertIntoTree: ${node.token.text}, precedence = $precedence, associativity = $associativity');
 
       token = lexer.getNextToken();
       lexer.rollBack();
@@ -1558,9 +1583,12 @@ class Parser {
       }
     }
     else if (token.type == LexerTokenType.subtract) {
-      var node  = UnaryMinusNode(this, token, makePrecedenceP(Precedence.unaryMinus), getAssociativityP(Precedence.unaryMinus));
+      print('token.type == LexerTokenType.subtract');
+      int precedence = makePrecedenceP(Precedence.unaryMinus);
+      Associativity associativity = getAssociativityP(Precedence.unaryMinus);
+      var node  = UnaryMinusNode(this, token, precedence, associativity);
       insertIntoTreeUnary(node);
-      print('insertIntoTreeUnary: ${node.token.text}');
+      print('insertIntoTreeUnary: ${node.token.text}, precedence = $precedence, associativity = $associativity');
 
       if (!expression1()) {
         return false;
@@ -1592,6 +1620,9 @@ class Parser {
   }
 
   bool expression2() {
+    print('expression2');
+    printTree();
+
     var token = lexer.getNextToken();
     if (token.type == LexerTokenType.lRBracket) {
       insertIntoTree(MultiplyNode(
@@ -1875,6 +1906,9 @@ class Parser {
   }
 
   bool variable() {
+    print('variable');
+    printTree();
+
     var token = lexer.getNextToken();
     if (token.type == LexerTokenType.function) {
       lexer.rollBack();
@@ -1901,9 +1935,12 @@ class Parser {
       }
     }
     else if (token.type == LexerTokenType.root) {
-      var node = RootNode(this, token, makePrecedenceT(token.type), getAssociativity(token), 2);
+      print('token.type == LexerTokenType.root');
+      int precedence = makePrecedenceT(token.type);
+      Associativity associativity = getAssociativity(token);
+      var node = RootNode(this, token, precedence, associativity, 2);
       insertIntoTreeUnary(node);
-      print('insertIntoTreeUnary: ${node.token.text}');
+      print('insertIntoTreeUnary: ${node.token.text}, precedence: $precedence, associativity: $associativity');
 
       if (!expression()) {
         return false;
