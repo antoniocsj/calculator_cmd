@@ -156,7 +156,13 @@ enum NumberMode {
 }
 
 
+void main() {
+  Precedence p = Precedence.unaryMinus;
+  print('Precedence: $p, value: ${p.value} ${p.index}');
 
+  p = Precedence.root;
+  print('Precedence: $p, value: ${p.value} ${p.index}');
+}
 
 
 
