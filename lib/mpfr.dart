@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:calculator/mpfr_bindings.dart';
 
-final DynamicLibrary _mpfr = DynamicLibrary.open('lib/external/libmpfr.so');
+final DynamicLibrary _mpfr = DynamicLibrary.open('external/libmpfr.so');
 
 var mpfr = MPFRNativeLib(_mpfr);
 

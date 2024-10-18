@@ -51,7 +51,7 @@ class MPCInexact {
   }
 }
 
-final DynamicLibrary _mpc = DynamicLibrary.open('lib/external/libmpc.so');
+final DynamicLibrary _mpc = DynamicLibrary.open('external/libmpc.so');
 
 var mpc = MPCNativeLib(_mpc);
 
